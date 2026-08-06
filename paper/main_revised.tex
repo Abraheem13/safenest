@@ -1,10 +1,23 @@
 \documentclass[fleqn,10pt]{wlscirep}
+% chktex-file 2
+% chktex-file 3
+% chktex-file 8
+% chktex-file 12
+% chktex-file 13
+% chktex-file 24
+% chktex-file 38
+% chktex-file 44
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{longtable}
 \usepackage{array}
 \usepackage{multirow}
 \usepackage{float}
+
+% Narrow table columns and full-page floats can leave intentionally loose boxes.
+% Suppress those non-actionable diagnostics while retaining overfull-box warnings.
+\hbadness=10000
+\vbadness=10000
 
 \usepackage{bm}
 \newcommand{\mathbbm}[1]{\ensuremath{\mathbb{#1}}}
@@ -143,7 +156,7 @@ Three patterns emerge from Table \ref{tab:gap}. First, guardrail frameworks sati
 
 \section*{The Proposed Architecture}
 
-Nested Policy Learning (NPL) is a middleware architecture situated between a foundation language model and the end user. It requires no modification of the foundation model's weights, fine-tuning procedure or inference mechanism. Instead it surrounds the model with five concentric layers of policy whose collective behaviour is governed by a bilevel optimisation framework. The specification comprises three subsystems: (i) a Multi-Signal Bayesian Age Assurance Module, which infers the user's developmental stage from observed signals with a provably converging posterior under an explicit differential-privacy model; (ii) a Nested Policy Engine, structured as five constraint layers over a lattice, with formally verifiable safety properties; and (iii) a Socratic Protection Engine, formalised as a finite-horizon MDP over pedagogical actions. Each component is presented below with its formal definition, guarantees and design rationale.
+Nested Policy Learning (NPL) is a middleware architecture situated between a foundation language model and the end user. It requires no modification of the foundation model's weights, fine-tuning procedure or inference mechanism. Instead it surrounds the model with five concentric layers of policy whose collective behaviour is governed by a bilevel optimisation framework. The specification comprises three subsystems: (i) a Multi-Signal Bayesian Age Assurance Module, which infers the user's developmental stage from observed signals with a provably converging posterior under an explicit differential-privacy model; (ii) a Nested Policy Engine, structured as five constraint layers over a lattice, with formally verifiable safety properties; and (iii) a Socratic Protection Engine, formalised as a finite-horizon MDP over pedagogical actions. Each component is presented below with its formal definition, guarantees and design rationale; Figure \ref{fig:architecture} shows their arrangement around the foundation model.
 
 \begin{figure}[ht]
 \centering
@@ -221,7 +234,7 @@ This factorisation is architecturally important: each signal source is processed
 \begin{equation}
 \hat{\tau} = \begin{cases} \arg\max_{t_k} P(t_k \mid s) & \text{if } \max_k P(t_k \mid s) \geq \gamma \\ t_1 & \text{otherwise} \end{cases}
 \end{equation}
-where $\gamma = 0.55$ is the confidence threshold. When the maximum posterior falls below $\gamma$ the system defaults to the most restrictive tier $t_1$, implementing a fail-safe design. The Dirichlet-Categorical sequential update carries the posterior from session $n-1$ as the prior for session $n$, enabling progressive refinement. Table \ref{tab:signals} specifies each signal modality, its statistical model and its share of the privacy budget.
+where $\gamma = 0.55$ is the confidence threshold. When the maximum posterior falls below $\gamma$ the system defaults to the most restrictive tier $t_1$, implementing a fail-safe design. The Dirichlet-Categorical sequential update carries the posterior from session $n-1$ as the prior for session $n$, enabling progressive refinement. Table \ref{tab:signals} specifies each signal modality, its statistical model and its share of the privacy budget, and Figure \ref{fig:bayesian} shows the corresponding fusion pipeline.
 
 \begin{table}[H]
 \centering
@@ -274,7 +287,7 @@ d_M(s, t_k) = \sqrt{(s - \mu_k)^\top \Sigma_k^{-1} (s - \mu_k)}
 
 If $d_M$ exceeds the threshold $\chi^2_\alpha$ at significance level $\alpha$, the session is flagged for potential age misrepresentation and the tier is held at its current assignment pending further evidence.
 
-A second check addresses a failure mode that the Mahalanobis test does not cover. Where an external attestation indicates a tier that the linguistic estimate contradicts by two tiers or more, the attested tier governs and the assignment never exceeds it. This \emph{profile--attestation discordance} rule exists because linguistic sophistication and protective need can diverge sharply in atypically developing children; its effect is quantified in Table \ref{tab:populations}. Table \ref{tab:convergence} reports the interaction counts implied by the Sanov bound.
+Figure \ref{fig:pipeline} shows the feature-extraction path by which these signals are obtained at interaction time. A second check addresses a failure mode that the Mahalanobis test does not cover. Where an external attestation indicates a tier that the linguistic estimate contradicts by two tiers or more, the attested tier governs and the assignment never exceeds it. This \emph{profile--attestation discordance} rule exists because linguistic sophistication and protective need can diverge sharply in atypically developing children; its effect is quantified in Table \ref{tab:populations}. Table \ref{tab:convergence} reports the interaction counts implied by the Sanov bound.
 
 \begin{table}[H]
 \centering
@@ -399,7 +412,7 @@ Verify\-Request & Requests that the learner articulate their reasoning before th
 
 The policy layers and the constraint lattice jointly determine which capabilities are available at each developmental stage. Table \ref{tab:gating} gives the complete feature-gating matrix. Lattice monotonicity guarantees that every capability available at tier $t_i$ is available at all tiers $t_j$ with $j > i$, and the conjunction in Equation 13 ensures that no single layer can unilaterally override another's gating decision.
 
-A note on the semantics of the access levels, since the distinction carries most of the framework's pedagogical content. \emph{Blocked} means the request is refused. \emph{Socratic} means the direct answer is withheld but the request is served through guided questioning --- interception, not refusal. \emph{Limited} means the capability is available but monitored, and below $t_3$ a direct request is scaffolded rather than answered outright. Conflating Socratic with Blocked would convert the framework's central mechanism into a refusal policy and would materially change its behaviour toward children.
+Figure \ref{fig:tierbehaviour} summarises the resulting per-tier behaviour. A note on the semantics of the access levels, since the distinction carries most of the framework's pedagogical content. \emph{Blocked} means the request is refused. \emph{Socratic} means the direct answer is withheld but the request is served through guided questioning --- interception, not refusal. \emph{Limited} means the capability is available but monitored, and below $t_3$ a direct request is scaffolded rather than answered outright. Conflating Socratic with Blocked would convert the framework's central mechanism into a refusal policy and would materially change its behaviour toward children.
 
 The asymptotic overhead of the pipeline is bounded: $L_0$ operates in $O(1)$ per token, $L_1$ in $O(|y|)$ per response, and $L_2$ through $L_4$ contribute no synchronous latency. Total cost per response is therefore $O(|y|)$ --- linear in response length, and independent of model size and vocabulary size.
 
