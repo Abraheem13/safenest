@@ -63,11 +63,16 @@ Mean DSR (`exp04_comparative`):
 | COPPA binary rule | 64.3 | 60.6 |
 | Child-safety classifier | 57.9 | 62.8 |
 | Age-conditioned (oracle) | 79.3 | 71.5 |
-| **NPL (ours)** | **88.1** | **73.8** |
+| **NPL (ours)** | **86.3** | **75.5** |
 
-So the honest gaps are **+21.3 pp** over the best age-agnostic baseline
-(Constitutional AI) and **+2.2 pp** over the strongest age-aware baseline, both
-significant by paired McNemar (p = 2.1e−238 and p = 6.7e−04) but far from +41.2.
+So the honest gaps are **+23.0 pp** over the best age-agnostic baseline
+(Constitutional AI) and **+4.0 pp** over the strongest age-aware baseline, both
+significant by paired McNemar (p = 6.6e-263 and p = 5.0e-10) but far from +41.2.
+
+Note the caveat recorded in `paper/REPLACEMENT_TEXT.md` §5: the open-ended-chat
+rule in `policy.py` was amended after the rubric exposed a gap, so the rubric is
+no longer strictly held out. Pre-amendment the rubric DSR was 73.8%; the
+amendment is worth 1.7 of the 23.0 points.
 
 **Action.** Replace the abstract's "+41.2 percentage point" with the rubric
 number against a named baseline, report both ground truths, and state the

@@ -24,10 +24,10 @@ Replace with:
 > where the privacy unit is one child in the calibration corpus. A comparative
 > policy-decision simulation over 7,000 prompts, scored against an independent
 > rubric derived from chronological age, regulatory instruments and Piagetian
-> stage criteria, gives NPL a mean developmental safety rate of 73.8% against
-> 52.5% for the strongest age-agnostic baseline (+21.3 percentage points,
-> McNemar p < 10⁻²³⁰) and 71.5% for a strong age-conditioned baseline
-> (+2.2 points, p < 10⁻³), while reducing under-protection from 39.0% to 5.6%.
+> stage criteria, gives NPL a mean developmental safety rate of 75.5% against
+> 52.5% for the strongest age-agnostic baseline (+23.0 percentage points,
+> McNemar p < 10⁻²⁶⁰) and 71.5% for a strong age-conditioned baseline
+> (+4.0 points, p < 10⁻⁹), while reducing under-protection from 39.0% to 3.9%.
 > Empirical validation with human subjects remains a necessary next step.
 
 **Why each change.** "confirms" → "yields" (simulation does not confirm); the
@@ -137,9 +137,22 @@ it is defined).
 > principle), and Piagetian criteria on abstraction demand. This labeller does
 > not consult the feature-gating matrix. The two labellings agree on 77.1% of the
 > 7,000 prompts (Cohen's κ = 0.645), so the choice materially affects the result:
-> NPL's mean DSR is 88.1% under the circular labelling and 73.8% under the
+> NPL's mean DSR is 86.3% under the circular labelling and 75.5% under the
 > independent one. We treat the latter as the headline figure and report the
 > former only for contrast.
+>
+> One qualification on the independence of the rubric labeller. During
+> development the rubric identified a case in which the specification permitted
+> direct answers to open-ended questions from 7-to-9-year-olds, and the
+> specification was subsequently amended to scaffold direct requests below t3
+> (Section 3.4). The rubric therefore informed one design decision, and to that
+> extent it is no longer a fully held-out standard. We report the affected
+> figure both ways: NPL's mean DSR against the rubric is 75.5% after the
+> amendment and 73.8% before it, so the amendment accounts for 1.7 points of the
+> 23.0-point margin over the strongest age-agnostic baseline. The conclusion is
+> unchanged under either value. A genuinely held-out evaluation — prompts labelled
+> by developmental psychologists who have not seen the specification — remains
+> necessary and is the first item of the human-subject protocol.
 
 ---
 

@@ -1,25 +1,25 @@
 {
   "provenance": {
-    "timestamp": "2026-08-06T19:30:54",
+    "timestamp": "2026-08-07T00:32:03",
     "python": "3.13.5",
     "numpy": "2.4.4",
     "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
-    "git_commit": "436a74a",
+    "git_commit": "38cb393",
     "master_seed": 20260806
   },
   "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
   "processor": "arm",
   "measurements_seconds": {
-    "L0: Token Filter (per response, 40 tokens)": 1.3510749995475635e-06,
-    "L1: Socratic Guard (per response)": 9.214789897669107e-08,
-    "L4: Policy Store (per query)": 1.0153166484087706e-06,
-    "Full engine (per response)": 3.180564599460922e-06,
-    "L2: Bayesian update (per interaction)": 2.9181042016716675e-05,
-    "Socratic MDP lookup (per step)": 1.4402084925677626e-07
+    "L0: Token Filter (per response, 40 tokens)": 1.3933916488895193e-06,
+    "L1: Socratic Guard (per response)": 8.976664976216853e-08,
+    "L4: Policy Store (per query)": 9.900000004563482e-07,
+    "Full engine (per response)": 3.2602083490928634e-06,
+    "L2: Bayesian update (per interaction)": 2.9051187506411226e-05,
+    "Socratic MDP lookup (per step)": 1.4187915076036007e-07
   },
-  "synchronous_per_response_seconds": 3.180564599460922e-06,
-  "share_of_500ms_llm": 6.361129198921844e-06,
-  "share_of_2000ms_llm": 1.590282299730461e-06,
+  "synchronous_per_response_seconds": 3.2602083490928634e-06,
+  "share_of_500ms_llm": 6.520416698185727e-06,
+  "share_of_2000ms_llm": 1.6301041745464317e-06,
   "conditional_independence": {
     "correlations": [
       0.0,

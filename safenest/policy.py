@@ -133,6 +133,15 @@ class L1SocraticGuard(Layer):
             # Direct answers to academic queries are withheld below t5.
             if response.is_academic_query and response.is_direct_answer and tier < Tier.T5:
                 return Decision.MODIFY
+            # Below concrete operations (t3), a direct answer to *any* request
+            # is scaffolded rather than delivered. A capability-indexed gating
+            # matrix cannot express this on its own: "Limited" is one bit, and
+            # the distinction that matters at t1-t2 is between answering a
+            # child's question and helping them reason toward it. Grounded in
+            # Piaget's account of preoperational and early concrete reasoning,
+            # where an authoritative answer is accepted without evaluation.
+            if response.is_direct_answer and tier < Tier.T3:
+                return Decision.MODIFY
             return Decision.ACCEPT
         return Decision.ACCEPT
 
