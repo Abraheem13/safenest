@@ -1,0 +1,138 @@
+{
+  "provenance": {
+    "timestamp": "2026-08-06T18:25:46",
+    "python": "3.13.5",
+    "numpy": "2.4.4",
+    "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+    "git_commit": "119adcf",
+    "master_seed": 20260806
+  },
+  "n_trials": 400,
+  "n_interactions": 10,
+  "by_population": {
+    "typical": {
+      "unmitigated": {
+        "correct": 395,
+        "under": 0,
+        "over": 5,
+        "n": 400
+      },
+      "with_discordance_flag": {
+        "correct": 395,
+        "under": 0,
+        "over": 5,
+        "n": 400
+      }
+    },
+    "neurodivergent_verbal": {
+      "unmitigated": {
+        "correct": 88,
+        "under": 249,
+        "over": 63,
+        "n": 400
+      },
+      "with_discordance_flag": {
+        "correct": 283,
+        "under": 76,
+        "over": 41,
+        "n": 400
+      }
+    },
+    "neurodivergent_motor": {
+      "unmitigated": {
+        "correct": 97,
+        "under": 237,
+        "over": 66,
+        "n": 400
+      },
+      "with_discordance_flag": {
+        "correct": 97,
+        "under": 237,
+        "over": 66,
+        "n": 400
+      }
+    },
+    "non_weird_l2": {
+      "unmitigated": {
+        "correct": 81,
+        "under": 0,
+        "over": 319,
+        "n": 400
+      },
+      "with_discordance_flag": {
+        "correct": 81,
+        "under": 0,
+        "over": 319,
+        "n": 400
+      }
+    },
+    "dialect_switching": {
+      "unmitigated": {
+        "correct": 249,
+        "under": 3,
+        "over": 148,
+        "n": 400
+      },
+      "with_discordance_flag": {
+        "correct": 249,
+        "under": 3,
+        "over": 148,
+        "n": 400
+      }
+    }
+  },
+  "population_table": [
+    {
+      "Population": "typical",
+      "Acc (%)": "98.8",
+      "Under-prot (%)": "0.0",
+      "Over-prot (%)": "1.2",
+      "Acc w/ flag (%)": "98.8",
+      "Under w/ flag (%)": "0.0"
+    },
+    {
+      "Population": "neurodivergent_verbal",
+      "Acc (%)": "22.0",
+      "Under-prot (%)": "62.3",
+      "Over-prot (%)": "15.8",
+      "Acc w/ flag (%)": "70.8",
+      "Under w/ flag (%)": "19.0"
+    },
+    {
+      "Population": "neurodivergent_motor",
+      "Acc (%)": "24.2",
+      "Under-prot (%)": "59.2",
+      "Over-prot (%)": "16.5",
+      "Acc w/ flag (%)": "24.2",
+      "Under w/ flag (%)": "59.2"
+    },
+    {
+      "Population": "non_weird_l2",
+      "Acc (%)": "20.2",
+      "Under-prot (%)": "0.0",
+      "Over-prot (%)": "79.8",
+      "Acc w/ flag (%)": "20.2",
+      "Under w/ flag (%)": "0.0"
+    },
+    {
+      "Population": "dialect_switching",
+      "Acc (%)": "62.3",
+      "Under-prot (%)": "0.8",
+      "Over-prot (%)": "37.0",
+      "Acc w/ flag (%)": "62.3",
+      "Under w/ flag (%)": "0.8"
+    }
+  ],
+  "verbal_case": {
+    "assigned_above_t2_unflagged": 0.82,
+    "assigned_above_t2_flagged": 0.03
+  },
+  "modality_robustness_under_shift": {
+    "linguistic": 0.316,
+    "behavioural": 0.6,
+    "device": 0.185,
+    "contextual": 0.301
+  },
+  "most_robust_modality": "behavioural",
+  "least_robust_modality": "device"
+}

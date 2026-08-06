@@ -1,0 +1,109 @@
+{
+  "provenance": {
+    "timestamp": "2026-08-06T18:25:45",
+    "python": "3.13.5",
+    "numpy": "2.4.4",
+    "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+    "git_commit": "119adcf",
+    "master_seed": 20260806
+  },
+  "privacy_statements": {
+    "none": {
+      "mode": "none",
+      "privacy_unit": "session",
+      "accounting": "per_session",
+      "post_processing": "posterior, tier assignment and response are post-processing",
+      "epsilon_total": null,
+      "adjacency": "not applicable",
+      "protected_output": "none (architectural data minimisation only)",
+      "mechanism": "none",
+      "claim": "raw features never cross the enclave boundary; LLRs discarded at session end. This is data minimisation, NOT an eps guarantee."
+    },
+    "local_inference": {
+      "mode": "local_inference",
+      "privacy_unit": "interaction",
+      "accounting": "per_interaction",
+      "post_processing": "posterior, tier assignment and response are post-processing",
+      "epsilon_total": 1.0,
+      "adjacency": "two signal streams differing in a single interaction of the live user, for one modality",
+      "protected_output": "per-modality clipped log-likelihood-ratio vector released to the fusion engine",
+      "mechanism": "Laplace",
+      "clip_bound_nats": 3.0,
+      "l1_sensitivity": 24.0,
+      "per_modality_epsilon": {
+        "linguistic": 0.4,
+        "behavioural": 0.3,
+        "device": 0.2,
+        "contextual": 0.1
+      },
+      "per_modality_noise_scale": {
+        "linguistic": 60.0,
+        "behavioural": 80.0,
+        "device": 120.0,
+        "contextual": 240.0
+      },
+      "per_modality_snr": {
+        "linguistic": 0.05,
+        "behavioural": 0.0375,
+        "device": 0.025,
+        "contextual": 0.0125
+      },
+      "cumulative_epsilon_10_interactions": 10.0,
+      "cumulative_epsilon_10_advanced": 32.357089578441915,
+      "caveat": "the released tier is an inference about the same user whose data is protected; accuracy is therefore bounded by eps"
+    },
+    "corpus": {
+      "mode": "corpus",
+      "privacy_unit": "corpus_child",
+      "accounting": "one_shot",
+      "post_processing": "posterior, tier assignment and response are post-processing",
+      "epsilon_total": 1.0,
+      "delta": 1e-05,
+      "adjacency": "add or remove all transcripts of one child from the calibration corpus",
+      "protected_output": "released tier-conditional likelihood parameters (means and covariances), computed offline",
+      "mechanism": "Gaussian",
+      "l2_sensitivity": 1.0,
+      "sigma": 4.844805262605389,
+      "per_parameter_noise_std": 0.0024224026313026943,
+      "corpus_n_children": 2000,
+      "caveat": "live-user signals are not themselves DP-protected; they are protected architecturally (see PrivacyMode.NONE) and by retention limits"
+    }
+  },
+  "epsilons": [
+    0.1,
+    0.3,
+    0.5,
+    0.7,
+    1.0,
+    3.0,
+    10.0,
+    30.0,
+    100.0
+  ],
+  "accuracy_corpus_dp": {
+    "0.1": 0.9825,
+    "0.3": 0.9975,
+    "0.5": 0.995,
+    "0.7": 0.99,
+    "1.0": 0.9875,
+    "3.0": 0.9925,
+    "10.0": 0.995,
+    "30.0": 0.9875,
+    "100.0": 0.9975
+  },
+  "accuracy_local_dp": {
+    "0.1": 0.33,
+    "0.3": 0.365,
+    "0.5": 0.3425,
+    "0.7": 0.355,
+    "1.0": 0.3725,
+    "3.0": 0.37,
+    "10.0": 0.39,
+    "30.0": 0.48,
+    "100.0": 0.62
+  },
+  "local_snr_at_eps1": 0.05,
+  "n_trials": 400,
+  "n_interactions": 10,
+  "verdict": "The 98.6% at eps=1.0 reported in the manuscript is reproducible only under CORPUS-mode DP, where eps protects the children in the calibration corpora. Under local DP applied to the live user's own signals, eps=1.0 gives near-chance accuracy, and the cumulative loss over a 10-interaction session is eps=10 under basic composition. The paper must state which reading it intends."
+}

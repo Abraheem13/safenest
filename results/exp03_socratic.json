@@ -1,0 +1,1326 @@
+{
+  "provenance": {
+    "timestamp": "2026-08-06T18:25:38",
+    "python": "3.13.5",
+    "numpy": "2.4.4",
+    "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+    "git_commit": "119adcf",
+    "master_seed": 20260806
+  },
+  "reward_params": {
+    "alpha_learn": 1.0,
+    "alpha_reveal": 0.6,
+    "alpha_frust": 0.25,
+    "alpha_meta": 0.06,
+    "discount": 0.95,
+    "horizon": 5,
+    "n_q": 50,
+    "sigma_zpd": 0.12,
+    "stagnation_threshold": 0.02
+  },
+  "bellman_updates": 6250,
+  "action_distribution_step1": {
+    "t1": {
+      "elicit": 48.0,
+      "hint": 52.0,
+      "guide": 0.0,
+      "partial_explain": 0.0,
+      "verify_request": 0.0
+    },
+    "t2": {
+      "elicit": 0.0,
+      "hint": 2.0,
+      "guide": 30.0,
+      "partial_explain": 0.0,
+      "verify_request": 68.0
+    },
+    "t3": {
+      "elicit": 4.0,
+      "hint": 0.0,
+      "guide": 0.0,
+      "partial_explain": 0.0,
+      "verify_request": 96.0
+    },
+    "t4": {
+      "elicit": 0.0,
+      "hint": 0.0,
+      "guide": 0.0,
+      "partial_explain": 0.0,
+      "verify_request": 100.0
+    },
+    "t5": {
+      "elicit": 0.0,
+      "hint": 0.0,
+      "guide": 0.0,
+      "partial_explain": 0.0,
+      "verify_request": 100.0
+    }
+  },
+  "expected_value": {
+    "t1": 0.0438419065854275,
+    "t2": 0.10170289336509743,
+    "t3": 0.1496713291987145,
+    "t4": 0.2112661974921574,
+    "t5": 0.25549219043277194
+  },
+  "trajectory_t2": [
+    {
+      "step": 1,
+      "action": "guide",
+      "q_before": 0.15,
+      "q_after": 0.29482845240006983
+    },
+    {
+      "step": 2,
+      "action": "guide",
+      "q_before": 0.29482845240006983,
+      "q_after": 0.4357611023447475
+    },
+    {
+      "step": 3,
+      "action": "guide",
+      "q_before": 0.4357611023447475,
+      "q_after": 0.5784985123232755
+    },
+    {
+      "step": 4,
+      "action": "guide",
+      "q_before": 0.5784985123232755,
+      "q_after": 0.718776726779983
+    },
+    {
+      "step": 5,
+      "action": "guide",
+      "q_before": 0.718776726779983,
+      "q_after": 0.8385694330245617
+    }
+  ],
+  "never_reveals_at_step1": {
+    "t1": true,
+    "t2": true,
+    "t3": true,
+    "t4": true,
+    "t5": true
+  },
+  "verify_usage_by_tier": [
+    0.0,
+    68.0,
+    96.0,
+    100.0,
+    100.0
+  ],
+  "verify_usage_published_eq15": [
+    0.0,
+    0.0,
+    4.0,
+    4.0,
+    0.0
+  ],
+  "sensitivity": {
+    "n_valid": 80,
+    "no_premature_reveal_fraction": 1.0,
+    "verify_monotone_fraction": 0.8125,
+    "grid": [
+      {
+        "alpha_reveal": 0.45,
+        "alpha_frust": 0.0,
+        "discount": 0.85,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": true,
+        "verify_by_tier": [
+          0.0,
+          20.0,
+          56.00000000000001,
+          84.0,
+          100.0
+        ]
+      },
+      {
+        "alpha_reveal": 0.45,
+        "alpha_frust": 0.0,
+        "discount": 0.9,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": true,
+        "verify_by_tier": [
+          0.0,
+          24.0,
+          68.0,
+          100.0,
+          100.0
+        ]
+      },
+      {
+        "alpha_reveal": 0.45,
+        "alpha_frust": 0.0,
+        "discount": 0.95,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": true,
+        "verify_by_tier": [
+          0.0,
+          32.0,
+          80.0,
+          100.0,
+          100.0
+        ]
+      },
+      {
+        "alpha_reveal": 0.45,
+        "alpha_frust": 0.0,
+        "discount": 0.99,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": true,
+        "verify_by_tier": [
+          0.0,
+          42.0,
+          100.0,
+          100.0,
+          100.0
+        ]
+      },
+      {
+        "alpha_reveal": 0.45,
+        "alpha_frust": 0.15,
+        "discount": 0.85,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": true,
+        "verify_by_tier": [
+          0.0,
+          48.0,
+          80.0,
+          100.0,
+          100.0
+        ]
+      },
+      {
+        "alpha_reveal": 0.45,
+        "alpha_frust": 0.15,
+        "discount": 0.9,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": true,
+        "verify_by_tier": [
+          0.0,
+          54.0,
+          100.0,
+          100.0,
+          100.0
+        ]
+      },
+      {
+        "alpha_reveal": 0.45,
+        "alpha_frust": 0.15,
+        "discount": 0.95,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": true,
+        "verify_by_tier": [
+          0.0,
+          60.0,
+          100.0,
+          100.0,
+          100.0
+        ]
+      },
+      {
+        "alpha_reveal": 0.45,
+        "alpha_frust": 0.15,
+        "discount": 0.99,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": true,
+        "verify_by_tier": [
+          0.0,
+          66.0,
+          100.0,
+          100.0,
+          100.0
+        ]
+      },
+      {
+        "alpha_reveal": 0.45,
+        "alpha_frust": 0.25,
+        "discount": 0.85,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": true,
+        "verify_by_tier": [
+          0.0,
+          56.00000000000001,
+          90.0,
+          100.0,
+          100.0
+        ]
+      },
+      {
+        "alpha_reveal": 0.45,
+        "alpha_frust": 0.25,
+        "discount": 0.9,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": true,
+        "verify_by_tier": [
+          0.0,
+          62.0,
+          100.0,
+          100.0,
+          100.0
+        ]
+      },
+      {
+        "alpha_reveal": 0.45,
+        "alpha_frust": 0.25,
+        "discount": 0.95,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": true,
+        "verify_by_tier": [
+          0.0,
+          68.0,
+          96.0,
+          100.0,
+          100.0
+        ]
+      },
+      {
+        "alpha_reveal": 0.45,
+        "alpha_frust": 0.25,
+        "discount": 0.99,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": true,
+        "verify_by_tier": [
+          0.0,
+          72.0,
+          80.0,
+          100.0,
+          100.0
+        ]
+      },
+      {
+        "alpha_reveal": 0.45,
+        "alpha_frust": 0.5,
+        "discount": 0.85,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": true,
+        "verify_by_tier": [
+          0.0,
+          66.0,
+          66.0,
+          80.0,
+          94.0
+        ]
+      },
+      {
+        "alpha_reveal": 0.45,
+        "alpha_frust": 0.5,
+        "discount": 0.9,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": false,
+        "verify_by_tier": [
+          0.0,
+          72.0,
+          60.0,
+          66.0,
+          78.0
+        ]
+      },
+      {
+        "alpha_reveal": 0.45,
+        "alpha_frust": 0.5,
+        "discount": 0.95,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": false,
+        "verify_by_tier": [
+          0.0,
+          76.0,
+          52.0,
+          56.00000000000001,
+          62.0
+        ]
+      },
+      {
+        "alpha_reveal": 0.45,
+        "alpha_frust": 0.5,
+        "discount": 0.99,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": false,
+        "verify_by_tier": [
+          0.0,
+          80.0,
+          46.0,
+          48.0,
+          46.0
+        ]
+      },
+      {
+        "alpha_reveal": 0.6,
+        "alpha_frust": 0.0,
+        "discount": 0.85,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": true,
+        "verify_by_tier": [
+          0.0,
+          20.0,
+          56.00000000000001,
+          84.0,
+          100.0
+        ]
+      },
+      {
+        "alpha_reveal": 0.6,
+        "alpha_frust": 0.0,
+        "discount": 0.9,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": true,
+        "verify_by_tier": [
+          0.0,
+          24.0,
+          68.0,
+          100.0,
+          100.0
+        ]
+      },
+      {
+        "alpha_reveal": 0.6,
+        "alpha_frust": 0.0,
+        "discount": 0.95,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": true,
+        "verify_by_tier": [
+          0.0,
+          32.0,
+          80.0,
+          100.0,
+          100.0
+        ]
+      },
+      {
+        "alpha_reveal": 0.6,
+        "alpha_frust": 0.0,
+        "discount": 0.99,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": true,
+        "verify_by_tier": [
+          0.0,
+          42.0,
+          100.0,
+          100.0,
+          100.0
+        ]
+      },
+      {
+        "alpha_reveal": 0.6,
+        "alpha_frust": 0.15,
+        "discount": 0.85,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": true,
+        "verify_by_tier": [
+          0.0,
+          48.0,
+          80.0,
+          100.0,
+          100.0
+        ]
+      },
+      {
+        "alpha_reveal": 0.6,
+        "alpha_frust": 0.15,
+        "discount": 0.9,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": true,
+        "verify_by_tier": [
+          0.0,
+          54.0,
+          100.0,
+          100.0,
+          100.0
+        ]
+      },
+      {
+        "alpha_reveal": 0.6,
+        "alpha_frust": 0.15,
+        "discount": 0.95,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": true,
+        "verify_by_tier": [
+          0.0,
+          60.0,
+          100.0,
+          100.0,
+          100.0
+        ]
+      },
+      {
+        "alpha_reveal": 0.6,
+        "alpha_frust": 0.15,
+        "discount": 0.99,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": true,
+        "verify_by_tier": [
+          0.0,
+          66.0,
+          100.0,
+          100.0,
+          100.0
+        ]
+      },
+      {
+        "alpha_reveal": 0.6,
+        "alpha_frust": 0.25,
+        "discount": 0.85,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": true,
+        "verify_by_tier": [
+          0.0,
+          56.00000000000001,
+          90.0,
+          100.0,
+          100.0
+        ]
+      },
+      {
+        "alpha_reveal": 0.6,
+        "alpha_frust": 0.25,
+        "discount": 0.9,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": true,
+        "verify_by_tier": [
+          0.0,
+          62.0,
+          100.0,
+          100.0,
+          100.0
+        ]
+      },
+      {
+        "alpha_reveal": 0.6,
+        "alpha_frust": 0.25,
+        "discount": 0.95,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": true,
+        "verify_by_tier": [
+          0.0,
+          68.0,
+          96.0,
+          100.0,
+          100.0
+        ]
+      },
+      {
+        "alpha_reveal": 0.6,
+        "alpha_frust": 0.25,
+        "discount": 0.99,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": true,
+        "verify_by_tier": [
+          0.0,
+          72.0,
+          80.0,
+          100.0,
+          100.0
+        ]
+      },
+      {
+        "alpha_reveal": 0.6,
+        "alpha_frust": 0.5,
+        "discount": 0.85,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": true,
+        "verify_by_tier": [
+          0.0,
+          66.0,
+          66.0,
+          80.0,
+          94.0
+        ]
+      },
+      {
+        "alpha_reveal": 0.6,
+        "alpha_frust": 0.5,
+        "discount": 0.9,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": false,
+        "verify_by_tier": [
+          0.0,
+          72.0,
+          60.0,
+          66.0,
+          78.0
+        ]
+      },
+      {
+        "alpha_reveal": 0.6,
+        "alpha_frust": 0.5,
+        "discount": 0.95,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": false,
+        "verify_by_tier": [
+          0.0,
+          76.0,
+          52.0,
+          56.00000000000001,
+          62.0
+        ]
+      },
+      {
+        "alpha_reveal": 0.6,
+        "alpha_frust": 0.5,
+        "discount": 0.99,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": false,
+        "verify_by_tier": [
+          0.0,
+          80.0,
+          46.0,
+          48.0,
+          46.0
+        ]
+      },
+      {
+        "alpha_reveal": 0.8,
+        "alpha_frust": 0.0,
+        "discount": 0.85,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": true,
+        "verify_by_tier": [
+          0.0,
+          20.0,
+          56.00000000000001,
+          84.0,
+          100.0
+        ]
+      },
+      {
+        "alpha_reveal": 0.8,
+        "alpha_frust": 0.0,
+        "discount": 0.9,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": true,
+        "verify_by_tier": [
+          0.0,
+          24.0,
+          68.0,
+          100.0,
+          100.0
+        ]
+      },
+      {
+        "alpha_reveal": 0.8,
+        "alpha_frust": 0.0,
+        "discount": 0.95,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": true,
+        "verify_by_tier": [
+          0.0,
+          32.0,
+          80.0,
+          100.0,
+          100.0
+        ]
+      },
+      {
+        "alpha_reveal": 0.8,
+        "alpha_frust": 0.0,
+        "discount": 0.99,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": true,
+        "verify_by_tier": [
+          0.0,
+          42.0,
+          100.0,
+          100.0,
+          100.0
+        ]
+      },
+      {
+        "alpha_reveal": 0.8,
+        "alpha_frust": 0.15,
+        "discount": 0.85,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": true,
+        "verify_by_tier": [
+          0.0,
+          48.0,
+          80.0,
+          100.0,
+          100.0
+        ]
+      },
+      {
+        "alpha_reveal": 0.8,
+        "alpha_frust": 0.15,
+        "discount": 0.9,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": true,
+        "verify_by_tier": [
+          0.0,
+          54.0,
+          100.0,
+          100.0,
+          100.0
+        ]
+      },
+      {
+        "alpha_reveal": 0.8,
+        "alpha_frust": 0.15,
+        "discount": 0.95,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": true,
+        "verify_by_tier": [
+          0.0,
+          60.0,
+          100.0,
+          100.0,
+          100.0
+        ]
+      },
+      {
+        "alpha_reveal": 0.8,
+        "alpha_frust": 0.15,
+        "discount": 0.99,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": true,
+        "verify_by_tier": [
+          0.0,
+          66.0,
+          100.0,
+          100.0,
+          100.0
+        ]
+      },
+      {
+        "alpha_reveal": 0.8,
+        "alpha_frust": 0.25,
+        "discount": 0.85,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": true,
+        "verify_by_tier": [
+          0.0,
+          56.00000000000001,
+          90.0,
+          100.0,
+          100.0
+        ]
+      },
+      {
+        "alpha_reveal": 0.8,
+        "alpha_frust": 0.25,
+        "discount": 0.9,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": true,
+        "verify_by_tier": [
+          0.0,
+          62.0,
+          100.0,
+          100.0,
+          100.0
+        ]
+      },
+      {
+        "alpha_reveal": 0.8,
+        "alpha_frust": 0.25,
+        "discount": 0.95,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": true,
+        "verify_by_tier": [
+          0.0,
+          68.0,
+          96.0,
+          100.0,
+          100.0
+        ]
+      },
+      {
+        "alpha_reveal": 0.8,
+        "alpha_frust": 0.25,
+        "discount": 0.99,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": true,
+        "verify_by_tier": [
+          0.0,
+          72.0,
+          80.0,
+          100.0,
+          100.0
+        ]
+      },
+      {
+        "alpha_reveal": 0.8,
+        "alpha_frust": 0.5,
+        "discount": 0.85,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": true,
+        "verify_by_tier": [
+          0.0,
+          66.0,
+          66.0,
+          80.0,
+          94.0
+        ]
+      },
+      {
+        "alpha_reveal": 0.8,
+        "alpha_frust": 0.5,
+        "discount": 0.9,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": false,
+        "verify_by_tier": [
+          0.0,
+          72.0,
+          60.0,
+          66.0,
+          78.0
+        ]
+      },
+      {
+        "alpha_reveal": 0.8,
+        "alpha_frust": 0.5,
+        "discount": 0.95,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": false,
+        "verify_by_tier": [
+          0.0,
+          76.0,
+          52.0,
+          56.00000000000001,
+          62.0
+        ]
+      },
+      {
+        "alpha_reveal": 0.8,
+        "alpha_frust": 0.5,
+        "discount": 0.99,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": false,
+        "verify_by_tier": [
+          0.0,
+          80.0,
+          46.0,
+          48.0,
+          46.0
+        ]
+      },
+      {
+        "alpha_reveal": 1.0,
+        "alpha_frust": 0.0,
+        "discount": 0.85,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": true,
+        "verify_by_tier": [
+          0.0,
+          20.0,
+          56.00000000000001,
+          84.0,
+          100.0
+        ]
+      },
+      {
+        "alpha_reveal": 1.0,
+        "alpha_frust": 0.0,
+        "discount": 0.9,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": true,
+        "verify_by_tier": [
+          0.0,
+          24.0,
+          68.0,
+          100.0,
+          100.0
+        ]
+      },
+      {
+        "alpha_reveal": 1.0,
+        "alpha_frust": 0.0,
+        "discount": 0.95,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": true,
+        "verify_by_tier": [
+          0.0,
+          32.0,
+          80.0,
+          100.0,
+          100.0
+        ]
+      },
+      {
+        "alpha_reveal": 1.0,
+        "alpha_frust": 0.0,
+        "discount": 0.99,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": true,
+        "verify_by_tier": [
+          0.0,
+          42.0,
+          100.0,
+          100.0,
+          100.0
+        ]
+      },
+      {
+        "alpha_reveal": 1.0,
+        "alpha_frust": 0.15,
+        "discount": 0.85,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": true,
+        "verify_by_tier": [
+          0.0,
+          48.0,
+          80.0,
+          100.0,
+          100.0
+        ]
+      },
+      {
+        "alpha_reveal": 1.0,
+        "alpha_frust": 0.15,
+        "discount": 0.9,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": true,
+        "verify_by_tier": [
+          0.0,
+          54.0,
+          100.0,
+          100.0,
+          100.0
+        ]
+      },
+      {
+        "alpha_reveal": 1.0,
+        "alpha_frust": 0.15,
+        "discount": 0.95,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": true,
+        "verify_by_tier": [
+          0.0,
+          60.0,
+          100.0,
+          100.0,
+          100.0
+        ]
+      },
+      {
+        "alpha_reveal": 1.0,
+        "alpha_frust": 0.15,
+        "discount": 0.99,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": true,
+        "verify_by_tier": [
+          0.0,
+          66.0,
+          100.0,
+          100.0,
+          100.0
+        ]
+      },
+      {
+        "alpha_reveal": 1.0,
+        "alpha_frust": 0.25,
+        "discount": 0.85,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": true,
+        "verify_by_tier": [
+          0.0,
+          56.00000000000001,
+          90.0,
+          100.0,
+          100.0
+        ]
+      },
+      {
+        "alpha_reveal": 1.0,
+        "alpha_frust": 0.25,
+        "discount": 0.9,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": true,
+        "verify_by_tier": [
+          0.0,
+          62.0,
+          100.0,
+          100.0,
+          100.0
+        ]
+      },
+      {
+        "alpha_reveal": 1.0,
+        "alpha_frust": 0.25,
+        "discount": 0.95,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": true,
+        "verify_by_tier": [
+          0.0,
+          68.0,
+          96.0,
+          100.0,
+          100.0
+        ]
+      },
+      {
+        "alpha_reveal": 1.0,
+        "alpha_frust": 0.25,
+        "discount": 0.99,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": true,
+        "verify_by_tier": [
+          0.0,
+          72.0,
+          80.0,
+          100.0,
+          100.0
+        ]
+      },
+      {
+        "alpha_reveal": 1.0,
+        "alpha_frust": 0.5,
+        "discount": 0.85,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": true,
+        "verify_by_tier": [
+          0.0,
+          66.0,
+          66.0,
+          80.0,
+          94.0
+        ]
+      },
+      {
+        "alpha_reveal": 1.0,
+        "alpha_frust": 0.5,
+        "discount": 0.9,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": false,
+        "verify_by_tier": [
+          0.0,
+          72.0,
+          60.0,
+          66.0,
+          78.0
+        ]
+      },
+      {
+        "alpha_reveal": 1.0,
+        "alpha_frust": 0.5,
+        "discount": 0.95,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": false,
+        "verify_by_tier": [
+          0.0,
+          76.0,
+          52.0,
+          56.00000000000001,
+          62.0
+        ]
+      },
+      {
+        "alpha_reveal": 1.0,
+        "alpha_frust": 0.5,
+        "discount": 0.99,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": false,
+        "verify_by_tier": [
+          0.0,
+          80.0,
+          46.0,
+          48.0,
+          46.0
+        ]
+      },
+      {
+        "alpha_reveal": 1.5,
+        "alpha_frust": 0.0,
+        "discount": 0.85,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": true,
+        "verify_by_tier": [
+          0.0,
+          20.0,
+          56.00000000000001,
+          84.0,
+          100.0
+        ]
+      },
+      {
+        "alpha_reveal": 1.5,
+        "alpha_frust": 0.0,
+        "discount": 0.9,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": true,
+        "verify_by_tier": [
+          0.0,
+          24.0,
+          68.0,
+          100.0,
+          100.0
+        ]
+      },
+      {
+        "alpha_reveal": 1.5,
+        "alpha_frust": 0.0,
+        "discount": 0.95,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": true,
+        "verify_by_tier": [
+          0.0,
+          32.0,
+          80.0,
+          100.0,
+          100.0
+        ]
+      },
+      {
+        "alpha_reveal": 1.5,
+        "alpha_frust": 0.0,
+        "discount": 0.99,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": true,
+        "verify_by_tier": [
+          0.0,
+          42.0,
+          100.0,
+          100.0,
+          100.0
+        ]
+      },
+      {
+        "alpha_reveal": 1.5,
+        "alpha_frust": 0.15,
+        "discount": 0.85,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": true,
+        "verify_by_tier": [
+          0.0,
+          48.0,
+          80.0,
+          100.0,
+          100.0
+        ]
+      },
+      {
+        "alpha_reveal": 1.5,
+        "alpha_frust": 0.15,
+        "discount": 0.9,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": true,
+        "verify_by_tier": [
+          0.0,
+          54.0,
+          100.0,
+          100.0,
+          100.0
+        ]
+      },
+      {
+        "alpha_reveal": 1.5,
+        "alpha_frust": 0.15,
+        "discount": 0.95,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": true,
+        "verify_by_tier": [
+          0.0,
+          60.0,
+          100.0,
+          100.0,
+          100.0
+        ]
+      },
+      {
+        "alpha_reveal": 1.5,
+        "alpha_frust": 0.15,
+        "discount": 0.99,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": true,
+        "verify_by_tier": [
+          0.0,
+          66.0,
+          100.0,
+          100.0,
+          100.0
+        ]
+      },
+      {
+        "alpha_reveal": 1.5,
+        "alpha_frust": 0.25,
+        "discount": 0.85,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": true,
+        "verify_by_tier": [
+          0.0,
+          56.00000000000001,
+          90.0,
+          100.0,
+          100.0
+        ]
+      },
+      {
+        "alpha_reveal": 1.5,
+        "alpha_frust": 0.25,
+        "discount": 0.9,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": true,
+        "verify_by_tier": [
+          0.0,
+          62.0,
+          100.0,
+          100.0,
+          100.0
+        ]
+      },
+      {
+        "alpha_reveal": 1.5,
+        "alpha_frust": 0.25,
+        "discount": 0.95,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": true,
+        "verify_by_tier": [
+          0.0,
+          68.0,
+          96.0,
+          100.0,
+          100.0
+        ]
+      },
+      {
+        "alpha_reveal": 1.5,
+        "alpha_frust": 0.25,
+        "discount": 0.99,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": true,
+        "verify_by_tier": [
+          0.0,
+          72.0,
+          80.0,
+          100.0,
+          100.0
+        ]
+      },
+      {
+        "alpha_reveal": 1.5,
+        "alpha_frust": 0.5,
+        "discount": 0.85,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": true,
+        "verify_by_tier": [
+          0.0,
+          66.0,
+          66.0,
+          80.0,
+          94.0
+        ]
+      },
+      {
+        "alpha_reveal": 1.5,
+        "alpha_frust": 0.5,
+        "discount": 0.9,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": false,
+        "verify_by_tier": [
+          0.0,
+          72.0,
+          60.0,
+          66.0,
+          78.0
+        ]
+      },
+      {
+        "alpha_reveal": 1.5,
+        "alpha_frust": 0.5,
+        "discount": 0.95,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": false,
+        "verify_by_tier": [
+          0.0,
+          76.0,
+          52.0,
+          56.00000000000001,
+          62.0
+        ]
+      },
+      {
+        "alpha_reveal": 1.5,
+        "alpha_frust": 0.5,
+        "discount": 0.99,
+        "valid": true,
+        "no_premature_reveal": true,
+        "verify_monotone": false,
+        "verify_by_tier": [
+          0.0,
+          80.0,
+          46.0,
+          48.0,
+          46.0
+        ]
+      }
+    ]
+  }
+}
