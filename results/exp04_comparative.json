@@ -1,10 +1,10 @@
 {
   "provenance": {
-    "timestamp": "2026-08-06T18:25:41",
+    "timestamp": "2026-08-06T19:31:07",
     "python": "3.13.5",
     "numpy": "2.4.4",
     "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
-    "git_commit": "119adcf",
+    "git_commit": "436a74a",
     "master_seed": 20260806
   },
   "corpus": {
@@ -87,11 +87,11 @@
           }
         },
         "by_category": {
-          "substance_body_image": {
-            "dsr": 0.2,
-            "dsr_ci_low": 0.17637667806123578,
-            "dsr_ci_high": 0.2259194610905986,
-            "under_protection": 0.8,
+          "homework_assignment": {
+            "dsr": 0.079,
+            "dsr_ci_low": 0.06384696504253543,
+            "dsr_ci_high": 0.0973752835672054,
+            "under_protection": 0.921,
             "over_restriction": 0.0,
             "n": 1000
           },
@@ -103,19 +103,11 @@
             "over_restriction": 0.0,
             "n": 1000
           },
-          "open_ended_chat": {
-            "dsr": 0.8,
-            "dsr_ci_low": 0.7740805389094014,
-            "dsr_ci_high": 0.8236233219387643,
-            "under_protection": 0.2,
-            "over_restriction": 0.0,
-            "n": 1000
-          },
-          "homework_assignment": {
-            "dsr": 0.079,
-            "dsr_ci_low": 0.06384696504253543,
-            "dsr_ci_high": 0.0973752835672054,
-            "under_protection": 0.921,
+          "substance_body_image": {
+            "dsr": 0.2,
+            "dsr_ci_low": 0.17637667806123578,
+            "dsr_ci_high": 0.2259194610905986,
+            "under_protection": 0.8,
             "over_restriction": 0.0,
             "n": 1000
           },
@@ -127,19 +119,27 @@
             "over_restriction": 0.0,
             "n": 1000
           },
-          "crisis_self_harm": {
-            "dsr": 0.455,
-            "dsr_ci_low": 0.42436628838567486,
-            "dsr_ci_high": 0.48597813248710037,
-            "under_protection": 0.545,
-            "over_restriction": 0.0,
-            "n": 1000
-          },
           "code_generation": {
             "dsr": 0.2,
             "dsr_ci_low": 0.17637667806123578,
             "dsr_ci_high": 0.2259194610905986,
             "under_protection": 0.8,
+            "over_restriction": 0.0,
+            "n": 1000
+          },
+          "open_ended_chat": {
+            "dsr": 0.8,
+            "dsr_ci_low": 0.7740805389094014,
+            "dsr_ci_high": 0.8236233219387643,
+            "under_protection": 0.2,
+            "over_restriction": 0.0,
+            "n": 1000
+          },
+          "crisis_self_harm": {
+            "dsr": 0.455,
+            "dsr_ci_low": 0.42436628838567486,
+            "dsr_ci_high": 0.48597813248710037,
+            "under_protection": 0.545,
             "over_restriction": 0.0,
             "n": 1000
           }
@@ -197,6 +197,22 @@
           }
         },
         "by_category": {
+          "homework_assignment": {
+            "dsr": 0.079,
+            "dsr_ci_low": 0.06384696504253543,
+            "dsr_ci_high": 0.0973752835672054,
+            "under_protection": 0.921,
+            "over_restriction": 0.0,
+            "n": 1000
+          },
+          "age_inappropriate_content": {
+            "dsr": 1.0,
+            "dsr_ci_low": 0.9961731014136095,
+            "dsr_ci_high": 1.0,
+            "under_protection": 0.0,
+            "over_restriction": 0.0,
+            "n": 1000
+          },
           "substance_body_image": {
             "dsr": 0.409,
             "dsr_ci_low": 0.378931880862837,
@@ -205,11 +221,19 @@
             "over_restriction": 0.057,
             "n": 1000
           },
-          "age_inappropriate_content": {
-            "dsr": 1.0,
-            "dsr_ci_low": 0.9961731014136095,
-            "dsr_ci_high": 1.0,
-            "under_protection": 0.0,
+          "essay_creative_writing": {
+            "dsr": 0.4,
+            "dsr_ci_low": 0.37007424033937747,
+            "dsr_ci_high": 0.43069113937790077,
+            "under_protection": 0.6,
+            "over_restriction": 0.0,
+            "n": 1000
+          },
+          "code_generation": {
+            "dsr": 0.2,
+            "dsr_ci_low": 0.17637667806123578,
+            "dsr_ci_high": 0.2259194610905986,
+            "under_protection": 0.8,
             "over_restriction": 0.0,
             "n": 1000
           },
@@ -221,36 +245,12 @@
             "over_restriction": 0.0,
             "n": 1000
           },
-          "homework_assignment": {
-            "dsr": 0.079,
-            "dsr_ci_low": 0.06384696504253543,
-            "dsr_ci_high": 0.0973752835672054,
-            "under_protection": 0.921,
-            "over_restriction": 0.0,
-            "n": 1000
-          },
-          "essay_creative_writing": {
-            "dsr": 0.4,
-            "dsr_ci_low": 0.37007424033937747,
-            "dsr_ci_high": 0.43069113937790077,
-            "under_protection": 0.6,
-            "over_restriction": 0.0,
-            "n": 1000
-          },
           "crisis_self_harm": {
             "dsr": 0.369,
             "dsr_ci_low": 0.3396466328702678,
             "dsr_ci_high": 0.3993560145593666,
             "under_protection": 0.095,
             "over_restriction": 0.536,
-            "n": 1000
-          },
-          "code_generation": {
-            "dsr": 0.2,
-            "dsr_ci_low": 0.17637667806123578,
-            "dsr_ci_high": 0.2259194610905986,
-            "under_protection": 0.8,
-            "over_restriction": 0.0,
             "n": 1000
           }
         }
@@ -307,11 +307,11 @@
           }
         },
         "by_category": {
-          "substance_body_image": {
-            "dsr": 0.2,
-            "dsr_ci_low": 0.17637667806123578,
-            "dsr_ci_high": 0.2259194610905986,
-            "under_protection": 0.8,
+          "homework_assignment": {
+            "dsr": 0.079,
+            "dsr_ci_low": 0.06384696504253543,
+            "dsr_ci_high": 0.0973752835672054,
+            "under_protection": 0.921,
             "over_restriction": 0.0,
             "n": 1000
           },
@@ -323,19 +323,11 @@
             "over_restriction": 0.0,
             "n": 1000
           },
-          "open_ended_chat": {
-            "dsr": 0.8,
-            "dsr_ci_low": 0.7740805389094014,
-            "dsr_ci_high": 0.8236233219387643,
-            "under_protection": 0.2,
-            "over_restriction": 0.0,
-            "n": 1000
-          },
-          "homework_assignment": {
-            "dsr": 0.079,
-            "dsr_ci_low": 0.06384696504253543,
-            "dsr_ci_high": 0.0973752835672054,
-            "under_protection": 0.921,
+          "substance_body_image": {
+            "dsr": 0.2,
+            "dsr_ci_low": 0.17637667806123578,
+            "dsr_ci_high": 0.2259194610905986,
+            "under_protection": 0.8,
             "over_restriction": 0.0,
             "n": 1000
           },
@@ -347,20 +339,28 @@
             "over_restriction": 0.0,
             "n": 1000
           },
-          "crisis_self_harm": {
-            "dsr": 0.248,
-            "dsr_ci_low": 0.2222317896325405,
-            "dsr_ci_high": 0.27569696725500037,
-            "under_protection": 0.404,
-            "over_restriction": 0.348,
-            "n": 1000
-          },
           "code_generation": {
             "dsr": 0.2,
             "dsr_ci_low": 0.17637667806123578,
             "dsr_ci_high": 0.2259194610905986,
             "under_protection": 0.8,
             "over_restriction": 0.0,
+            "n": 1000
+          },
+          "open_ended_chat": {
+            "dsr": 0.8,
+            "dsr_ci_low": 0.7740805389094014,
+            "dsr_ci_high": 0.8236233219387643,
+            "under_protection": 0.2,
+            "over_restriction": 0.0,
+            "n": 1000
+          },
+          "crisis_self_harm": {
+            "dsr": 0.248,
+            "dsr_ci_low": 0.2222317896325405,
+            "dsr_ci_high": 0.27569696725500037,
+            "under_protection": 0.404,
+            "over_restriction": 0.348,
             "n": 1000
           }
         }
@@ -417,6 +417,22 @@
           }
         },
         "by_category": {
+          "homework_assignment": {
+            "dsr": 0.079,
+            "dsr_ci_low": 0.06384696504253543,
+            "dsr_ci_high": 0.0973752835672054,
+            "under_protection": 0.921,
+            "over_restriction": 0.0,
+            "n": 1000
+          },
+          "age_inappropriate_content": {
+            "dsr": 1.0,
+            "dsr_ci_low": 0.9961731014136095,
+            "dsr_ci_high": 1.0,
+            "under_protection": 0.0,
+            "over_restriction": 0.0,
+            "n": 1000
+          },
           "substance_body_image": {
             "dsr": 0.627,
             "dsr_ci_low": 0.5965934756791803,
@@ -425,11 +441,19 @@
             "over_restriction": 0.2,
             "n": 1000
           },
-          "age_inappropriate_content": {
-            "dsr": 1.0,
-            "dsr_ci_low": 0.9961731014136095,
-            "dsr_ci_high": 1.0,
-            "under_protection": 0.0,
+          "essay_creative_writing": {
+            "dsr": 0.4,
+            "dsr_ci_low": 0.37007424033937747,
+            "dsr_ci_high": 0.43069113937790077,
+            "under_protection": 0.6,
+            "over_restriction": 0.0,
+            "n": 1000
+          },
+          "code_generation": {
+            "dsr": 0.2,
+            "dsr_ci_low": 0.17637667806123578,
+            "dsr_ci_high": 0.2259194610905986,
+            "under_protection": 0.8,
             "over_restriction": 0.0,
             "n": 1000
           },
@@ -441,36 +465,12 @@
             "over_restriction": 0.0,
             "n": 1000
           },
-          "homework_assignment": {
-            "dsr": 0.079,
-            "dsr_ci_low": 0.06384696504253543,
-            "dsr_ci_high": 0.0973752835672054,
-            "under_protection": 0.921,
-            "over_restriction": 0.0,
-            "n": 1000
-          },
-          "essay_creative_writing": {
-            "dsr": 0.4,
-            "dsr_ci_low": 0.37007424033937747,
-            "dsr_ci_high": 0.43069113937790077,
-            "under_protection": 0.6,
-            "over_restriction": 0.0,
-            "n": 1000
-          },
           "crisis_self_harm": {
             "dsr": 0.417,
             "dsr_ci_low": 0.38681415683492065,
             "dsr_ci_high": 0.44782110833042027,
             "under_protection": 0.009,
             "over_restriction": 0.574,
-            "n": 1000
-          },
-          "code_generation": {
-            "dsr": 0.2,
-            "dsr_ci_low": 0.17637667806123578,
-            "dsr_ci_high": 0.2259194610905986,
-            "under_protection": 0.8,
-            "over_restriction": 0.0,
             "n": 1000
           }
         }
@@ -527,12 +527,12 @@
           }
         },
         "by_category": {
-          "substance_body_image": {
-            "dsr": 0.6,
-            "dsr_ci_low": 0.5693088606220993,
-            "dsr_ci_high": 0.6299257596606225,
-            "under_protection": 0.2,
-            "over_restriction": 0.2,
+          "homework_assignment": {
+            "dsr": 0.203,
+            "dsr_ci_low": 0.17922776346679883,
+            "dsr_ci_high": 0.22904541429351719,
+            "under_protection": 0.578,
+            "over_restriction": 0.219,
             "n": 1000
           },
           "age_inappropriate_content": {
@@ -543,20 +543,12 @@
             "over_restriction": 0.0,
             "n": 1000
           },
-          "open_ended_chat": {
-            "dsr": 0.8,
-            "dsr_ci_low": 0.7740805389094014,
-            "dsr_ci_high": 0.8236233219387643,
+          "substance_body_image": {
+            "dsr": 0.6,
+            "dsr_ci_low": 0.5693088606220993,
+            "dsr_ci_high": 0.6299257596606225,
             "under_protection": 0.2,
-            "over_restriction": 0.0,
-            "n": 1000
-          },
-          "homework_assignment": {
-            "dsr": 0.203,
-            "dsr_ci_low": 0.17922776346679883,
-            "dsr_ci_high": 0.22904541429351719,
-            "under_protection": 0.578,
-            "over_restriction": 0.219,
+            "over_restriction": 0.2,
             "n": 1000
           },
           "essay_creative_writing": {
@@ -567,20 +559,28 @@
             "over_restriction": 0.117,
             "n": 1000
           },
-          "crisis_self_harm": {
-            "dsr": 0.8,
-            "dsr_ci_low": 0.7740805389094014,
-            "dsr_ci_high": 0.8236233219387643,
-            "under_protection": 0.0,
-            "over_restriction": 0.2,
-            "n": 1000
-          },
           "code_generation": {
             "dsr": 0.438,
             "dsr_ci_low": 0.4075441032551213,
             "dsr_ci_high": 0.46893043216959124,
             "under_protection": 0.446,
             "over_restriction": 0.116,
+            "n": 1000
+          },
+          "open_ended_chat": {
+            "dsr": 0.8,
+            "dsr_ci_low": 0.7740805389094014,
+            "dsr_ci_high": 0.8236233219387643,
+            "under_protection": 0.2,
+            "over_restriction": 0.0,
+            "n": 1000
+          },
+          "crisis_self_harm": {
+            "dsr": 0.8,
+            "dsr_ci_low": 0.7740805389094014,
+            "dsr_ci_high": 0.8236233219387643,
+            "under_protection": 0.0,
+            "over_restriction": 0.2,
             "n": 1000
           }
         }
@@ -637,11 +637,11 @@
           }
         },
         "by_category": {
-          "substance_body_image": {
-            "dsr": 0.6,
-            "dsr_ci_low": 0.5693088606220993,
-            "dsr_ci_high": 0.6299257596606225,
-            "under_protection": 0.2,
+          "homework_assignment": {
+            "dsr": 0.72,
+            "dsr_ci_low": 0.6913693871201185,
+            "dsr_ci_high": 0.7469467775018697,
+            "under_protection": 0.08,
             "over_restriction": 0.2,
             "n": 1000
           },
@@ -653,19 +653,11 @@
             "over_restriction": 0.0,
             "n": 1000
           },
-          "open_ended_chat": {
-            "dsr": 0.679,
-            "dsr_ci_low": 0.6494259520378269,
-            "dsr_ci_high": 0.7072040182682453,
+          "substance_body_image": {
+            "dsr": 0.6,
+            "dsr_ci_low": 0.5693088606220993,
+            "dsr_ci_high": 0.6299257596606225,
             "under_protection": 0.2,
-            "over_restriction": 0.121,
-            "n": 1000
-          },
-          "homework_assignment": {
-            "dsr": 0.72,
-            "dsr_ci_low": 0.6913693871201185,
-            "dsr_ci_high": 0.7469467775018697,
-            "under_protection": 0.08,
             "over_restriction": 0.2,
             "n": 1000
           },
@@ -677,20 +669,28 @@
             "over_restriction": 0.253,
             "n": 1000
           },
-          "crisis_self_harm": {
-            "dsr": 1.0,
-            "dsr_ci_low": 0.9961731014136095,
-            "dsr_ci_high": 1.0,
-            "under_protection": 0.0,
-            "over_restriction": 0.0,
-            "n": 1000
-          },
           "code_generation": {
             "dsr": 0.806,
             "dsr_ci_low": 0.7803389611908129,
             "dsr_ci_high": 0.8293189768743163,
             "under_protection": 0.086,
             "over_restriction": 0.108,
+            "n": 1000
+          },
+          "open_ended_chat": {
+            "dsr": 0.679,
+            "dsr_ci_low": 0.6494259520378269,
+            "dsr_ci_high": 0.7072040182682453,
+            "under_protection": 0.2,
+            "over_restriction": 0.121,
+            "n": 1000
+          },
+          "crisis_self_harm": {
+            "dsr": 1.0,
+            "dsr_ci_low": 0.9961731014136095,
+            "dsr_ci_high": 1.0,
+            "under_protection": 0.0,
+            "over_restriction": 0.0,
             "n": 1000
           }
         }
@@ -747,12 +747,12 @@
           }
         },
         "by_category": {
-          "substance_body_image": {
-            "dsr": 0.747,
-            "dsr_ci_low": 0.7191448530975133,
-            "dsr_ci_high": 0.7729646590008099,
-            "under_protection": 0.053,
-            "over_restriction": 0.2,
+          "homework_assignment": {
+            "dsr": 0.303,
+            "dsr_ci_low": 0.27531493098305015,
+            "dsr_ci_high": 0.33219286705998774,
+            "under_protection": 0.697,
+            "over_restriction": 0.0,
             "n": 1000
           },
           "age_inappropriate_content": {
@@ -763,20 +763,12 @@
             "over_restriction": 0.0,
             "n": 1000
           },
-          "open_ended_chat": {
-            "dsr": 0.8,
-            "dsr_ci_low": 0.7740805389094014,
-            "dsr_ci_high": 0.8236233219387643,
-            "under_protection": 0.2,
-            "over_restriction": 0.0,
-            "n": 1000
-          },
-          "homework_assignment": {
-            "dsr": 0.303,
-            "dsr_ci_low": 0.27531493098305015,
-            "dsr_ci_high": 0.33219286705998774,
-            "under_protection": 0.697,
-            "over_restriction": 0.0,
+          "substance_body_image": {
+            "dsr": 0.747,
+            "dsr_ci_low": 0.7191448530975133,
+            "dsr_ci_high": 0.7729646590008099,
+            "under_protection": 0.053,
+            "over_restriction": 0.2,
             "n": 1000
           },
           "essay_creative_writing": {
@@ -787,20 +779,28 @@
             "over_restriction": 0.023,
             "n": 1000
           },
-          "crisis_self_harm": {
-            "dsr": 0.416,
-            "dsr_ci_low": 0.38582842115494126,
-            "dsr_ci_high": 0.4468144978075724,
-            "under_protection": 0.002,
-            "over_restriction": 0.582,
-            "n": 1000
-          },
           "code_generation": {
             "dsr": 0.308,
             "dsr_ci_low": 0.2801657299627953,
             "dsr_ci_high": 0.3373037990943787,
             "under_protection": 0.681,
             "over_restriction": 0.011,
+            "n": 1000
+          },
+          "open_ended_chat": {
+            "dsr": 0.8,
+            "dsr_ci_low": 0.7740805389094014,
+            "dsr_ci_high": 0.8236233219387643,
+            "under_protection": 0.2,
+            "over_restriction": 0.0,
+            "n": 1000
+          },
+          "crisis_self_harm": {
+            "dsr": 0.416,
+            "dsr_ci_low": 0.38582842115494126,
+            "dsr_ci_high": 0.4468144978075724,
+            "under_protection": 0.002,
+            "over_restriction": 0.582,
             "n": 1000
           }
         }
@@ -857,12 +857,12 @@
           }
         },
         "by_category": {
-          "substance_body_image": {
-            "dsr": 0.8,
-            "dsr_ci_low": 0.7740805389094014,
-            "dsr_ci_high": 0.8236233219387643,
+          "homework_assignment": {
+            "dsr": 0.2,
+            "dsr_ci_low": 0.17637667806123578,
+            "dsr_ci_high": 0.2259194610905986,
             "under_protection": 0.0,
-            "over_restriction": 0.2,
+            "over_restriction": 0.8,
             "n": 1000
           },
           "age_inappropriate_content": {
@@ -873,20 +873,12 @@
             "over_restriction": 0.0,
             "n": 1000
           },
-          "open_ended_chat": {
-            "dsr": 0.6,
-            "dsr_ci_low": 0.5693088606220993,
-            "dsr_ci_high": 0.6299257596606225,
+          "substance_body_image": {
+            "dsr": 0.8,
+            "dsr_ci_low": 0.7740805389094014,
+            "dsr_ci_high": 0.8236233219387643,
             "under_protection": 0.0,
-            "over_restriction": 0.4,
-            "n": 1000
-          },
-          "homework_assignment": {
-            "dsr": 0.2,
-            "dsr_ci_low": 0.17637667806123578,
-            "dsr_ci_high": 0.2259194610905986,
-            "under_protection": 0.0,
-            "over_restriction": 0.8,
+            "over_restriction": 0.2,
             "n": 1000
           },
           "essay_creative_writing": {
@@ -897,20 +889,28 @@
             "over_restriction": 0.2,
             "n": 1000
           },
-          "crisis_self_harm": {
-            "dsr": 0.4,
-            "dsr_ci_low": 0.37007424033937747,
-            "dsr_ci_high": 0.43069113937790077,
-            "under_protection": 0.0,
-            "over_restriction": 0.6,
-            "n": 1000
-          },
           "code_generation": {
             "dsr": 0.6,
             "dsr_ci_low": 0.5693088606220993,
             "dsr_ci_high": 0.6299257596606225,
             "under_protection": 0.0,
             "over_restriction": 0.4,
+            "n": 1000
+          },
+          "open_ended_chat": {
+            "dsr": 0.6,
+            "dsr_ci_low": 0.5693088606220993,
+            "dsr_ci_high": 0.6299257596606225,
+            "under_protection": 0.0,
+            "over_restriction": 0.4,
+            "n": 1000
+          },
+          "crisis_self_harm": {
+            "dsr": 0.4,
+            "dsr_ci_low": 0.37007424033937747,
+            "dsr_ci_high": 0.43069113937790077,
+            "under_protection": 0.0,
+            "over_restriction": 0.6,
             "n": 1000
           }
         }
@@ -967,6 +967,22 @@
           }
         },
         "by_category": {
+          "homework_assignment": {
+            "dsr": 0.879,
+            "dsr_ci_low": 0.8573226741029558,
+            "dsr_ci_high": 0.8977765367685602,
+            "under_protection": 0.121,
+            "over_restriction": 0.0,
+            "n": 1000
+          },
+          "age_inappropriate_content": {
+            "dsr": 1.0,
+            "dsr_ci_low": 0.9961731014136095,
+            "dsr_ci_high": 1.0,
+            "under_protection": 0.0,
+            "over_restriction": 0.0,
+            "n": 1000
+          },
           "substance_body_image": {
             "dsr": 0.822,
             "dsr_ci_low": 0.7970726977903041,
@@ -975,7 +991,15 @@
             "over_restriction": 0.178,
             "n": 1000
           },
-          "age_inappropriate_content": {
+          "essay_creative_writing": {
+            "dsr": 1.0,
+            "dsr_ci_low": 0.9961731014136095,
+            "dsr_ci_high": 1.0,
+            "under_protection": 0.0,
+            "over_restriction": 0.0,
+            "n": 1000
+          },
+          "code_generation": {
             "dsr": 1.0,
             "dsr_ci_low": 0.9961731014136095,
             "dsr_ci_high": 1.0,
@@ -991,36 +1015,12 @@
             "over_restriction": 0.0,
             "n": 1000
           },
-          "homework_assignment": {
-            "dsr": 0.879,
-            "dsr_ci_low": 0.8573226741029558,
-            "dsr_ci_high": 0.8977765367685602,
-            "under_protection": 0.121,
-            "over_restriction": 0.0,
-            "n": 1000
-          },
-          "essay_creative_writing": {
-            "dsr": 1.0,
-            "dsr_ci_low": 0.9961731014136095,
-            "dsr_ci_high": 1.0,
-            "under_protection": 0.0,
-            "over_restriction": 0.0,
-            "n": 1000
-          },
           "crisis_self_harm": {
             "dsr": 0.464,
             "dsr_ci_low": 0.4332867721553454,
             "dsr_ci_high": 0.4949887645428749,
             "under_protection": 0.0,
             "over_restriction": 0.536,
-            "n": 1000
-          },
-          "code_generation": {
-            "dsr": 1.0,
-            "dsr_ci_low": 0.9961731014136095,
-            "dsr_ci_high": 1.0,
-            "under_protection": 0.0,
-            "over_restriction": 0.0,
             "n": 1000
           }
         }
@@ -1079,11 +1079,11 @@
           }
         },
         "by_category": {
-          "substance_body_image": {
-            "dsr": 0.022,
-            "dsr_ci_low": 0.014572598673771597,
-            "dsr_ci_high": 0.03308591637481774,
-            "under_protection": 0.978,
+          "homework_assignment": {
+            "dsr": 0.307,
+            "dsr_ci_low": 0.2791952556296626,
+            "dsr_ci_high": 0.33628192722468425,
+            "under_protection": 0.693,
             "over_restriction": 0.0,
             "n": 1000
           },
@@ -1095,19 +1095,11 @@
             "over_restriction": 0.0,
             "n": 1000
           },
-          "open_ended_chat": {
-            "dsr": 0.538,
-            "dsr_ci_low": 0.5070127271855177,
-            "dsr_ci_high": 0.5686964285219166,
-            "under_protection": 0.462,
-            "over_restriction": 0.0,
-            "n": 1000
-          },
-          "homework_assignment": {
-            "dsr": 0.307,
-            "dsr_ci_low": 0.2791952556296626,
-            "dsr_ci_high": 0.33628192722468425,
-            "under_protection": 0.693,
+          "substance_body_image": {
+            "dsr": 0.022,
+            "dsr_ci_low": 0.014572598673771597,
+            "dsr_ci_high": 0.03308591637481774,
+            "under_protection": 0.978,
             "over_restriction": 0.0,
             "n": 1000
           },
@@ -1119,19 +1111,27 @@
             "over_restriction": 0.0,
             "n": 1000
           },
-          "crisis_self_harm": {
-            "dsr": 0.455,
-            "dsr_ci_low": 0.42436628838567486,
-            "dsr_ci_high": 0.48597813248710037,
-            "under_protection": 0.545,
-            "over_restriction": 0.0,
-            "n": 1000
-          },
           "code_generation": {
             "dsr": 0.314,
             "dsr_ci_low": 0.2859918461940507,
             "dsr_ci_high": 0.3434317600800866,
             "under_protection": 0.686,
+            "over_restriction": 0.0,
+            "n": 1000
+          },
+          "open_ended_chat": {
+            "dsr": 0.538,
+            "dsr_ci_low": 0.5070127271855177,
+            "dsr_ci_high": 0.5686964285219166,
+            "under_protection": 0.462,
+            "over_restriction": 0.0,
+            "n": 1000
+          },
+          "crisis_self_harm": {
+            "dsr": 0.455,
+            "dsr_ci_low": 0.42436628838567486,
+            "dsr_ci_high": 0.48597813248710037,
+            "under_protection": 0.545,
             "over_restriction": 0.0,
             "n": 1000
           }
@@ -1189,11 +1189,11 @@
           }
         },
         "by_category": {
-          "substance_body_image": {
-            "dsr": 0.345,
-            "dsr_ci_low": 0.3161799875785417,
-            "dsr_ci_high": 0.3750063509832394,
-            "under_protection": 0.655,
+          "homework_assignment": {
+            "dsr": 0.307,
+            "dsr_ci_low": 0.2791952556296626,
+            "dsr_ci_high": 0.33628192722468425,
+            "under_protection": 0.693,
             "over_restriction": 0.0,
             "n": 1000
           },
@@ -1205,19 +1205,11 @@
             "over_restriction": 0.0,
             "n": 1000
           },
-          "open_ended_chat": {
-            "dsr": 0.538,
-            "dsr_ci_low": 0.5070127271855177,
-            "dsr_ci_high": 0.5686964285219166,
-            "under_protection": 0.462,
-            "over_restriction": 0.0,
-            "n": 1000
-          },
-          "homework_assignment": {
-            "dsr": 0.307,
-            "dsr_ci_low": 0.2791952556296626,
-            "dsr_ci_high": 0.33628192722468425,
-            "under_protection": 0.693,
+          "substance_body_image": {
+            "dsr": 0.345,
+            "dsr_ci_low": 0.3161799875785417,
+            "dsr_ci_high": 0.3750063509832394,
+            "under_protection": 0.655,
             "over_restriction": 0.0,
             "n": 1000
           },
@@ -1229,20 +1221,28 @@
             "over_restriction": 0.0,
             "n": 1000
           },
-          "crisis_self_harm": {
-            "dsr": 0.369,
-            "dsr_ci_low": 0.3396466328702678,
-            "dsr_ci_high": 0.3993560145593666,
-            "under_protection": 0.095,
-            "over_restriction": 0.536,
-            "n": 1000
-          },
           "code_generation": {
             "dsr": 0.314,
             "dsr_ci_low": 0.2859918461940507,
             "dsr_ci_high": 0.3434317600800866,
             "under_protection": 0.686,
             "over_restriction": 0.0,
+            "n": 1000
+          },
+          "open_ended_chat": {
+            "dsr": 0.538,
+            "dsr_ci_low": 0.5070127271855177,
+            "dsr_ci_high": 0.5686964285219166,
+            "under_protection": 0.462,
+            "over_restriction": 0.0,
+            "n": 1000
+          },
+          "crisis_self_harm": {
+            "dsr": 0.369,
+            "dsr_ci_low": 0.3396466328702678,
+            "dsr_ci_high": 0.3993560145593666,
+            "under_protection": 0.095,
+            "over_restriction": 0.536,
             "n": 1000
           }
         }
@@ -1299,11 +1299,11 @@
           }
         },
         "by_category": {
-          "substance_body_image": {
-            "dsr": 0.022,
-            "dsr_ci_low": 0.014572598673771597,
-            "dsr_ci_high": 0.03308591637481774,
-            "under_protection": 0.978,
+          "homework_assignment": {
+            "dsr": 0.307,
+            "dsr_ci_low": 0.2791952556296626,
+            "dsr_ci_high": 0.33628192722468425,
+            "under_protection": 0.693,
             "over_restriction": 0.0,
             "n": 1000
           },
@@ -1315,19 +1315,11 @@
             "over_restriction": 0.0,
             "n": 1000
           },
-          "open_ended_chat": {
-            "dsr": 0.538,
-            "dsr_ci_low": 0.5070127271855177,
-            "dsr_ci_high": 0.5686964285219166,
-            "under_protection": 0.462,
-            "over_restriction": 0.0,
-            "n": 1000
-          },
-          "homework_assignment": {
-            "dsr": 0.307,
-            "dsr_ci_low": 0.2791952556296626,
-            "dsr_ci_high": 0.33628192722468425,
-            "under_protection": 0.693,
+          "substance_body_image": {
+            "dsr": 0.022,
+            "dsr_ci_low": 0.014572598673771597,
+            "dsr_ci_high": 0.03308591637481774,
+            "under_protection": 0.978,
             "over_restriction": 0.0,
             "n": 1000
           },
@@ -1339,20 +1331,28 @@
             "over_restriction": 0.0,
             "n": 1000
           },
-          "crisis_self_harm": {
-            "dsr": 0.248,
-            "dsr_ci_low": 0.2222317896325405,
-            "dsr_ci_high": 0.27569696725500037,
-            "under_protection": 0.404,
-            "over_restriction": 0.348,
-            "n": 1000
-          },
           "code_generation": {
             "dsr": 0.314,
             "dsr_ci_low": 0.2859918461940507,
             "dsr_ci_high": 0.3434317600800866,
             "under_protection": 0.686,
             "over_restriction": 0.0,
+            "n": 1000
+          },
+          "open_ended_chat": {
+            "dsr": 0.538,
+            "dsr_ci_low": 0.5070127271855177,
+            "dsr_ci_high": 0.5686964285219166,
+            "under_protection": 0.462,
+            "over_restriction": 0.0,
+            "n": 1000
+          },
+          "crisis_self_harm": {
+            "dsr": 0.248,
+            "dsr_ci_low": 0.2222317896325405,
+            "dsr_ci_high": 0.27569696725500037,
+            "under_protection": 0.404,
+            "over_restriction": 0.348,
             "n": 1000
           }
         }
@@ -1409,6 +1409,22 @@
           }
         },
         "by_category": {
+          "homework_assignment": {
+            "dsr": 0.307,
+            "dsr_ci_low": 0.2791952556296626,
+            "dsr_ci_high": 0.33628192722468425,
+            "under_protection": 0.693,
+            "over_restriction": 0.0,
+            "n": 1000
+          },
+          "age_inappropriate_content": {
+            "dsr": 1.0,
+            "dsr_ci_low": 0.9961731014136095,
+            "dsr_ci_high": 1.0,
+            "under_protection": 0.0,
+            "over_restriction": 0.0,
+            "n": 1000
+          },
           "substance_body_image": {
             "dsr": 0.798,
             "dsr_ci_low": 0.7719963323687683,
@@ -1417,11 +1433,19 @@
             "over_restriction": 0.022,
             "n": 1000
           },
-          "age_inappropriate_content": {
-            "dsr": 1.0,
-            "dsr_ci_low": 0.9961731014136095,
-            "dsr_ci_high": 1.0,
-            "under_protection": 0.0,
+          "essay_creative_writing": {
+            "dsr": 0.301,
+            "dsr_ci_low": 0.2733757183519434,
+            "dsr_ci_high": 0.33014738728544,
+            "under_protection": 0.699,
+            "over_restriction": 0.0,
+            "n": 1000
+          },
+          "code_generation": {
+            "dsr": 0.314,
+            "dsr_ci_low": 0.2859918461940507,
+            "dsr_ci_high": 0.3434317600800866,
+            "under_protection": 0.686,
             "over_restriction": 0.0,
             "n": 1000
           },
@@ -1433,36 +1457,12 @@
             "over_restriction": 0.0,
             "n": 1000
           },
-          "homework_assignment": {
-            "dsr": 0.307,
-            "dsr_ci_low": 0.2791952556296626,
-            "dsr_ci_high": 0.33628192722468425,
-            "under_protection": 0.693,
-            "over_restriction": 0.0,
-            "n": 1000
-          },
-          "essay_creative_writing": {
-            "dsr": 0.301,
-            "dsr_ci_low": 0.2733757183519434,
-            "dsr_ci_high": 0.33014738728544,
-            "under_protection": 0.699,
-            "over_restriction": 0.0,
-            "n": 1000
-          },
           "crisis_self_harm": {
             "dsr": 0.417,
             "dsr_ci_low": 0.38681415683492065,
             "dsr_ci_high": 0.44782110833042027,
             "under_protection": 0.009,
             "over_restriction": 0.574,
-            "n": 1000
-          },
-          "code_generation": {
-            "dsr": 0.314,
-            "dsr_ci_low": 0.2859918461940507,
-            "dsr_ci_high": 0.3434317600800866,
-            "under_protection": 0.686,
-            "over_restriction": 0.0,
             "n": 1000
           }
         }
@@ -1519,12 +1519,12 @@
           }
         },
         "by_category": {
-          "substance_body_image": {
-            "dsr": 0.621,
-            "dsr_ci_low": 0.5905217916969553,
-            "dsr_ci_high": 0.6505520988451382,
-            "under_protection": 0.357,
-            "over_restriction": 0.022,
+          "homework_assignment": {
+            "dsr": 0.431,
+            "dsr_ci_low": 0.4006278926003595,
+            "dsr_ci_high": 0.46190021940456244,
+            "under_protection": 0.35,
+            "over_restriction": 0.219,
             "n": 1000
           },
           "age_inappropriate_content": {
@@ -1535,20 +1535,12 @@
             "over_restriction": 0.0,
             "n": 1000
           },
-          "open_ended_chat": {
-            "dsr": 0.538,
-            "dsr_ci_low": 0.5070127271855177,
-            "dsr_ci_high": 0.5686964285219166,
-            "under_protection": 0.462,
-            "over_restriction": 0.0,
-            "n": 1000
-          },
-          "homework_assignment": {
-            "dsr": 0.431,
-            "dsr_ci_low": 0.4006278926003595,
-            "dsr_ci_high": 0.46190021940456244,
-            "under_protection": 0.35,
-            "over_restriction": 0.219,
+          "substance_body_image": {
+            "dsr": 0.621,
+            "dsr_ci_low": 0.5905217916969553,
+            "dsr_ci_high": 0.6505520988451382,
+            "under_protection": 0.357,
+            "over_restriction": 0.022,
             "n": 1000
           },
           "essay_creative_writing": {
@@ -1559,20 +1551,28 @@
             "over_restriction": 0.251,
             "n": 1000
           },
-          "crisis_self_harm": {
-            "dsr": 0.8,
-            "dsr_ci_low": 0.7740805389094014,
-            "dsr_ci_high": 0.8236233219387643,
-            "under_protection": 0.0,
-            "over_restriction": 0.2,
-            "n": 1000
-          },
           "code_generation": {
             "dsr": 0.43,
             "dsr_ci_low": 0.3996403690487447,
             "dsr_ci_high": 0.46089539675335006,
             "under_protection": 0.332,
             "over_restriction": 0.238,
+            "n": 1000
+          },
+          "open_ended_chat": {
+            "dsr": 0.538,
+            "dsr_ci_low": 0.5070127271855177,
+            "dsr_ci_high": 0.5686964285219166,
+            "under_protection": 0.462,
+            "over_restriction": 0.0,
+            "n": 1000
+          },
+          "crisis_self_harm": {
+            "dsr": 0.8,
+            "dsr_ci_low": 0.7740805389094014,
+            "dsr_ci_high": 0.8236233219387643,
+            "under_protection": 0.0,
+            "over_restriction": 0.2,
             "n": 1000
           }
         }
@@ -1629,12 +1629,12 @@
           }
         },
         "by_category": {
-          "substance_body_image": {
-            "dsr": 0.621,
-            "dsr_ci_low": 0.5905217916969553,
-            "dsr_ci_high": 0.6505520988451382,
-            "under_protection": 0.357,
-            "over_restriction": 0.022,
+          "homework_assignment": {
+            "dsr": 0.576,
+            "dsr_ci_low": 0.5451362089936294,
+            "dsr_ci_high": 0.6062821024212393,
+            "under_protection": 0.0,
+            "over_restriction": 0.424,
             "n": 1000
           },
           "age_inappropriate_content": {
@@ -1645,20 +1645,12 @@
             "over_restriction": 0.0,
             "n": 1000
           },
-          "open_ended_chat": {
-            "dsr": 0.659,
-            "dsr_ci_low": 0.6290598496719452,
-            "dsr_ci_high": 0.6877231965775826,
-            "under_protection": 0.341,
-            "over_restriction": 0.0,
-            "n": 1000
-          },
-          "homework_assignment": {
-            "dsr": 0.576,
-            "dsr_ci_low": 0.5451362089936294,
-            "dsr_ci_high": 0.6062821024212393,
-            "under_protection": 0.0,
-            "over_restriction": 0.424,
+          "substance_body_image": {
+            "dsr": 0.621,
+            "dsr_ci_low": 0.5905217916969553,
+            "dsr_ci_high": 0.6505520988451382,
+            "under_protection": 0.357,
+            "over_restriction": 0.022,
             "n": 1000
           },
           "essay_creative_writing": {
@@ -1669,20 +1661,28 @@
             "over_restriction": 0.43,
             "n": 1000
           },
-          "crisis_self_harm": {
-            "dsr": 1.0,
-            "dsr_ci_low": 0.9961731014136095,
-            "dsr_ci_high": 1.0,
-            "under_protection": 0.0,
-            "over_restriction": 0.0,
-            "n": 1000
-          },
           "code_generation": {
             "dsr": 0.58,
             "dsr_ci_low": 0.5491598306141976,
             "dsr_ci_high": 0.61022786561198,
             "under_protection": 0.0,
             "over_restriction": 0.42,
+            "n": 1000
+          },
+          "open_ended_chat": {
+            "dsr": 0.659,
+            "dsr_ci_low": 0.6290598496719452,
+            "dsr_ci_high": 0.6877231965775826,
+            "under_protection": 0.341,
+            "over_restriction": 0.0,
+            "n": 1000
+          },
+          "crisis_self_harm": {
+            "dsr": 1.0,
+            "dsr_ci_low": 0.9961731014136095,
+            "dsr_ci_high": 1.0,
+            "under_protection": 0.0,
+            "over_restriction": 0.0,
             "n": 1000
           }
         }
@@ -1739,12 +1739,12 @@
           }
         },
         "by_category": {
-          "substance_body_image": {
-            "dsr": 0.909,
-            "dsr_ci_low": 0.8895740291786208,
-            "dsr_ci_high": 0.9252955677777118,
-            "under_protection": 0.065,
-            "over_restriction": 0.026,
+          "homework_assignment": {
+            "dsr": 0.495,
+            "dsr_ci_low": 0.46408970934046934,
+            "dsr_ci_high": 0.5259485596453947,
+            "under_protection": 0.491,
+            "over_restriction": 0.014,
             "n": 1000
           },
           "age_inappropriate_content": {
@@ -1755,20 +1755,12 @@
             "over_restriction": 0.0,
             "n": 1000
           },
-          "open_ended_chat": {
-            "dsr": 0.538,
-            "dsr_ci_low": 0.5070127271855177,
-            "dsr_ci_high": 0.5686964285219166,
-            "under_protection": 0.462,
-            "over_restriction": 0.0,
-            "n": 1000
-          },
-          "homework_assignment": {
-            "dsr": 0.495,
-            "dsr_ci_low": 0.46408970934046934,
-            "dsr_ci_high": 0.5259485596453947,
-            "under_protection": 0.491,
-            "over_restriction": 0.014,
+          "substance_body_image": {
+            "dsr": 0.909,
+            "dsr_ci_low": 0.8895740291786208,
+            "dsr_ci_high": 0.9252955677777118,
+            "under_protection": 0.065,
+            "over_restriction": 0.026,
             "n": 1000
           },
           "essay_creative_writing": {
@@ -1779,20 +1771,28 @@
             "over_restriction": 0.015,
             "n": 1000
           },
-          "crisis_self_harm": {
-            "dsr": 0.417,
-            "dsr_ci_low": 0.38681415683492065,
-            "dsr_ci_high": 0.44782110833042027,
-            "under_protection": 0.001,
-            "over_restriction": 0.582,
-            "n": 1000
-          },
           "code_generation": {
             "dsr": 0.518,
             "dsr_ci_low": 0.48702012301568326,
             "dsr_ci_high": 0.5488421086352068,
             "under_protection": 0.466,
             "over_restriction": 0.016,
+            "n": 1000
+          },
+          "open_ended_chat": {
+            "dsr": 0.538,
+            "dsr_ci_low": 0.5070127271855177,
+            "dsr_ci_high": 0.5686964285219166,
+            "under_protection": 0.462,
+            "over_restriction": 0.0,
+            "n": 1000
+          },
+          "crisis_self_harm": {
+            "dsr": 0.417,
+            "dsr_ci_low": 0.38681415683492065,
+            "dsr_ci_high": 0.44782110833042027,
+            "under_protection": 0.001,
+            "over_restriction": 0.582,
             "n": 1000
           }
         }
@@ -1849,12 +1849,12 @@
           }
         },
         "by_category": {
-          "substance_body_image": {
-            "dsr": 0.957,
-            "dsr_ci_low": 0.9425806957803401,
-            "dsr_ci_high": 0.9679215189116991,
+          "homework_assignment": {
+            "dsr": 0.124,
+            "dsr_ci_low": 0.10499965005666721,
+            "dsr_ci_high": 0.14587817768029848,
             "under_protection": 0.0,
-            "over_restriction": 0.043,
+            "over_restriction": 0.876,
             "n": 1000
           },
           "age_inappropriate_content": {
@@ -1865,20 +1865,12 @@
             "over_restriction": 0.0,
             "n": 1000
           },
-          "open_ended_chat": {
-            "dsr": 0.6,
-            "dsr_ci_low": 0.5693088606220993,
-            "dsr_ci_high": 0.6299257596606225,
+          "substance_body_image": {
+            "dsr": 0.957,
+            "dsr_ci_low": 0.9425806957803401,
+            "dsr_ci_high": 0.9679215189116991,
             "under_protection": 0.0,
-            "over_restriction": 0.4,
-            "n": 1000
-          },
-          "homework_assignment": {
-            "dsr": 0.124,
-            "dsr_ci_low": 0.10499965005666721,
-            "dsr_ci_high": 0.14587817768029848,
-            "under_protection": 0.0,
-            "over_restriction": 0.876,
+            "over_restriction": 0.043,
             "n": 1000
           },
           "essay_creative_writing": {
@@ -1889,20 +1881,28 @@
             "over_restriction": 0.476,
             "n": 1000
           },
-          "crisis_self_harm": {
-            "dsr": 0.4,
-            "dsr_ci_low": 0.37007424033937747,
-            "dsr_ci_high": 0.43069113937790077,
-            "under_protection": 0.0,
-            "over_restriction": 0.6,
-            "n": 1000
-          },
           "code_generation": {
             "dsr": 0.316,
             "dsr_ci_low": 0.287935120952589,
             "dsr_ci_high": 0.34547317772720276,
             "under_protection": 0.0,
             "over_restriction": 0.684,
+            "n": 1000
+          },
+          "open_ended_chat": {
+            "dsr": 0.6,
+            "dsr_ci_low": 0.5693088606220993,
+            "dsr_ci_high": 0.6299257596606225,
+            "under_protection": 0.0,
+            "over_restriction": 0.4,
+            "n": 1000
+          },
+          "crisis_self_harm": {
+            "dsr": 0.4,
+            "dsr_ci_low": 0.37007424033937747,
+            "dsr_ci_high": 0.43069113937790077,
+            "under_protection": 0.0,
+            "over_restriction": 0.6,
             "n": 1000
           }
         }
@@ -1959,12 +1959,12 @@
           }
         },
         "by_category": {
-          "substance_body_image": {
-            "dsr": 0.979,
-            "dsr_ci_low": 0.9681094652438844,
-            "dsr_ci_high": 0.9862243659103536,
+          "homework_assignment": {
+            "dsr": 0.817,
+            "dsr_ci_low": 0.7918361923371519,
+            "dsr_ci_high": 0.8397375539590765,
             "under_protection": 0.0,
-            "over_restriction": 0.021,
+            "over_restriction": 0.183,
             "n": 1000
           },
           "age_inappropriate_content": {
@@ -1975,20 +1975,12 @@
             "over_restriction": 0.0,
             "n": 1000
           },
-          "open_ended_chat": {
-            "dsr": 0.738,
-            "dsr_ci_low": 0.709871862427285,
-            "dsr_ci_high": 0.7643065338455931,
-            "under_protection": 0.262,
-            "over_restriction": 0.0,
-            "n": 1000
-          },
-          "homework_assignment": {
-            "dsr": 0.817,
-            "dsr_ci_low": 0.7918361923371519,
-            "dsr_ci_high": 0.8397375539590765,
+          "substance_body_image": {
+            "dsr": 0.979,
+            "dsr_ci_low": 0.9681094652438844,
+            "dsr_ci_high": 0.9862243659103536,
             "under_protection": 0.0,
-            "over_restriction": 0.183,
+            "over_restriction": 0.021,
             "n": 1000
           },
           "essay_creative_writing": {
@@ -1999,20 +1991,28 @@
             "over_restriction": 0.307,
             "n": 1000
           },
-          "crisis_self_harm": {
-            "dsr": 0.464,
-            "dsr_ci_low": 0.4332867721553454,
-            "dsr_ci_high": 0.4949887645428749,
-            "under_protection": 0.0,
-            "over_restriction": 0.536,
-            "n": 1000
-          },
           "code_generation": {
             "dsr": 0.602,
             "dsr_ci_low": 0.5713266254213354,
             "dsr_ci_high": 0.631892687267041,
             "under_protection": 0.0,
             "over_restriction": 0.398,
+            "n": 1000
+          },
+          "open_ended_chat": {
+            "dsr": 0.738,
+            "dsr_ci_low": 0.709871862427285,
+            "dsr_ci_high": 0.7643065338455931,
+            "under_protection": 0.262,
+            "over_restriction": 0.0,
+            "n": 1000
+          },
+          "crisis_self_harm": {
+            "dsr": 0.464,
+            "dsr_ci_low": 0.4332867721553454,
+            "dsr_ci_high": 0.4949887645428749,
+            "under_protection": 0.0,
+            "over_restriction": 0.536,
             "n": 1000
           }
         }
