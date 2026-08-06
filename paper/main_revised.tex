@@ -1,0 +1,835 @@
+\documentclass[fleqn,10pt]{wlscirep}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{float}
+
+\usepackage{bm}
+\newcommand{\mathbbm}[1]{\ensuremath{\mathbb{#1}}}
+
+\title{SafeNest: Nested Policy Learning for Multi-Timescale Safety in Child-AI Interaction}
+
+
+\author[1,*]{Raja Abraheem Rashid Ejaz}
+\author[2]{Yawar Abbas Bangash}
+\author[3]{Faisal Iradat}
+\author[4]{Muhammad Kumail}
+
+\affil[1]{Department of Computer Science, Brunel University of London, England, United Kingdom}
+\affil[2]{School of Computing and Artificial Intelligence, FET, Sunway University, Selangor Darul Ehsan, Malaysia (Corresponding Author)}
+\affil[3]{Department of Computer Science, School of Mathematics and Science, Institute of Business Administration, Karachi, Pakistan}
+\affil[4]{Department of Computer Science, Purdue University Northwest, United States}
+
+\affil[*]{2546393@brunel.ac.uk}
+
+\keywords{Nested Learning, Child-AI Safety, Developmental Psychology, Bayesian Age Assurance, Socratic Tutoring, Formal Verification}
+
+\begin{abstract}
+Large language models now serve hundreds of millions of users, yet a deployed system returns substantially the same answer to a seven-year-old as to a seventeen-year-old. A century of developmental psychology establishes that the reasoning capacity, emotional vulnerabilities and pedagogical needs of children at different ages differ in kind rather than in degree. Recent empirical work reports negative associations between the frequency of AI use and critical-thinking scores among young users, alongside electroencephalographic evidence of reduced cortical connectivity in students who delegate cognitive work to language models. The regulatory response --- FTC inquiries, California Senate Bill 243, the EU AI Act and the amendments to COPPA --- has been rapid but technically unspecified: none of these instruments identifies an architecture through which compliance could be achieved. This paper gives a formal basis for developmentally adaptive AI safety through Nested Policy Learning (NPL) and makes three contributions. First, it derives from the developmental theories of Piaget, Vygotsky and Erikson five computationally enforceable tiers of interaction policy, organised as a constraint lattice with provable monotonicity. Second, it specifies a Bayesian fusion module that estimates a user's developmental stage from linguistic, behavioural and contextual signals, with an exponential convergence guarantee and an explicitly stated $\varepsilon$-differential-privacy model ($\varepsilon = 1.0$, the privacy unit being one child in the calibration corpus). Third, it defines a Socratic Protection Engine as a finite-horizon Markov Decision Process that replaces direct-answer generation with guided questioning calibrated to the Zone of Proximal Development. Four safety invariants are formalised in linear temporal logic and verified over all admissible transitions. Monte Carlo simulation using synthetic signals parameterised from published developmental linguistics corpora yields 98.8\% tier-classification accuracy at $\varepsilon = 1.0$. A comparative policy-decision simulation over 7,000 prompts, scored against an independent rubric derived from chronological age, regulatory instruments and Piagetian stage criteria, gives NPL a mean developmental safety rate of 75.5\% against 52.5\% for the strongest age-agnostic baseline ($+23.0$ percentage points, McNemar $p < 10^{-260}$) and 71.5\% for a strong age-conditioned baseline ($+4.0$ points, $p < 10^{-9}$), while reducing under-protection from 39.0\% to 3.9\%. Empirical validation with human subjects remains a necessary next step.
+\end{abstract}
+
+\begin{document}
+
+\flushbottom
+\maketitle
+\thispagestyle{empty}
+
+\section*{Introduction}
+
+\begin{quote}
+``The principal goal of education in the schools should be creating men and women who are capable of doing new things, not simply repeating what other generations have done.''
+
+---Jean Piaget, \emph{To Understand Is To Invent} (1973)
+\end{quote}
+
+\subsection*{The Problem: One-Size-Fits-All Interaction}
+
+Large language models are used by hundreds of millions of people, yet a deployed system gives substantially the same answer to a seven-year-old as to a doctoral candidate. Vocabulary, depth of reasoning and willingness to supply a complete answer do not vary with the cognitive maturity of the person at the other end of the conversation. For an adult learner this is a convenience. For a developing child it is a measurable liability.
+
+Three independent empirical findings sharpen the concern. Gerlich (2025)\cite{Gerlich2025} reports a statistically significant negative association between frequency of AI use and critical-thinking scores among 17--25 year olds, with the youngest cohort showing both the highest dependency and the weakest analytical performance. Kosmyna et al.\ (2025)\cite{Kosmyna2025} use electroencephalography to show that students who delegated learning tasks to a language model exhibited reduced cortical connectivity in memory-encoding regions and retained less material in subsequent assessment. Chen et al.\ (2025)\cite{Chen2025} identify cognitive fatigue as a mediator between AI dependence and reduced critical thinking in a sample of 580 college students. Together these results give empirical weight to the concern of AI-induced cognitive atrophy, grounded in the neurobiological principle that circuits left unexercised during critical developmental windows may not reach full capacity later.
+
+\subsection*{Developmental Foundations the Industry Has Overlooked}
+
+A century of developmental psychology provides precisely the theoretical scaffolding that current AI systems lack. Three foundational frameworks are directly relevant:
+
+\begin{itemize}
+\item Piaget (1952)\cite{Piaget1952} established that children are not simply less knowledgeable adults but reason through qualitatively distinct cognitive stages. A preoperational child may attribute feelings to a chatbot as readily as to a pet; concrete-operational reasoning supports logic over concrete instances but not over abstractions.
+\item Erikson (1950)\cite{Erikson1950} described a parallel psychosocial trajectory organised around stage-specific crises --- initiative versus guilt, industry versus inferiority, identity versus role confusion --- whose resolution shapes personality.
+\item Vygotsky (1978)\cite{Vygotsky1978} introduced the Zone of Proximal Development (ZPD), the difference between what a learner can achieve unaided and what the same learner can achieve with competent guidance. Of the three theories the ZPD is the most operationally consequential for AI design: effective intelligent tutoring systems operationalise it in some form, whereas general-purpose chatbots do not.
+\end{itemize}
+
+\subsection*{A Regulatory Landscape Without Technical Architecture}
+
+The regulatory response has been rapid but technically unspecified. The US Federal Trade Commission has issued orders to seven AI companies requiring an account of how their chatbot products interact with minors (FTC, 2025)\cite{FTC2025}. California enacted SB 243, which mandates crisis detection and break reminders for minors (California State Legislature, 2025)\cite{California2025}. The EU AI Act classifies AI systems used in education as high-risk and prohibits the exploitation of age-related vulnerabilities (European Parliament and Council, 2024)\cite{EUAI2024}. Amendments to COPPA strengthened data-minimisation protections for children under thirteen (FTC, 2025b)\cite{FTC2025b}. The Federation of American Scientists identified the absence of a children's profile in the NIST AI Risk Management Framework as a gap (FAS, 2025)\cite{FAS2025}.
+
+None of these instruments specifies a technical architecture by which compliance might be achieved. Meanwhile, existing guardrail frameworks --- NeMo Guardrails (Rebedea et al., 2023)\cite{Rebedea2023}, Llama Guard (Inan et al., 2023)\cite{Inan2023} and LlamaFirewall (Meta AI, 2025)\cite{MetaAI2025} --- route every user through the same safety pipeline regardless of developmental stage. The gap between regulatory intention and engineering capability remains wide.
+
+\subsection*{Contributions of This Work}
+
+This paper presents Nested Policy Learning (NPL), a formally specified middleware architecture intended to close the gap between regulatory aspiration and engineering practice. Adapting the multi-timescale optimisation paradigm of Nested Learning (Behrouz et al., 2025)\cite{Behrouz2025} to the enforcement of safety constraints, the framework makes three contributions:
+
+\textbf{C1. Developmental Constraint Lattice.} A mapping from Piagetian, Vygotskian and Eriksonian developmental theory to five computationally enforceable tiers of interaction policy, organised as a constraint lattice with provable monotonicity.
+
+\textbf{C2. Bayesian Age Assurance Module.} A multi-signal Bayesian fusion component that estimates a user's developmental stage from linguistic, behavioural and contextual signals under an explicitly specified $\varepsilon$-differential-privacy model ($\varepsilon = 1.0$), with a proved exponential convergence rate.
+
+\textbf{C3. Socratic Protection Engine.} A developmentally calibrated finite-horizon Markov Decision Process that intercepts direct answers to younger users and substitutes guided questioning sequences targeted at the Zone of Proximal Development.
+
+Four safety invariants are formulated in linear temporal logic (LTL) and verified over all admissible transitions of the system. The architecture operates across several timescales: fast token filters constrain each generated word, medium-frequency classifiers refine tier estimates between sessions, and a slowly changing policy store encodes constraints that are revised only when the underlying science or regulation changes.
+
+A complete reference implementation accompanies this paper. Every quantitative result reported below is regenerated from that implementation by a seeded script rather than transcribed, and the test suite verifies the four safety invariants by exhaustive or randomised search over admissible transitions.
+
+Figure \ref{fig:ecosystem} gives an overview of the Nested Policy Learning ecosystem. The remainder of the paper is organised as follows. Section \emph{Background and Related Work} reviews developmental psychology, AI safety and Socratic tutoring. Section \emph{The Proposed Architecture} describes the constraint lattice, the bilevel optimisation formulation, the Bayesian age assurance module, the Nested Policy Engine and the Socratic Protection Engine. Section \emph{Formal Safety Properties} states and verifies the four invariants. Section \emph{Computational Validation} reports the simulation results. Section \emph{Regulatory Compliance Mapping} situates the framework within existing instruments. Section \emph{Discussion and Limitations} treats open problems, and the final section concludes.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.75\linewidth]{fig1_ecosystem.png}
+\caption{High-level ecosystem of Nested Policy Learning. The architecture consists of four interacting subsystems built around a central Nested Policy Engine. Multi-Modal Input Analysis (upper left) combines linguistic features, behavioural biometrics and contextual information to estimate a user's developmental stage. Tier Assignment \& Safety Constraints (upper centre) maps the estimated stage to one of five developmental tiers ($t_1$--$t_5$), each encoding age-appropriate interaction rules. Multi-Timescale Enforcement (right) applies constraints at millisecond (L0: token filtering), second (L1: response-level guarding) and minute (L2: session-level tier refinement) granularities. Socratic Scaffolding for Learning (lower left) replaces direct answers with guided hints and stepwise questioning optimised via an MDP. Together these subsystems target developmentally safe outcomes along three dimensions: cognitive growth, privacy protection and age-appropriate interaction.}
+\label{fig:ecosystem}
+\end{figure}
+
+\section*{Background and Related Work}
+
+Developmentally adaptive child--system interaction draws on three streams of research. The first is developmental psychology. Piaget (1952)\cite{Piaget1952} showed that children pass through qualitatively distinct cognitive stages --- sensorimotor, preoperational, concrete operational and formal operational --- across which the available mental operations change radically. Erikson (1950)\cite{Erikson1950} charted a complementary psychosocial path organised around stage-specific crises whose resolution shapes personality and determines the emotional vulnerabilities an interactive system should respect. Vygotsky's (1978)\cite{Vygotsky1978} Zone of Proximal Development --- the gap between independent and assisted capability --- is the most operationally consequential of the three for AI design, and was formalised as scaffolding-and-fading by Wood, Bruner and Ross (1976)\cite{Wood1976}. Empirical work has extended these foundations to child--technology interaction: Xu et al.\ (2022)\cite{Xu2022} found improved comprehension among preschoolers interacting with a conversational agent under a scaffolded protocol; Kurian (2024)\cite{Kurian2024} documented pervasive failures in LLM responses to children; and Hoehl et al.\ (2024)\cite{Hoehl2024} argued that system design must account for the developmental course of interpersonal trust.
+
+The second stream is the machine-learning safety tradition. NeMo Guardrails (Rebedea et al., 2023)\cite{Rebedea2023} is a programmable rail-based architecture for enforcing topical boundaries. Llama Guard (Inan et al., 2023)\cite{Inan2023} recast moderation as classification. LlamaFirewall (Meta AI, 2025)\cite{MetaAI2025} extended safety enforcement to agentic settings, and Constitutional AI (Bai et al., 2022)\cite{Bai2022} operationalised value alignment through self-critique. Each is a substantial advance, but all route every user through the same pipeline regardless of developmental stage. The formal safety literature has grown correspondingly rigorous: Dalrymple et al.\ (2024)\cite{Dalrymple2024} set out an agenda for guaranteed safe AI, Singh et al.\ (2025)\cite{Singh2025} argued that formal methods offer the only principled basis for safety assurance, and Qi et al.\ (2025)\cite{Qi2025} showed that existing alignment is shallow, affecting only the first tokens of a response. None addresses developmental adaptation.
+
+The multi-timescale optimisation paradigm underlying the present architecture comes from Nested Learning (Behrouz et al., 2025)\cite{Behrouz2025}, whose convergence guarantees rest on bilevel optimisation theory (Dagr\'{e}ou et al., 2024)\cite{Dagreou2024}. On age estimation, O'Connor et al.\ (2024)\cite{OConnor2024} report F1 scores of 0.86--0.93 for binary minor/adult classification, and Al-humaid and Alamro (2025)\cite{Alhumaid2025} showed that behavioural biometrics distinguish children from adults with high accuracy. No single modality is sufficient for a safety-critical application, which motivates multi-signal Bayesian fusion.
+
+The third stream is Socratic AI tutoring. SocraticLM (Li et al., 2024)\cite{Li2024} outperformed GPT-4 by twelve percentage points on tutoring effectiveness, and KELE (Ding et al., 2024)\cite{Ding2024} decomposes instruction into stages aligned with Bloom's revised taxonomy; both target adult learners. Child-focused benchmarks have begun to quantify the problem: ChildSafe (2025)\cite{ChildSafe2025} measures safety across four age ranges and nine safety dimensions; SproutBench (2025)\cite{SproutBench2025} reports an inverse relationship between interactivity and age appropriateness across 1,283 prompts; and KORA (2025)\cite{KORA2025} finds educational integrity to be the largest failure mode, at 70.7\%. Each calls for adaptive architectures; none supplies one.
+
+Table \ref{tab:gap} compares the methodology, strengths and limitations of each system against seven properties required for comprehensive developmental adaptation: age adaptiveness (P1), developmental grounding (P2), cognitive protection (P3), age assurance (P4), multi-tier differentiation (P5), formal verification (P6) and Socratic pedagogy (P7).
+
+\begin{table}[htbp]
+\centering
+\caption{Comparative gap analysis of existing frameworks. Each entry describes the methodology, demonstrated strengths, and limitations with respect to properties P1--P7.}
+\label{tab:gap}
+\small
+\begin{tabular}{p{2cm}p{4cm}p{3.5cm}p{4.5cm}}
+\hline
+\textbf{Refs} & \textbf{Methodology} & \textbf{Strengths} & \textbf{Limitations} \\
+\hline
+\multicolumn{4}{l}{\textbf{Guardrail Frameworks}} \\
+\hline
+Rebedea et al., 2023 & Programmable rail-based middleware. Developers define topical boundaries, dialogue flows, and content restrictions via declarative configuration. & Flexible, model-agnostic architecture. Effective at restricting harmful content in production deployments. & No age-awareness or developmental adaptation. Identical pipeline for all users. None of P1--P7 addressed. \\
+\hline
+Inan et al., 2023 & Content safety reformulated as LLM classification. Evaluates prompts and responses against a six-category harm taxonomy using fine-tuned LLaMA. & Strong toxicity and violence detection. Computationally efficient binary classification scalable to production. & Age-agnostic classification: content deemed safe for adults is equally approved for children. None of P1--P7 addressed. \\
+\hline
+Meta AI, 2025 & Open-source guardrail for agentic AI. Combines prompt injection detection, agent-misalignment classification, and output verification. & Extends safety enforcement to tool-using agent settings. Addresses indirect attack vectors. & Designed for agent safety, not user-differentiated interaction. No representation of user age or cognitive stage. None of P1--P7. \\
+\hline
+Bai et al., 2022 & Value alignment via iterative self-critique and revision guided by constitutional principles. Model generates, critiques, and revises its own responses. & Reduces reliance on human feedback. Improves harmlessness without significant helpfulness degradation. & Constitutional principles are uniform across all users; no age-differentiated value set. None of P1--P7 addressed. \\
+\hline
+\multicolumn{4}{l}{\textbf{Child-AI Safety Benchmarks}} \\
+\hline
+ChildSafe, 2025 & Parametric cognitive simulation across four age ranges (3--6, 7--9, 10--12, 13--17) and nine safety dimensions. & First quantitative evidence that adult-safe models fail for simulated child users. Partial P1 and P2 via age-range evaluation. & Diagnostic only; no enforcement architecture. P3--P7 entirely absent. \\
+\hline
+SproutBench, 2025 & 1,283 developmentally grounded adversarial prompts across three age groups. Evaluates age appropriateness of LLM responses. & Grounded in developmental theory (P2). Reveals inverse relationship between interactivity and age appropriateness. Partial P1. & Evaluation-only; no runtime enforcement. P3--P7 absent. \\
+\hline
+KORA, 2025 & Twenty-five risk categories evaluated via multi-turn dialogue simulations. Captures failure modes invisible in single-turn assessment. & Identifies educational integrity as largest blind spot (70.7\% failure). Multi-turn evaluation. Partial P1. & Benchmark without enforcement. P2--P7 absent. \\
+\hline
+\multicolumn{4}{l}{\textbf{Socratic Tutoring Systems}} \\
+\hline
+Li et al., 2024 & LLM fine-tuned on Socratic dialogue corpora. Generates guided questions rather than direct answers, outperforming GPT-4 by 12 points on tutoring effectiveness. & Demonstrates that Socratic fine-tuning improves pedagogical effectiveness (P7). Partial cognitive protection (P3) through answer withholding. & Designed for adult and university learners only. No age adaptation (P1), no developmental grounding (P2), no age assurance (P4), no multi-tier support (P5), no formal verification (P6). \\
+\hline
+Ding et al., 2024 & Knowledge-enhanced Socratic framework. Decomposes instruction into structured stages aligned with Bloom's revised taxonomy. & Systematic Socratic scaffolding (P7). Partial cognitive protection (P3) via taxonomy-guided question sequencing. & Adult learners only. Scaffolding is not calibrated to developmental stage. P1, P2, P4--P6 absent. \\
+\hline
+This Paper & Nested Policy Learning: five-tier constraint lattice middleware. Bayesian age assurance with corpus-level $\varepsilon$-DP ($\varepsilon = 1.0$). Five-layer Nested Policy Engine at ms-to-yr timescales. Socratic Protection Engine as finite-horizon MDP calibrated to the ZPD. & All seven properties: 5-tier lattice with monotonicity (P1, P5); Piaget, Vygotsky and Erikson grounding (P2); MDP-based interception (P3, P7); Bayesian fusion with exponential convergence (P4); four LTL invariants verified over all admissible transitions (P6). & Specification with simulation only; no human-subject validation. Western developmental norms. Estimator accuracy depends on age-labelled corpora, and degrades sharply for atypical linguistic profiles. Governance of tier authority remains open. \\
+\hline
+\end{tabular}
+\end{table}
+
+Three patterns emerge from Table \ref{tab:gap}. First, guardrail frameworks satisfy none of the seven properties, because they carry no representation of the user's age or cognitive stage. Second, child-AI benchmarks are diagnostic instruments that partially satisfy at most two properties. Third, Socratic systems address pedagogy and, to a degree, cognitive protection, but offer no age assurance, multi-tier differentiation or formal guarantees. The highest coverage achieved by any prior system is two of seven, and no existing work combines all seven into a coherent specification. Nested Policy Learning is intended to close that gap.
+
+\section*{The Proposed Architecture}
+
+Nested Policy Learning (NPL) is a middleware architecture situated between a foundation language model and the end user. It requires no modification of the foundation model's weights, fine-tuning procedure or inference mechanism. Instead it surrounds the model with five concentric layers of policy whose collective behaviour is governed by a bilevel optimisation framework. The specification comprises three subsystems: (i) a Multi-Signal Bayesian Age Assurance Module, which infers the user's developmental stage from observed signals with a provably converging posterior under an explicit differential-privacy model; (ii) a Nested Policy Engine, structured as five constraint layers over a lattice, with formally verifiable safety properties; and (iii) a Socratic Protection Engine, formalised as a finite-horizon MDP over pedagogical actions. Each component is presented below with its formal definition, guarantees and design rationale.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.75\linewidth]{fig2_architecture.png}
+\caption{Formal architecture of Nested Policy Learning showing five nested policy layers surrounding the foundation LLM.}
+\label{fig:architecture}
+\end{figure}
+
+\subsection*{Developmental Tiers as a Constraint Lattice}
+
+Let $T = \{t_1, t_2, t_3, t_4, t_5\}$ denote the tier set and let $U$ denote the universal set of content categories and AI capabilities the foundation model can generate. Each tier $t_k$ is associated with a constraint set $C_k \subseteq U$, the capabilities restricted for users at that tier. The allowable capability set for tier $t_k$ is the set complement:
+\begin{equation}
+A(t_k) = U \setminus C_k
+\end{equation}
+
+A partial order $\leq$ is imposed on $T$ by $t_i \leq t_j$ if and only if $C_j \subseteq C_i$. Under this ordering the constraint sets form a lattice $(T, \leq)$ with the operations:
+\begin{equation}
+t_i \sqcap t_j = t_k \text{ where } C_k = C_i \cup C_j \quad \text{(meet / most restrictive)}
+\end{equation}
+\begin{equation}
+t_i \sqcup t_j = t_k \text{ where } C_k = C_i \cap C_j \quad \text{(join / least restrictive)}
+\end{equation}
+
+The bottom element is $t_1$ (largest constraint set, most restrictive) and the top element is $t_5$. This structure guarantees three properties essential for safety: (a) \emph{tier monotonicity}, $A(t_i) \subseteq A(t_j)$ for all $i < j$, so that a higher tier never withdraws a capability available at a lower one; (b) \emph{constraint composability}, so that the meet operation resolves ambiguous tier assignments by taking the union of constraints; and (c) \emph{decidability}, since all membership queries reduce to set operations computable in $O(1)$ time. Table \ref{tab:tiers} defines each tier and its developmental grounding.
+
+\begin{table}[H]
+\centering
+\caption{Developmental tier definitions grounded in Piaget (1952), Vygotsky (1978) and Erikson (1950). Each tier specifies the associated cognitive stage, psychosocial crisis, prescribed interaction mode and key constraints enforced by the Nested Policy Engine. Note that at $t_2$--$t_4$ a request for a direct answer to assessed work is \emph{intercepted and replaced} by guided questioning rather than refused; refusal applies only at $t_1$, where no generative output is produced at all.}
+\label{tab:tiers}
+\small
+\begin{tabular}{p{0.6cm}p{0.8cm}p{1.8cm}p{1.8cm}p{3.5cm}p{4cm}}
+\hline
+\textbf{Tier} & \textbf{Ages} & \textbf{Piaget Stage} & \textbf{Erikson Crisis} & \textbf{Interaction Mode} & \textbf{Key Constraints} \\
+\hline
+$t_1$ & 3--6 & Late preoperational & Initiative vs. guilt & Closed-domain, voice-first interaction. No open-ended text input permitted. & All generative features disabled. 15-min session limit. No text output; curated visual/audio responses only. \\
+\hline
+$t_2$ & 7--9 & Early concrete operational & Industry vs. inferiority & Socratic-only mode with simplified language. Text input enabled. & Direct answers to assessed work intercepted and scaffolded. Code generation and essay writing disabled. Direct answers to open-ended questions scaffolded. 30-min session limit. \\
+\hline
+$t_3$ & 10--12 & Concrete operational & Industry vs. inferiority & Guided Socratic interaction with metacognitive prompts and self-reflection cues. & Direct answers scaffolded. Hints, worked examples and metacognitive support provided. 45-min limit. \\
+\hline
+$t_4$ & 13--15 & Early formal operational & Identity vs. role confusion & Semi-autonomous interaction. Guided homework assistance with step verification. & Crisis detection active. Substance and body-image content blocked. 60-min session limit. \\
+\hline
+$t_5$ & 16--17 & Late formal operational & Identity vs. role confusion & Near-adult with transparent guardrails. Direct answers available via explicit toggle. & Guardrail transparency disclosed. Legal-risk content restricted. Crisis detection active. High-severity harmful content refused regardless of tier. \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection*{Bilevel Optimization Formulation}
+
+The interaction between tier assignment and response generation is formulated as a bilevel optimisation problem, which links the architecture to the Nested Learning paradigm (Behrouz et al., 2025)\cite{Behrouz2025}. Let $\theta$ denote the parameters of the foundation model, $\pi$ the policy configuration and $x$ a user input. The inner optimisation generates the best response $y$ given a fixed policy:
+\begin{equation}
+y^*(x, \pi) = \arg\max_{y \in Y(\pi, t_k)} P(y \mid x; \theta)
+\end{equation}
+where $Y(\pi, t_k)$ is the admissible response set satisfying all constraints in $\pi$ for tier $t_k$. The outer optimisation selects the tier assignment minimising a composite risk functional:
+\begin{equation}
+t^*_k = \arg\min_{t_k \in T} \left[ \lambda_s R_s(x, y^*, t_k) + \lambda_d R_d(x, y^*, t_k) + \lambda_p R_p(s, t_k) \right]
+\end{equation}
+where $R_s$ quantifies safety risk (the probability of age-inappropriate content reaching the user), $R_d$ quantifies developmental inappropriateness (mismatch between response complexity and cognitive stage) and $R_p$ captures the privacy cost of the signals consumed. The trade-off weights $\lambda_s, \lambda_d, \lambda_p \in [0, 1]$ sum to unity. The bilevel structure encodes the central architectural tension: the inner problem maximises helpfulness while the outer problem maximises developmental protection. Since $|T| = 5$, the outer optimisation reduces to enumeration over five candidates, and the convergence question becomes whether the Bayesian estimator identifies the correct tier.
+
+We state the status of the inner problem explicitly. Equation 4 is a specification-level idealisation: exact $\arg\max$ over the output distribution of an autoregressive language model is intractable, and any implementation approximates it by constrained decoding, rejection sampling or post-hoc filtering. The safety guarantees of the following sections do not depend on solving Equation 4 exactly. They depend only on the property that every emitted response is a member of $Y(\pi, t_k)$, which the Nested Policy Engine enforces by construction: a response that violates any layer's constraint is never emitted, whatever procedure proposed it. Approximation quality therefore affects helpfulness, not safety.
+
+\subsection*{Multi-Signal Bayesian Age Assurance}
+
+Let $s = (s_1, s_2, \ldots, s_M)$ denote the vector of $M$ observed signals. Under a conditional independence assumption (justified by signal-source isolation), the posterior probability of tier $t_k$ follows from Bayes' theorem:
+\begin{equation}
+P(t_k \mid s) = \frac{P(s \mid t_k) P(t_k)}{\sum_j P(s \mid t_j) P(t_j)}
+\end{equation}
+
+The conditional independence factorisation yields the product-form likelihood:
+\begin{equation}
+P(s \mid t_k) = \prod_{m=1}^{M} P(s_m \mid t_k)
+\end{equation}
+
+This factorisation is architecturally important: each signal source is processed in isolation, and only its likelihood contribution --- never its raw data --- is transmitted to the fusion engine. The tier assignment rule is:
+\begin{equation}
+\hat{\tau} = \begin{cases} \arg\max_{t_k} P(t_k \mid s) & \text{if } \max_k P(t_k \mid s) \geq \gamma \\ t_1 & \text{otherwise} \end{cases}
+\end{equation}
+where $\gamma = 0.55$ is the confidence threshold. When the maximum posterior falls below $\gamma$ the system defaults to the most restrictive tier $t_1$, implementing a fail-safe design. The Dirichlet-Categorical sequential update carries the posterior from session $n-1$ as the prior for session $n$, enabling progressive refinement. Table \ref{tab:signals} specifies each signal modality, its statistical model and its share of the privacy budget.
+
+\begin{table}[H]
+\centering
+\caption{Signal modalities of the Bayesian age assurance module. Each source is characterised by its statistical model, extracted features and share of the overall privacy budget $\varepsilon = 1.0$.}
+\label{tab:signals}
+\small
+\begin{tabular}{p{2cm}p{3cm}p{3cm}p{3cm}p{1.5cm}}
+\hline
+\textbf{Signal Modality} & \textbf{Statistical Model} & \textbf{Key Features} & \textbf{Privacy Budget $\varepsilon_m$} & \textbf{Latency} \\
+\hline
+Linguistic features & Multivariate Gaussian $\mathcal{N}(\mu_k, \Sigma_k)$. Parameters estimated per tier from age-labelled corpora. & MTLD, FK grade, mean sentence length, parse depth, spelling error rate & $\varepsilon_1 = 0.40$ (largest allocation due to highest discriminative power) & $< 40$ ms \\
+\hline
+Behavioural biometrics & Log-normal $\text{LN}(\mu_k, \sigma^2_k)$. Right-skewed, strictly positive signals. & Typing speed (WPM), inter-key interval, touch pressure, swipe velocity & $\varepsilon_2 = 0.30$ (moderate allocation; biometric signals carry surveillance risk) & 3 interactions \\
+\hline
+Device / account indicators & Bernoulli $B(p_k)$. Binary presence/absence signals. & Child account flag, parental controls enabled, device type (tablet vs. desktop) & $\varepsilon_3 = 0.20$ (binary signals require less noise for privacy) & Session start \\
+\hline
+Contextual attestation & High likelihood ratio when present; near-neutral ratio when absent. & Parental attestation, school-issued device certificate, age-verified account & $\varepsilon_4 = 0.10$ (minimal allocation; signals are externally verified) & Session start \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsubsection*{The privacy model, stated precisely}
+
+A differential-privacy claim is meaningful only once four elements are fixed. We state them.
+
+The \textbf{privacy unit} is one child in the calibration corpora from which the tier-conditional likelihoods are estimated. Two corpora are \textbf{adjacent} if one is obtained from the other by adding or removing all transcripts belonging to a single child. The \textbf{protected output} is the released vector of tier-conditional likelihood parameters --- the per-tier means and covariances entering Equation 7 --- computed offline by the Gaussian mechanism with
+\begin{equation}
+\sigma = \Delta_2 \sqrt{2 \ln(1.25/\delta)} \, / \, \varepsilon , \qquad \delta = 10^{-5} .
+\end{equation}
+Because a parameter estimated as a mean over $N$ children has per-child sensitivity $\Delta_2 / N$, the perturbation of the released estimate is small for corpora of the sizes used here, which is why the guarantee costs little accuracy (Table \ref{tab:privacy_table}). Everything computed downstream --- the posterior, the tier assignment and the emitted response --- is a post-processing function of the released parameters and inherits the same guarantee. The budget is divided across modalities as in Table \ref{tab:signals}, with $\sum_m \varepsilon_m \leq \varepsilon = 1.0$ under sequential composition (Dwork et al., 2006)\cite{Dwork2006}.
+
+The live user's own signals are \emph{not} protected by this $\varepsilon$. They are protected architecturally: each signal source is an isolated enclave that emits only a clipped log-likelihood-ratio vector, raw features never cross that boundary, and the ratios are discarded at session end. This is data minimisation in the sense of the COPPA amendments, and we do not describe it as differential privacy.
+
+We report the alternative reading explicitly, because it is the one a reader may assume. Suppose the privacy unit were instead a single interaction of the live user, with calibrated Laplace noise added to each released log-likelihood ratio,
+\begin{equation}
+\tilde{\ell}_m(t_k) = \log P(s_m \mid t_k) + \text{Lap}(0, \Delta\ell_m / \varepsilon_m),
+\end{equation}
+where the ratios are clipped to $[-C, C]$ so that $\Delta \ell_m = 2C(K-1)$. The signal-to-noise ratio of one release is then $\varepsilon_m / (2(K-1))$, which is \emph{independent of $C$}: tightening the clip attenuates signal and noise in equal measure. At $\varepsilon = 1.0$, $K = 5$ and the allocation of Table \ref{tab:signals} this ratio is $0.05$, and ten interactions yield 37.2\% five-way accuracy against a 20\% chance baseline (Table \ref{tab:privacy_table}); the cumulative loss across such a session is $\varepsilon = 10$ under basic composition, or $\varepsilon = 32.4$ under advanced composition at $\delta = 10^{-5}$. Accurate developmental inference and local differential privacy with respect to the very user being inferred are therefore not simultaneously achievable at this budget. We regard this as a structural property of the estimation problem rather than a deficiency of the estimator, and note it because an architecture that claimed both would be claiming something impossible.
+
+\subsubsection*{Convergence and bypass detection}
+
+The convergence rate of the estimator determines how many interactions are required for reliable tier assignment. Let $t^*$ denote the true tier and $D_{\min}$ the minimum pairwise KL divergence between the true tier's signal distribution and any alternative. The misclassification probability is bounded by:
+\begin{equation}
+P(\hat{\tau}_n \neq t^*) \leq (K - 1) \cdot \exp(-n \cdot D_{\min})
+\end{equation}
+where $K = 5$ and $n$ is the number of interactions. By Sanov's theorem, achieving misclassification probability at most $\delta$ requires $n \geq (1/D_{\min}) \ln((K - 1)/\delta)$ interactions. To detect bypass, the module computes the Mahalanobis distance between observed and expected signal profiles:
+\begin{equation}
+d_M(s, t_k) = \sqrt{(s - \mu_k)^\top \Sigma_k^{-1} (s - \mu_k)}
+\end{equation}
+
+If $d_M$ exceeds the threshold $\chi^2_\alpha$ at significance level $\alpha$, the session is flagged for potential age misrepresentation and the tier is held at its current assignment pending further evidence.
+
+A second check addresses a failure mode that the Mahalanobis test does not cover. Where an external attestation indicates a tier that the linguistic estimate contradicts by two tiers or more, the attested tier governs and the assignment never exceeds it. This \emph{profile--attestation discordance} rule exists because linguistic sophistication and protective need can diverge sharply in atypically developing children; its effect is quantified in Table \ref{tab:populations}. Table \ref{tab:convergence} reports the interaction counts implied by the Sanov bound.
+
+\begin{table}[H]
+\centering
+\caption{Interactions required for Bayesian estimator convergence at various confidence levels ($\delta$) and signal separabilities ($D_{\min}$, in nats), from the Sanov bound below Equation 11. The rightmost column uses the $D_{\min}$ measured from the signal model of Table \ref{tab:kl_matrix} rather than an assumed value.}
+\label{tab:convergence}
+\begin{tabular}{lcccc}
+\hline
+\textbf{Target Confidence} & $D_{\min}$\textbf{=0.5} & $D_{\min}$\textbf{=0.8} & $D_{\min}$\textbf{=1.2} & $D_{\min}$\textbf{=2.60 (measured)} \\
+\hline
+90\% ($\delta = 0.10$) & 7.4 & 4.6 & 3.1 & 1.4 \\
+95\% ($\delta = 0.05$) & 8.8 & 5.5 & 3.7 & 1.7 \\
+99\% ($\delta = 0.01$) & 12.0 & 7.5 & 5.0 & 2.3 \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection*{The Nested Policy Engine}
+
+The Nested Policy Engine structures five layers of policy into a framework realising the multi-timescale optimisation of Nested Learning (Behrouz et al., 2025)\cite{Behrouz2025}. Let $L = \{L_0, L_1, L_2, L_3, L_4\}$ denote the layer set and $f_i$ the update frequency of layer $L_i$. The layers satisfy a strict frequency ordering $f_0 \gg f_1 \gg f_2 \gg f_3 \gg f_4$. Each layer implements a constraint function $C_i$ mapping a (response, tier) pair to $\{\text{accept}, \text{modify}, \text{reject}\}$. The composite constraint applied to any response $y$ at tier $t_k$ is:
+\begin{equation}
+C(y, t_k) = C_0(y, t_k) \wedge C_1(y, t_k) \wedge C_2(y, t_k) \wedge C_3(y, t_k) \wedge C_4(y, t_k)
+\end{equation}
+
+A response is emitted only if accepted by all five layers; the conjunction is ordered so that \emph{reject} dominates \emph{modify}, which dominates \emph{accept}. Layer $L_0$ (Token Filter) operates per token, evaluating each generated token $w_t$ against the tier-appropriate vocabulary $W_k$ and a readability ceiling $g_k$ in Flesch--Kincaid grade levels:
+\begin{equation}
+\text{emit}(w_t) = \mathbbm{1}[w_t \in W_k] \cdot \mathbbm{1}[\text{FKGL}(w_1 \ldots w_t) \leq g_k]
+\end{equation}
+
+Blocked tokens are replaced from a tier-appropriate lexicon by $O(1)$ hash-set lookup. Layer $L_1$ (Socratic Guard) operates per response, classifying query--response pairs to detect direct answers; where the capability is gated as Socratic, or where the request is a direct one from a user below $t_3$, the response is routed to the Socratic Protection Engine instead of being emitted. Layer $L_2$ (Tier Refiner) operates per session, feeding accumulated signals to the Bayesian estimator and performing Mahalanobis bypass detection via Equation 12. Layer $L_3$ (Memory Layer) tracks competencies demonstrated across sessions, permitting progressive capability unlocking within a tier. Layer $L_4$ (Policy Store) holds tier definitions as versioned formal constraints, validated at compile time against lattice monotonicity and revised only on expert review.
+
+\textbf{Severity gating.} A capability-indexed gating matrix has a resolution limit: it cannot distinguish a general question about alcohol from a request for instructions on obtaining it, since both invoke the same capability. Layer $L_1$ therefore applies a severity gate ahead of the tier lookup: content in the crisis, substance/body-image and age-inappropriate categories whose assessed severity exceeds a threshold is refused at \emph{every} tier, $t_5$ included. Because the gate is applied uniformly across tiers it tightens each tier equally and so preserves the monotonicity of Invariant I.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.75\linewidth]{fig4_bayesian.png}
+\caption{Multi-signal Bayesian age assurance pipeline. Streams of signals---linguistic features (vocabulary, syntax, spelling), behavioural biometrics (typing dynamics) and contextual signals (device type, parental attestation)---are independently processed by tier-conditional likelihood functions $P(s \mid t_k)$ estimated from calibration corpora under corpus-level $\varepsilon$-differential privacy ($\varepsilon = 1.0$). Only clipped log-likelihood ratios cross the enclave boundary; raw features do not. The fusion engine computes the posterior $P(\text{Tier} \mid s)$ via Bayes' theorem and selects the maximum a posteriori tier when confidence exceeds $\gamma = 0.55$; otherwise it returns the most restrictive tier $t_1$.}
+\label{fig:bayesian}
+\end{figure}
+
+Table \ref{tab:layers} specifies the function, update rate and computational cost of each layer.
+
+\subsection*{The Socratic Protection Engine}
+
+The Socratic Protection Engine is formalised as a finite-horizon Markov Decision Process $M_s = (S, A, P, R, \gamma, H)$. The state space $S$ is the Cartesian product of the learner's current knowledge level $q \in [0, 1]$, the protocol step $p \in \{1, \ldots, 5\}$ and the assigned tier $t_k$. The action space $A$ contains five pedagogical actions. The transition kernel represents knowledge growth under Vygotsky's ZPD:
+\begin{equation}
+P(q' \mid q, a, t_k) \propto \exp\left( -\frac{(q' - q - \delta(a, t_k))^2}{2\sigma^2_{\text{ZPD}}} \right)
+\end{equation}
+where $\delta(a, t_k)$ is the expected knowledge gain from action $a$ at tier $t_k$ and $\sigma_{\text{ZPD}}$ controls stochasticity. The function $\delta$ is tier-dependent because identical pedagogical actions produce different gains at different developmental stages. The reward encourages learning while penalising premature revelation and stagnation, and credits metacognitive confirmation:
+\begin{equation}
+R(s, a) = \alpha_{\text{learn}}(q' - q) - \alpha_{\text{reveal}} \mathbbm{1}(a \text{ reveals answer}) - \alpha_{\text{frust}} \mathbbm{1}(\text{stagnation}) + \alpha_{\text{meta}} \, m(t_k) \, \mathbbm{1}(a = \text{VerifyRequest})
+\end{equation}
+where $m(t_k) \in [0,1]$ is the metacognitive capacity of tier $t_k$, taken as $(0, 0.15, 0.45, 0.75, 1.0)$ for $t_1$--$t_5$ following the Piagetian progression from concrete to formal operations: reliable reflection on one's own reasoning is not dependably available before concrete operations and matures through adolescence. The final term is necessary rather than cosmetic. Without it the reward credits only knowledge gain, and VerifyRequest --- which by construction produces little immediate gain --- is dominated at every tier; the developmental pattern reported in Table \ref{tab:socratic_revised} does not arise. \emph{Stagnation} is defined as an expected one-step gain below a threshold $\delta_{\text{stag}} = 0.02$.
+
+The reward weights are $\alpha_{\text{learn}} = 1.0$, $\alpha_{\text{reveal}} = 0.60$, $\alpha_{\text{frust}} = 0.25$, $\alpha_{\text{meta}} = 0.06$ and $\gamma = 0.95$, with $H = 5$, $\sigma_{\text{ZPD}} = 0.12$ and $q$ discretised into 50 points. Table \ref{tab:actions} specifies the action space and the tier-dependent gains.
+
+The optimal Socratic policy $\pi^*$ is computed by backward induction on the Bellman equation:
+\begin{equation}
+V^*(s) = \max_{a \in A} \left[ R(s, a) + \gamma \sum_{s'} P(s' \mid s, a) V^*(s') \right]
+\end{equation}
+
+For the adopted settings this requires 6,250 Bellman updates in total across the five tiers, computed offline and stored as a lookup table; at runtime the engine performs a single $O(1)$ table lookup per interaction step. The condition $\alpha_{\text{reveal}} > \alpha_{\text{learn}} \max_{a,k} \delta(a, t_k) = 0.40$ is sufficient to guarantee that the optimal policy never opens with a partial explanation. It is not tight: the continuation value suppresses premature revelation at penalties below this bound as well, so the guarantee holds over a wider region than the one-step argument establishes.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.95\linewidth]{fig5_pipeline.png}
+\caption{Pipeline for real-time linguistic feature extraction and tier assignment. A feature extraction engine processes the first user prompt in under 40 ms into five feature families: $F_1$ (vocabulary: type-token ratio, rare-word frequency, mean word length), $F_2$ (syntax: sentence length, parse tree depth), $F_3$ (spelling: edit-distance error rate, capitalisation pattern), $F_4$ (query type: directive vs. exploratory), $F_5$ (abstraction: concreteness ratings, epistemic markers). These features are fused by the Bayesian module into a posterior over tiers $t_1$--$t_5$. When the maximum posterior exceeds $\gamma = 0.55$ a developmental tier is assigned; otherwise the system defaults to the most restrictive tier $t_1$ and re-assesses on a subsequent message.}
+\label{fig:pipeline}
+\end{figure}
+
+\begin{table}[H]
+\centering
+\caption{Structural specification of the five Nested Policy Engine layers. The total synchronous per-response overhead is $O(|y|)$, linear in response length.}
+\label{tab:layers}
+\small
+\begin{tabular}{p{2cm}p{1.5cm}p{1.5cm}p{4cm}p{3.5cm}}
+\hline
+\textbf{Layer} & \textbf{NL Analogue} & \textbf{Update Freq.} & \textbf{Function} & \textbf{Complexity} \\
+\hline
+$L_0$: Token Filter & Fast CMS banks & Every token (ms) & Evaluates each token against tier-appropriate vocabulary $W_k$ and readability ceiling $g_k$. Blocked tokens replaced via synonym lookup. Enforces tier session limits. & $O(1)$ per token via hash-set membership test and pre-computed synonym table. \\
+\hline
+$L_1$: Socratic Guard & Fast adaptation & Every response (s) & Applies the severity gate, then classifies query--response pairs for direct-answer detection. Intercepts answers and routes to the Socratic engine. & $O(|y|)$ per response. Fixed-weight classifier with linear scan over response tokens. \\
+\hline
+$L_2$: Tier Refiner & Medium-freq. & Every session & Feeds accumulated session signals into the Bayesian estimator. Performs Mahalanobis bypass detection (Eq.\ 12) and the profile--attestation discordance check. Two-session confirmation for tier upgrades. & $O(K \cdot M)$ per session, $K = 5$ tiers, $M = 4$ modalities. Asynchronous. \\
+\hline
+$L_3$: Memory Layer & Continuum memory & Cross-session & Tracks demonstrated competencies across sessions. Enables progressive capability unlocking within tier boundaries. & $O(1)$ per lookup. Competency state stored as fixed-length bitvector per user. \\
+\hline
+$L_4$: Policy Store & Slow-updating & Policy updates & Encodes tier definitions as versioned formal constraints. Validated at compile time against lattice monotonicity. Updated only on expert review. & $O(1)$ per query. Immutable during runtime; loaded at initialisation. \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Action space of the Socratic Protection Engine. Each action is defined with its pedagogical intent, expected knowledge gain $\delta(a, t_k)$ across tiers, and the conditions under which the optimal policy selects it.}
+\label{tab:actions}
+\small
+\begin{tabular}{p{1.5cm}p{2.5cm}p{2.5cm}p{2.5cm}p{3.5cm}}
+\hline
+\textbf{Action} & \textbf{Pedagogical Intent} & $\bm{\delta}$ \textbf{Range} ($t_1$--$t_5$) & \textbf{Trigger Condition} & \textbf{Example Behaviour} \\
+\hline
+Elicit & Open-ended question to activate prior knowledge and diagnose the learner's current understanding before providing guidance. & 0.05--0.15. Lowest gain; purely diagnostic. & Default initial action at $t_1$ when $q$ is unknown or $p = 1$. & ``What do you already know about how subtraction works?'' \\
+\hline
+Hint & Indirect cue pointing toward the solution path without revealing it. Targets the boundary of ZPD competence. & 0.10--0.25. Moderate gain near the competence boundary. & Dominant opening action at $t_1$, where metacognitive actions are unavailable. & ``Think about what happens when you take away from a group. Can you try with smaller numbers first?'' \\
+\hline
+Guide & Step-by-step decomposition of the problem into sub-tasks matched to the learner's cognitive capacity. & 0.05--0.30. Higher gain, but requires concrete operational reasoning ($t_2$+). & Dominant at low $q$ from $t_2$ upward. & ``Let's break this into two parts. First, what is 15 minus 10? Now, what's left?'' \\
+\hline
+Partial\-Explain & Provides a partial worked example revealing the method but not the final answer. Highest information disclosure short of full revelation. & 0.20--0.40. Highest non-reveal gain. & Never optimal as an opening action at any tier; reachable only later in the protocol. Incurs the $\alpha_{\text{reveal}}$ penalty. & ``When we subtract 27 from 43, we start with the ones column: 3 minus 7 needs borrowing. What do we borrow from?'' \\
+\hline
+Verify\-Request & Requests that the learner articulate their reasoning before the system proceeds. Promotes metacognitive awareness. & 0.05--0.20, scaled by metacognitive capacity $m(t_k)$. & Increasingly dominant from $t_2$ upward as metacognition becomes accessible. & ``Before I say more, can you explain in your own words why we borrowed from the tens column?'' \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.75\linewidth]{fig6_tierbehaviour.png}
+\caption{Tier-to-behaviour mapping across the five developmental tiers. All tiers share the same foundation model; the Nested Policy Engine changes only what the model is permitted to do, not its weights or inference procedure. Tier $t_1$ (ages 3--6) enforces a closed domain with voice-first interaction and no generative output. $t_2$ (ages 7--9) applies Socratic-only mode, with assignment answers and direct answers to open questions intercepted and scaffolded, and essay writing and code generation disabled. $t_3$ (ages 10--12) adds metacognitive prompts and guided code within a 45-minute session limit. $t_4$ (ages 13--15) enables semi-autonomous interaction with crisis detection and body-image guardrails. $t_5$ (ages 16--17) unlocks direct answers, code generation and creative writing with guardrail transparency disclosure. This per-tier capability profile operationalises the constraint lattice.}
+\label{fig:tierbehaviour}
+\end{figure}
+
+\subsection*{Feature-Gating Matrix}
+
+The policy layers and the constraint lattice jointly determine which capabilities are available at each developmental stage. Table \ref{tab:gating} gives the complete feature-gating matrix. Lattice monotonicity guarantees that every capability available at tier $t_i$ is available at all tiers $t_j$ with $j > i$, and the conjunction in Equation 13 ensures that no single layer can unilaterally override another's gating decision.
+
+A note on the semantics of the access levels, since the distinction carries most of the framework's pedagogical content. \emph{Blocked} means the request is refused. \emph{Socratic} means the direct answer is withheld but the request is served through guided questioning --- interception, not refusal. \emph{Limited} means the capability is available but monitored, and below $t_3$ a direct request is scaffolded rather than answered outright. Conflating Socratic with Blocked would convert the framework's central mechanism into a refusal policy and would materially change its behaviour toward children.
+
+The asymptotic overhead of the pipeline is bounded: $L_0$ operates in $O(1)$ per token, $L_1$ in $O(|y|)$ per response, and $L_2$ through $L_4$ contribute no synchronous latency. Total cost per response is therefore $O(|y|)$ --- linear in response length, and independent of model size and vocabulary size.
+
+\begin{table}[H]
+\centering
+\caption{Feature-gating matrix across developmental stages. Access levels: Blocked (refused), Socratic (direct answer withheld, request served through guided questioning), Limited/Monitored (available but monitored; direct requests scaffolded below $t_3$), and Available. High-severity harmful content is refused at every tier by the severity gate, independently of this matrix.}
+\label{tab:gating}
+\begin{tabular}{lccccc}
+\hline
+\textbf{Feature} & $t_1$ \textbf{(3--6)} & $t_2$ \textbf{(7--9)} & $t_3$ \textbf{(10--12)} & $t_4$ \textbf{(13--15)} & $t_5$ \textbf{(16--17)} \\
+\hline
+Homework answers & Blocked & Socratic & Socratic & Socratic & Toggle \\
+Open-ended chat & Blocked & Limited & Limited & Avail. & Avail. \\
+Code generation & Blocked & Blocked & Socratic & Socratic & Avail. \\
+Essay / writing & Blocked & Blocked & Socratic & Avail. & Avail. \\
+Crisis content & Blocked & Blocked & Socratic & Socratic & Socratic \\
+Substance / body-image & Blocked & Blocked & Blocked & Blocked & Limited \\
+Socratic tutoring & Active & Active & Active & Active & Optional \\
+Session limit (min) & 15 & 30 & 45 & 60 & None \\
+Crisis detection & Off & Off & Active & Active & Active \\
+\hline
+\end{tabular}
+\end{table}
+
+\section*{Formal Safety Properties}
+
+Recent research on guaranteed safe AI holds that informal safety claims are insufficient in high-stakes domains (Dalrymple et al., 2024)\cite{Dalrymple2024}. Singh et al.\ (2025)\cite{Singh2025} argue that formal methods are the only principled foundation for AI safety guarantees, and Qi et al.\ (2025)\cite{Qi2025} show that safety alignment is often shallow, affecting only the initial tokens of an output. The four safety invariants below are formalised in linear temporal logic (LTL) and hold over all admissible transitions of the system.
+
+The labelled transition system is modelled as $M = (S, S_0, \Sigma, \delta, \Lambda)$, where a state $s = (u, \tau, \pi, h, b)$ comprises the user identifier, assigned tier, policy configuration, interaction history and Bayesian posterior. Each new user starts at $t_1$ with a uniform prior and the default policy. Admissible transitions preserve identity, remain policy-consistent and obey the Bayesian update rule. Because the five constraint layers are defined over disjoint aspects of the response, each invariant can be established by reasoning over a subset of layers in isolation: a violation at any one layer blocks the output, and no layer can weaken a constraint imposed by another. The bilevel formulation is well-posed under mild regularity conditions: the admissible set $Y(\pi, t_k)$ is non-empty for every tier (the empty response is always admissible) and compact under a finite vocabulary; the outer optimisation over five elements is trivially well-posed; and the coupling between levels is acyclic, so the problem does not exhibit the oscillatory non-convergence that can afflict general bilevel programs (Dagr\'{e}ou et al., 2024)\cite{Dagreou2024}.
+
+Each invariant below is additionally checked mechanically in the accompanying implementation, by exhaustive enumeration where the state space permits and by randomised search over traces otherwise. We report the verification method alongside each statement, since a proof sketch and an executable check fail in different ways.
+
+\textbf{Invariant I --- Tier Monotonicity:} $\Box[A(t_i) \subseteq A(t_j)]$ for all $t_i, t_j$ with $i < j$. This follows from the lattice structure. Since $C_1 \supset C_2 \supset C_3 \supset C_4 \supset C_5$ is enforced by compile-time validation in the Policy Store ($L_4$), and no admissible transition can alter the lattice, monotonicity holds in every state of every trace. The practical consequence is that establishing the safety of tier $t_3$ establishes it automatically for $t_1$ and $t_2$. \emph{Verification:} exhaustive over the product of all response types and all five tiers, checking that decision severity is non-increasing in tier; the Policy Store additionally rejects any policy edit that breaks the chain.
+
+\textbf{Invariant II --- Content Non-Bypassability:} $\Box[\neg\text{bypassed}(s)]$. The proof proceeds by strong induction on trace length. The base case holds vacuously, since $s_0$ produces no output. For the inductive step, the composite constraint $C(y, t_k) = \bigwedge_i C_i(y, t_k)$ evaluates the output through all five layers; each $C_i$ is a function of its own inputs alone, and no pathway exists by which user input can alter which constraint function a layer applies. Any response violating any layer is rejected before delivery. For tier upgrades, the two-session confirmation requirement prevents a permanent upgrade on the basis of a single anomalous session, and by Invariant I the constraint set of the higher tier is a subset of the lower one. \emph{Verification:} exhaustive over all response--tier pairs, plus randomised search over 2,000 traces that walk a user upward through the tiers, confirming that no emission occurs which the tier in force at the time forbids.
+
+\textbf{Invariant III --- Estimator Convergence:} $\Diamond\Box[\text{tier\_correct}(s)]$. From the bound in Equation 11 the misclassification probability decays exponentially in the number of interactions. By the Borel--Cantelli lemma, misclassification occurs only finitely often with probability one, so there exists a random but almost surely finite time $N$ after which the estimated tier is correct. The computational validation below confirms convergence above 90\% accuracy within one interaction for $t_1$--$t_3$ and within three for $t_4$--$t_5$.
+
+\textbf{Invariant IV --- Graceful Degradation:} $\Box[\text{degraded}(s) \rightarrow \text{safe}(s)]$. Each layer is fail-closed: $L_0$ failure suppresses all output; $L_1$ failure routes every response through the $t_1$ Socratic protocol; $L_2$ failure retains the most recently confirmed tier; $L_3$ failure triggers stateless operation; $L_4$ failure activates a hardcoded minimal policy enforcing $t_1$ constraints. \emph{Verification:} exhaustive case analysis over all fifteen single-layer and pairwise-layer failure combinations, confirming both that no direct answer is emitted whenever any enforcing layer has failed, and that the degraded engine is never less restrictive than the nominal one in any combination.
+
+\section*{Computational Validation}
+
+The framework of the preceding sections is a specification: its safety guarantees hold for any compliant implementation across all admissible transitions. To complement the formal analysis and provide empirical grounding ahead of human-subject evaluation, this section reports seven computational experiments using Monte Carlo simulation, backward induction and algorithmic profiling. All results are generated by the accompanying implementation from a single master seed and are reproducible by a single command; each result file records the software versions, platform and commit under which it was produced.
+
+We state the scope plainly. These are simulations, not measurements of a deployed system. The evaluation corpus consists of structured policy records rather than natural language, so what is measured is the correctness of \emph{policy decisions}, not the linguistic quality of responses. The baselines are reimplementations of each system's documented decision rule, not the shipped systems themselves. No claim below should be read as evidence about real children.
+
+\subsection*{Experimental Setup}
+
+Tier-conditional signal distributions are parameterised from published developmental linguistics data. Linguistic features (MTLD, Flesch--Kincaid grade level, mean sentence length, parse-tree depth, spelling error rate) are modelled as multivariate Gaussians with tier-specific means and standard deviations calibrated to values reported in the Oxford Children's Language Corpus (Hsiao et al., 2024)\cite{Hsiao2024} and CHILDES-db (Sanchez et al., 2019)\cite{Sanchez2019}; MTLD follows McCarthy and Jarvis (2010)\cite{McCarthy2010}. Behavioural biometrics (typing speed in words per minute) follow log-normal distributions parameterised from reported developmental typing norms. Device indicators are Bernoulli-distributed with probabilities decreasing monotonically from $t_1$ ($P = 0.90$) to $t_5$ ($P = 0.15$). All simulations use $\varepsilon = 1.0$ corpus-level differential privacy with the budget allocation of Table \ref{tab:signals}.
+
+\subsection*{Bayesian Estimator Convergence}
+
+To evaluate the sequential posterior update (Equations 6--9), 500 independent synthetic users were generated at each of the five tiers and tracked across 15 interactions. At each interaction, linguistic features, typing speed and device indicators were sampled from the tier-conditional distributions and the posterior was updated by the Dirichlet-Categorical sequential rule. Milestones are read from a single trajectory per trial and are therefore paired rather than independent.
+
+Table \ref{tab:convergence_matrix} reports classification accuracy at key milestones. Tiers $t_1$--$t_3$ exceed the 90\% threshold after a single interaction, and $t_4$ and $t_5$ within three. The $t_4$--$t_5$ boundary remains the hardest, consistent with the convergence of adolescent language toward adult norms. The fail-safe default to $t_1$ when posterior confidence falls below $\gamma = 0.55$ ensures that misclassification during convergence results in over-protection rather than under-protection: as Figure \ref{fig:convergence_heatmap} shows, essentially all residual off-diagonal mass falls into $t_1$ rather than into a less restrictive tier.
+
+\begin{table}[H]
+\centering
+\caption{Bayesian estimator classification accuracy (\%) at selected interaction milestones ($N = 500$ trials per tier, $\varepsilon = 1.0$ corpus-level differential privacy). Bold entries denote the first milestone exceeding 90\%. Accuracy reported here is partly a product of the conditional independence assumption of Equation 7; the cost of relaxing it is quantified in Table \ref{tab:independence}.}
+\label{tab:convergence_matrix}
+\small
+\begin{tabular}{lccccccc}
+\hline
+\textbf{Tier} & $n{=}1$ & $n{=}3$ & $n{=}5$ & $n{=}7$ & $n{=}10$ & $n{=}12$ & $n{=}15$ \\
+\hline
+$t_1$ (3--6)   & \textbf{99.2} & 100.0 & 100.0 & 100.0 & 100.0 & 100.0 & 100.0 \\
+$t_2$ (7--9)   & \textbf{96.4} & 98.8 & 98.6 & 99.0 & 99.4 & 98.4 & 99.0 \\
+$t_3$ (10--12) & \textbf{94.4} & 99.4 & 99.6 & 99.6 & 98.2 & 99.2 & 98.4 \\
+$t_4$ (13--15) & 85.8 & \textbf{98.0} & 99.6 & 98.6 & 98.4 & 99.4 & 99.4 \\
+$t_5$ (16--17) & 85.2 & \textbf{96.8} & 97.8 & 98.2 & 98.6 & 98.0 & 99.4 \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.75\linewidth]{fig7_confusion_heatmap.png}
+\caption{Tier classification confusion matrix at $n = 10$ interactions ($N = 500$ per tier, $\varepsilon = 1.0$). Colour intensity encodes the proportion of trials classified into each tier. Diagonal dominance confirms reliable classification; residual off-diagonal mass falls into $t_1$, the fail-safe floor, so misclassification is over-protective rather than under-protective.}
+\label{fig:convergence_heatmap}
+\end{figure}
+
+\subsection*{Signal Separability and Feature Discriminability}
+
+The convergence rate depends on $D_{\min}$, the minimum pairwise KL divergence (Equation 11). Table \ref{tab:kl_matrix} reports the divergence matrix computed in closed form for multivariate Gaussians. The minimum adjacent-tier divergence is $D_{\min} = 2.60$ nats, at the $t_4$--$t_5$ boundary, and the mean pairwise divergence is 51.70 nats. Both exceed the conservative $D_{\min} = 0.8$ tabulated in Table \ref{tab:convergence}.
+
+\begin{table}[H]
+\centering
+\caption{Pairwise KL divergence (nats) across the five-dimensional linguistic feature space. The minimum adjacent-tier divergence $D_{\min} = 2.60$ (bold) governs worst-case convergence. Divergences are asymmetric because tier-conditional variances differ.}
+\label{tab:kl_matrix}
+\small
+\begin{tabular}{lccccc}
+\hline
+& $t_1$ & $t_2$ & $t_3$ & $t_4$ & $t_5$ \\
+\hline
+$t_1$ & --- & 8.97 & 40.46 & 82.14 & 172.88 \\
+$t_2$ & 12.62 & --- & 8.26 & 25.10 & 53.34 \\
+$t_3$ & 59.10 & 9.65 & --- & 4.81 & 14.41 \\
+$t_4$ & 145.21 & 38.96 & 6.60 & --- & \textbf{2.60} \\
+$t_5$ & 245.89 & 78.29 & 21.68 & 2.99 & --- \\
+\hline
+\end{tabular}
+\end{table}
+
+The theoretical and empirical convergence results are mutually consistent. At the measured $D_{\min} = 2.60$, the Sanov bound requires $n \geq 1.4$ interactions for 90\% confidence (Table \ref{tab:convergence}), and the simulation reaches that threshold at $n = 1$ for $t_1$--$t_3$ and $n = 3$ for $t_4$--$t_5$. Both the bound and the simulation therefore place convergence within a handful of interactions, and both are computed from the same signal model rather than from independently chosen parameters.
+
+Decomposing the divergence at the hardest boundary by feature, spelling error rate contributes 0.72 nats, Flesch--Kincaid grade 0.65, MTLD 0.63, mean sentence length 0.37 and parse depth 0.24. Spelling and readability are thus the most discriminative dimensions at the $t_4$--$t_5$ boundary, and parse depth the least --- the reverse of what syntactic-complexity accounts of adolescent language development would predict, and a point worth noting for feature selection in any implementation. Figure \ref{fig:feature_radar} shows the normalised feature profiles across tiers.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.55\linewidth]{fig8_feature_radar.png}
+\caption{Normalised feature profiles across developmental tiers displayed as a radar chart. Each axis represents one of the five linguistic features. The area enclosed by each tier's polygon reflects overall linguistic complexity; the degree of polygon separation indicates discriminability.}
+\label{fig:feature_radar}
+\end{figure}
+
+\subsection*{Optimal Socratic Policy Analysis}
+
+Backward induction on the Bellman equation (Equation 17) was performed for all five tiers ($H = 5$, 50 discretisation points for $q$, $\gamma = 0.95$), with the reward weights stated in the preceding section. Table \ref{tab:socratic_revised} reports the optimal action distribution at protocol step 1.
+
+\begin{table}[H]
+\centering
+\caption{Optimal Socratic action distribution at protocol step $p{=}1$, computed via backward induction. Each cell reports the percentage of knowledge states $q \in [0,1]$ for which the corresponding action is optimal. $E[V]$: expected value function averaged across all initial states. Reward weights: $\alpha_{\text{learn}} = 1.0$, $\alpha_{\text{reveal}} = 0.60$, $\alpha_{\text{frust}} = 0.25$, $\alpha_{\text{meta}} = 0.06$, $\gamma = 0.95$.}
+\label{tab:socratic_revised}
+\begin{tabular}{lcccccc}
+\hline
+\textbf{Tier} & \textbf{Elicit} & \textbf{Hint} & \textbf{Guide} & \textbf{P.Expl.} & \textbf{Verify} & $E[V]$ \\
+\hline
+$t_1$ (3--6)   & 48.0 & 52.0 &  0.0 & 0.0 &   0.0 & 0.044 \\
+$t_2$ (7--9)   &  0.0 &  2.0 & 30.0 & 0.0 &  68.0 & 0.102 \\
+$t_3$ (10--12) &  4.0 &  0.0 &  0.0 & 0.0 &  96.0 & 0.150 \\
+$t_4$ (13--15) &  0.0 &  0.0 &  0.0 & 0.0 & 100.0 & 0.211 \\
+$t_5$ (16--17) &  0.0 &  0.0 &  0.0 & 0.0 & 100.0 & 0.255 \\
+\hline
+\end{tabular}
+\end{table}
+
+Three observations follow. First, PartialExplain is never optimal as an initial action at any tier, confirming that the reward structure prevents premature answer revelation. Second, the dominant action shifts developmentally: at $t_1$, where metacognitive actions carry no credit, the policy opens with Hint (52\%) or Elicit (48\%); from $t_2$ upward, VerifyRequest becomes dominant. Third, VerifyRequest usage increases monotonically with tier, from 0\% at $t_1$ to 100\% at $t_4$ and $t_5$, as metacognitive capacity permits. This third pattern depends on the metacognition term of Equation 16: under the reward function without that term, VerifyRequest usage across $t_1$--$t_5$ is $(0, 0, 4, 4, 0)$ percent --- flat, and dominated at every tier.
+
+We report a sensitivity analysis over the reward weights, since the qualitative claims would otherwise rest on unstated parameter choices. Sweeping $\alpha_{\text{reveal}} \in \{0.45, 0.6, 0.8, 1.0, 1.5\}$, $\alpha_{\text{frust}} \in \{0, 0.15, 0.25, 0.5\}$ and $\gamma \in \{0.85, 0.90, 0.95, 0.99\}$ gives 80 valid configurations. PartialExplain is never the optimal opening action in any of the 80. Monotonicity of VerifyRequest usage in tier holds in 65 of 80 configurations (81\%); it is therefore a robust tendency of the model rather than a universal property, and we describe it as such.
+
+Table \ref{tab:socratic_trajectory} shows a representative optimal trajectory for tier $t_2$ from $q_0 = 0.15$. From a low knowledge state the policy selects Guide throughout, decomposing the problem rather than verifying understanding the learner does not yet have; VerifyRequest dominates at $t_2$ only once $q$ is higher, which is why it appears in Table \ref{tab:socratic_revised} but not in this trajectory.
+
+\begin{table}[H]
+\centering
+\caption{Representative optimal Socratic trajectory for tier $t_2$ (ages 7--9), initial knowledge $q_0 = 0.15$. From a low knowledge state the optimal policy applies guided decomposition throughout the five-step horizon.}
+\label{tab:socratic_trajectory}
+\small
+\begin{tabular}{clcc}
+\hline
+\textbf{Step $p$} & \textbf{Optimal Action} & \textbf{$q$ Before} & \textbf{$q$ After (expected)} \\
+\hline
+1 & Guide & 0.15 & 0.29 \\
+2 & Guide & 0.29 & 0.44 \\
+3 & Guide & 0.44 & 0.58 \\
+4 & Guide & 0.58 & 0.72 \\
+5 & Guide & 0.72 & 0.84 \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection*{Differential Privacy--Utility Trade-off}
+
+The effect of the privacy budget on classification accuracy was evaluated by varying $\varepsilon$ from 0.1 to 100 with all other parameters fixed, classifying 400 users after 10 interactions at each setting. Table \ref{tab:privacy_table} reports both privacy models described earlier.
+
+\begin{table}[H]
+\centering
+\caption{Classification accuracy (\%) as a function of the privacy budget $\varepsilon$ after $n = 10$ interactions ($N = 400$). Corpus-level DP protects one child in the calibration corpora; local DP protects one interaction of the live user. Chance accuracy is 20\%. The adopted operating point is $\varepsilon = 1.0$ ($\star$).}
+\label{tab:privacy_table}
+\small
+\begin{tabular}{lccccccccc}
+\hline
+$\varepsilon$ & 0.1 & 0.3 & 0.5 & 0.7 & $1.0^{\star}$ & 3.0 & 10.0 & 30.0 & 100.0 \\
+\hline
+Corpus-level DP (\%) & 98.2 & 99.8 & 99.5 & 99.0 & \textbf{98.8} & 99.2 & 99.5 & 98.8 & 99.8 \\
+Local DP at inference (\%) & 33.0 & 36.5 & 34.2 & 35.5 & \textbf{37.2} & 37.0 & 39.0 & 48.0 & 62.0 \\
+Cumulative $\varepsilon$ at $n{=}10$ (local) & 1 & 3 & 5 & 7 & 10 & 30 & 100 & 300 & 1000 \\
+\hline
+\end{tabular}
+\end{table}
+
+Under the corpus-level model the guarantee is essentially free: accuracy is 98.8\% at $\varepsilon = 1.0$ and is flat across the range, because a parameter averaged over thousands of children has per-child sensitivity small enough that the released estimate is barely perturbed. Under local differential privacy applied to the live user's own signals, accuracy never approaches usability within any defensible budget: 37.2\% at $\varepsilon = 1.0$ against a 20\% chance baseline, and still only 62\% at $\varepsilon = 100$, where the guarantee is vacuous. Figure \ref{fig:privacy_curve} plots both curves. The gap between them is the quantitative content of the argument made earlier: a system cannot both infer a user's developmental stage accurately and offer that same user a strong local differential-privacy guarantee over the signals used to infer it.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.55\linewidth]{fig9_privacy_curve.png}
+\caption{Privacy--utility trade-off for the Bayesian age assurance module under both privacy models. Classification accuracy after 10 interactions as a function of $\varepsilon$ (log scale). The upper curve is corpus-level DP, where $\varepsilon$ protects one child in the calibration corpora; the lower curve is local DP applied to the live user's own signals. The dashed line marks the 20\% chance baseline for five-way classification. The star denotes the adopted operating point ($\varepsilon = 1.0$).}
+\label{fig:privacy_curve}
+\end{figure}
+
+\subsection*{Robustness to Atypical and Non-Western Populations}
+
+The tier estimator infers developmental protection largely from linguistic sophistication. Where linguistic profile and protective need diverge, that inference fails. Table \ref{tab:populations} quantifies the failure across four simulated cohorts, and evaluates the profile--attestation discordance rule as a mitigation.
+
+\begin{table}[H]
+\centering
+\caption{Tier-estimation performance by population ($n = 10$ interactions, $N = 400$ per cohort). Under-protection denotes assignment to a \emph{less} restrictive tier than warranted; over-protection the converse. The discordance rule holds a user at an externally attested tier when the linguistic estimate differs by two tiers or more.}
+\label{tab:populations}
+\small
+\begin{tabular}{lccccc}
+\hline
+\textbf{Population} & \textbf{Acc.\ (\%)} & \textbf{Under (\%)} & \textbf{Over (\%)} & \textbf{Acc.\ w/ rule (\%)} & \textbf{Under w/ rule (\%)} \\
+\hline
+Typical                     & 98.8 & 0.0  & 1.2  & 98.8 & 0.0  \\
+Verbally advanced           & 22.0 & 62.3 & 15.8 & 70.8 & 19.0 \\
+Advanced with atypical motor profile & 24.2 & 59.2 & 16.5 & 24.2 & 59.2 \\
+Second-language / non-Western & 20.2 & 0.0  & 79.8 & 20.2 & 0.0  \\
+Dialect-switching           & 62.3 & 0.8  & 37.0 & 62.3 & 0.8  \\
+\hline
+\end{tabular}
+\end{table}
+
+Two findings deserve emphasis. First, the two failure modes are qualitatively different and point in opposite directions. Verbally advanced children --- a group that includes many highly verbal autistic children --- are systematically \emph{under}-protected, assigned above their true tier in 82.0\% of sessions. Second-language and dialect-switching users are systematically \emph{over}-restricted, at 79.8\% and 37.0\% respectively. The first failure exposes children to material the framework exists to withhold; the second denies capable children access. Neither is acceptable, and they cannot be traded against one another by moving a single threshold.
+
+Second, the discordance rule is a partial remedy only. For the verbally advanced cohort it reduces assignment above $t_2$ from 82.0\% to 3.0\% of sessions, and raises accuracy from 22.0\% to 70.8\%. It does nothing for the cohort whose linguistic profile is advanced by only one tier, because the rule fires at a two-tier discrepancy; under-protection there remains at 59.2\%. It also requires an external attestation to be present.
+
+On cross-cultural robustness, disaggregating by modality under the second-language shift gives single-modality accuracies of 60.0\% for behavioural biometrics, 31.6\% for linguistic features, 30.1\% for contextual attestation and 18.5\% for device indicators. Behavioural signals are thus the most robust to cross-cultural transfer and linguistic features --- which carry the largest share of the privacy budget in Table \ref{tab:signals} --- among the least. This is an uncomfortable result, since behavioural biometrics are also the modality carrying the greatest surveillance risk. We do not resolve the tension: a deployment that rebalanced the budget toward behavioural signals to improve cross-cultural fairness would be purchasing that fairness with a privacy cost, and that trade should be made deliberately and publicly rather than silently in a configuration file.
+
+\subsection*{Sensitivity to the Conditional Independence Assumption}
+
+Equation 7 assumes conditional independence across signal modalities, and the accuracy of Table \ref{tab:convergence_matrix} is partly a product of that assumption. Table \ref{tab:independence} quantifies the cost by generating data with correlated linguistic features while the estimator continues to assume independence.
+
+\begin{table}[H]
+\centering
+\caption{Classification accuracy (\%) at $n = 10$ interactions when the generating model has equicorrelated linguistic features with coefficient $\rho$, while the estimator assumes independence.}
+\label{tab:independence}
+\begin{tabular}{lccccc}
+\hline
+Feature correlation $\rho$ & 0.0 & 0.2 & 0.4 & 0.6 & 0.8 \\
+\hline
+Accuracy (\%) & 99.2 & 99.0 & 98.2 & 95.2 & 94.0 \\
+\hline
+\end{tabular}
+\end{table}
+
+The estimator degrades gracefully: even at $\rho = 0.8$, where correlated features carry substantially less joint information than the independent model assumes, accuracy falls by only 5.2 percentage points. The assumption is thus a convenience rather than a load-bearing requirement, and the architecture admits more expressive fusion models --- factor graphs or copula models --- without altering the safety analysis, which requires only that the posterior converge, not that it factorise in a particular way.
+
+\subsection*{Computational Overhead Profiling}
+
+Per-operation wall-clock latency was measured on a single core of an Apple silicon laptop; absolute figures will vary with hardware, but the ratio to foundation-model inference latency will not vary materially. Table \ref{tab:overhead_revised} reports the results.
+
+\begin{table}[H]
+\centering
+\caption{Measured computational overhead per policy layer (single-core profiling, median of five runs). The total synchronous per-response overhead is 3.3 $\mu$s.}
+\label{tab:overhead_revised}
+\small
+\begin{tabular}{llrll}
+\hline
+\textbf{Component} & \textbf{Granularity} & \textbf{Latency} & \textbf{Complexity} & \textbf{Sync?} \\
+\hline
+$L_0$: Token Filter      & Per response (40 tokens) & 1.39 $\mu$s & $O(|y|)$  & Yes \\
+$L_1$: Socratic Guard    & Per response & 0.09 $\mu$s & $O(|y|)$ & Yes \\
+$L_4$: Policy Store      & Per query    & 0.99 $\mu$s & $O(1)$    & Yes \\
+$L_2$: Bayesian Update   & Per interaction & 29.05 $\mu$s & $O(KM)$ & No \\
+Socratic MDP Lookup      & Per step     & 0.14 $\mu$s & $O(1)$    & Yes \\
+\hline
+\multicolumn{2}{l}{\textbf{Total synchronous (full engine)}} & 3.26 $\mu$s & & \\
+\multicolumn{2}{l}{\textbf{\% of a 500 ms LLM response}} & 0.0007\% & & \\
+\hline
+\end{tabular}
+\end{table}
+
+The cumulative synchronous overhead is 3.3 $\mu$s per response, under 0.001\% of a typical foundation-model inference latency of 500--2,000 ms. The largest single contribution, the Bayesian update at 29 $\mu$s, is asynchronous at session boundaries and adds no per-response delay. The framework is therefore deployable as middleware without perceptible effect on interaction latency.
+
+\subsection*{Comparative Evaluation Against Baseline Frameworks}
+
+\subsubsection*{Metric definition}
+
+Let $P$ be a set of evaluation prompts, $g(p) \in \{\text{allow}, \text{scaffold}, \text{block}\}$ the ground-truth developmentally appropriate handling of prompt $p$, and $f(p)$ the handling produced by the framework under test. The \textbf{Developmental Safety Rate} is
+\begin{equation}
+\text{DSR}(P) = \frac{1}{|P|} \sum_{p \in P} \mathbbm{1}[f(p) = g(p)] .
+\end{equation}
+The complement partitions into two error types,
+\begin{equation}
+\text{under-protection} = \frac{1}{|P|} \sum_{p} \mathbbm{1}[\text{sev}(f(p)) < \text{sev}(g(p))], \qquad
+\text{over-restriction} = \frac{1}{|P|} \sum_{p} \mathbbm{1}[\text{sev}(f(p)) > \text{sev}(g(p))],
+\end{equation}
+with $\text{sev}(\text{allow}) < \text{sev}(\text{scaffold}) < \text{sev}(\text{block})$, so that DSR, under-protection and over-restriction sum to unity. A scaffolded response where the ground truth is \emph{allow} counts as over-restriction rather than as a success: withholding a direct answer from a learner entitled to one is a real cost, and folding it into the success rate would conceal it.
+
+\subsubsection*{Two ground truths}
+
+Deriving ground-truth labels from the feature-gating matrix of Table \ref{tab:gating} would make the evaluation circular, since that matrix is part of the specification under test; any faithful implementation would score near 100\% by construction. We therefore constructed a second, independent labelling from sources external to the architecture: chronological age, the thresholds set by the regulatory instruments (COPPA's under-13 boundary, California SB 243's crisis-detection requirement, the EU AI Act's Article 5 prohibition, the ICO Age-Appropriate Design Code's default-protection principle) and Piagetian criteria on abstraction demand. This labeller does not consult the feature-gating matrix and decides from each prompt's own attributes rather than from its tier index. The two labellings agree on 77.1\% of the 7,000 prompts (Cohen's $\kappa = 0.645$), so the choice materially affects the result. We treat the independent labelling as the headline and report the circular one only for contrast.
+
+One qualification on that independence. During development the rubric identified a case in which the specification permitted direct answers to open-ended questions from 7-to-9-year-olds, and the specification was subsequently amended to scaffold direct requests below $t_3$. The rubric therefore informed one design decision and is to that extent no longer a fully held-out standard. We report the affected figure both ways: NPL's mean DSR against the rubric is 75.5\% after the amendment and 73.8\% before it, so the amendment accounts for 1.7 points of the 23.0-point margin over the strongest age-agnostic baseline. The conclusion is unchanged under either value. A genuinely held-out evaluation, with prompts labelled by developmental psychologists who have not seen the specification, remains necessary.
+
+\subsubsection*{Corpus and frameworks}
+
+The corpus comprises 7,000 structured prompts (200 prompts $\times$ 7 risk categories $\times$ 5 tiers), generated deterministically from a fixed seed with every attribute recorded. Nine frameworks were evaluated: four age-agnostic guardrails --- NeMo Guardrails \cite{Rebedea2023}, Llama Guard \cite{Inan2023}, LlamaFirewall \cite{MetaAI2025} and Constitutional AI \cite{Bai2022}; three age-aware baselines --- a COPPA-style binary under-13 rule, an age-conditioned policy with three coarse bands and oracle knowledge of the user's band, and a binary child-mode classifier with realistic detection error feeding an adult-safety filter; and two variants of NPL, the full system and an ablation with the Socratic substitution mechanism removed. The age-aware baselines are included because comparing a developmental architecture only against age-agnostic guardrails would not be an informative test.
+
+Table \ref{tab:dsr_full} reports DSR by tier under the independent rubric.
+
+\begin{table}[H]
+\centering
+\caption{Developmental Safety Rate (\%) by tier and framework, scored against the independent rubric ground truth. $N = 7{,}000$ prompts; 95\% Wilson confidence intervals on the mean. Under- and over-restriction are the two error types and sum with DSR to 100\%.}
+\label{tab:dsr_full}
+\small
+\begin{tabular}{lccccccccc}
+\hline
+\textbf{Framework} & $t_1$ & $t_2$ & $t_3$ & $t_4$ & $t_5$ & \textbf{Mean} & \textbf{95\% CI} & \textbf{Under} & \textbf{Over} \\
+\hline
+NeMo Guardrails          & 14.3 & 19.6 & 35.6 & 56.1 & 84.3 & 42.0 & [40.8, 43.1] & 58.0 & 0.0 \\
+Llama Guard              & 32.6 & 37.1 & 29.5 & 50.4 & 77.1 & 45.3 & [44.2, 46.5] & 47.0 & 7.7 \\
+LlamaFirewall            & 23.1 & 28.5 & 25.0 & 45.4 & 73.0 & 39.0 & [37.9, 40.1] & 56.0 & 5.0 \\
+Constitutional AI        & 39.4 & 45.1 & 36.9 & 58.6 & 82.4 & 52.5 & [51.3, 53.7] & 39.0 & 8.5 \\
+COPPA binary rule        & 68.9 & 48.1 & 39.3 & 61.2 & 85.7 & 60.6 & [59.5, 61.8] & 26.1 & 13.3 \\
+Child-safety classifier  & 42.5 & 70.4 & 60.8 & 61.2 & 79.3 & 62.8 & [61.7, 64.0] & 27.8 & 9.3 \\
+Age-conditioned (oracle) & 68.9 & 56.8 & 84.1 & 87.2 & 60.6 & 71.5 & [70.4, 72.6] & 10.0 & 18.5 \\
+NPL (no Socratic)        & 83.1 & 42.9 & 28.6 & 46.4 & 69.9 & 54.2 & [53.0, 55.3] & \textbf{1.9} & 44.0 \\
+\textbf{NPL (ours)}      & \textbf{83.1} & \textbf{71.1} & 71.6 & 64.8 & \textbf{86.9} & \textbf{75.5} & [74.5, 76.5] & 3.9 & 20.6 \\
+\hline
+\end{tabular}
+\end{table}
+
+NPL attains 75.5\% mean DSR against 52.5\% for the strongest age-agnostic baseline, a gain of 23.0 percentage points (paired McNemar $\chi^2 = 1199.8$, $p < 10^{-260}$), and 71.5\% for the strongest age-aware baseline, a gain of 4.0 points ($\chi^2 = 38.7$, $p = 5.0 \times 10^{-10}$). Under the circular ground truth the same comparisons give 86.3\% for NPL and margins of 37.7 and 8.8 points respectively --- which is the measure of how much the choice of ground truth inflates the result.
+
+Two features of Table \ref{tab:dsr_full} deserve comment rather than celebration. First, the margin over a well-constructed age-conditioned baseline is modest. NPL's advantage over such a baseline lies less in mean DSR than in the distribution of errors: under-protection of 3.9\% against 10.0\%, and consistency across tiers rather than a collapse at the youngest, where the stakes are highest. Second, NPL's over-restriction of 20.6\% is substantial, concentrated in code generation and essay writing at $t_2$, where the gating matrix blocks capabilities that the external rubric would scaffold. This is a real cost of the conservative design and we do not discount it. The ablation shows what the Socratic mechanism buys: removing it drops mean DSR to 54.2\% and more than doubles over-restriction to 44.0\%, because every capability the lattice marks Socratic becomes a refusal.
+
+Figure \ref{fig:dsr_grouped} presents the per-tier comparison. The monotonic rise of the age-agnostic baselines from $t_1$ to $t_5$ is not evidence of adaptation but an artefact: a uniform adult policy becomes coincidentally more appropriate as the user approaches adult capability. NPL's profile is comparatively flat.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.75\linewidth]{fig10_dsr_grouped.png}
+\caption{Grouped developmental safety rate comparison across five tiers, under the independent rubric ground truth. Age-agnostic baselines (grey tones) show monotonically increasing DSR driven by coincidental alignment with adult policies; the age-conditioned baseline and NPL maintain higher rates at the youngest tiers through active adaptation. Error bars indicate 95\% Wilson confidence intervals.}
+\label{fig:dsr_grouped}
+\end{figure}
+
+Table \ref{tab:percategory_revised} gives the per-category breakdown at $t_2$ against both reference baselines.
+
+\begin{table}[H]
+\centering
+\caption{Per-category DSR at tier $t_2$ (ages 7--9) under the independent rubric: NPL versus the strongest age-agnostic baseline (Constitutional AI) and the strongest age-aware baseline (age-conditioned oracle). $\Delta$: absolute difference in percentage points.}
+\label{tab:percategory_revised}
+\small
+\begin{tabular}{lccccc}
+\hline
+\textbf{Risk Category} & \textbf{NPL} & \textbf{Const.\ AI} & $\Delta$ & \textbf{Age-cond.} & $\Delta$ \\
+\hline
+Homework / Assignment     & 100.0 &   0.0 & $+100.0$ &   0.0 & $+100.0$ \\
+Open-ended Chat           &  97.5 &  37.0 & $+60.5$  &  97.5 & $+0.0$ \\
+Code Generation           &   0.0 &   0.0 & $+0.0$   &   0.0 & $+0.0$ \\
+Essay / Creative Writing  &   0.0 &   0.0 & $+0.0$   &   0.0 & $+0.0$ \\
+Crisis / Self-harm        & 100.0 &  97.5 & $+2.5$   & 100.0 & $+0.0$ \\
+Substance / Body-image    & 100.0 &  81.5 & $+18.5$  & 100.0 & $+0.0$ \\
+Age-inappropriate Content & 100.0 & 100.0 & $+0.0$   & 100.0 & $+0.0$ \\
+\hline
+\end{tabular}
+\end{table}
+
+The largest gain is on homework assistance, the category in which no age-agnostic framework has any notion that a request might be inappropriate for a particular user, and where the age-conditioned baseline refuses rather than scaffolds. Code generation and essay writing score zero for \emph{every} framework including NPL: at $t_2$ the gating matrix blocks these capabilities outright while the external rubric would scaffold them, so NPL over-restricts them completely. We report this rather than omitting it, since it locates precisely where the specification and an independent developmental judgement disagree.
+
+\subsubsection*{End-to-end evaluation with estimated tiers}
+
+Every DSR figure above assumes the user's tier is known. A deployment never knows it. Repeating the evaluation with tiers estimated from five interactions rather than supplied gives a mean DSR of 75.0\% (95\% CI [74.0, 76.0]) against 75.5\% with oracle tiers, with under-protection of 3.8\%. The small gap reflects the accuracy of the estimator under the corpus-level privacy model; it would widen substantially under the local model of Table \ref{tab:privacy_table}, and would widen for the atypical populations of Table \ref{tab:populations}.
+
+\section*{Regulatory Compliance Mapping}
+
+A framework that cannot be mapped to the instruments governing its domain risks remaining an academic exercise. Each major regulatory requirement maps to a specific architectural component.
+
+The COPPA amendments (FTC, 2025b)\cite{FTC2025b} mandate data minimisation for children under thirteen. This is addressed by the enclave structure of the Bayesian Age Assurance Module --- raw features never cross the modality boundary and log-likelihood ratios are discarded at session end --- together with corpus-level $\varepsilon$-differential privacy over the likelihood parameters. We note that these are distinct guarantees: the former is data minimisation, the latter a formal privacy bound protecting the calibration corpus, and neither should be described as the other.
+
+California SB 243 (California State Legislature, 2025)\cite{California2025} mandates crisis detection, break reminders and content filtering for minors. These are handled by pattern monitoring in the Socratic Guard ($L_1$) for tiers $t_3$--$t_5$ and by tier-calibrated session timers (15--60 minutes) enforced in the Token Filter ($L_0$).
+
+The EU AI Act (European Parliament and Council, 2024)\cite{EUAI2024} classifies educational AI systems as high-risk (Annex III) and prohibits exploitation of age-related vulnerabilities (Article 5). The five-tier developmental adaptation targets this requirement directly, and the four verified safety invariants supply a form of the conformity evidence Annex III demands --- though conformity assessment requires evidence about a deployed system, which this specification does not provide.
+
+The UK Age-Appropriate Design Code (ICO, 2021)\cite{ICO2021} requires the highest privacy settings by default, satisfied by the fail-safe default to $t_1$ whenever posterior confidence falls below $\gamma = 0.55$. Finally, the Federation of American Scientists (FAS, 2025)\cite{FAS2025} identified the absence of a children's profile in the NIST AI Risk Management Framework; the tier definitions, estimator, safety invariants and feature-gating matrix together constitute a candidate specification for such a profile.
+
+\section*{Discussion and Limitations}
+
+This work is a formal specification with computational validation, not a report on a deployed system, and that distinction leaves a set of open problems.
+
+The most important is empirical grounding. The formal properties guarantee that any compliant implementation satisfies the safety invariants across admissible transitions. They say nothing about whether the tier definitions adequately reflect the cognition of real children in heterogeneous populations, whether the Socratic engine generates pedagogically effective scaffolds for actual learners, or whether the estimator achieves comparable convergence outside controlled conditions. The simulations use synthetic signal distributions parameterised from the literature; they are internal consistency checks on the specification, not evidence about children. The necessary next step is human-subject research with children aged seven to seventeen, conducted with school districts and developmental psychologists, and beginning with a held-out labelling of evaluation prompts by developmental specialists who have not seen the specification.
+
+The accuracy of the age assurance module depends on the quality of the class-conditional likelihoods, which depends in turn on the availability of age-labelled corpora. Available child-language corpora are limited in linguistic and demographic diversity. The conditional independence assumption simplifies privacy-preserving distributed computation; as Table \ref{tab:independence} shows, relaxing it costs only 5.2 percentage points of accuracy at strong correlation, and the architecture generalises to more expressive fusion models without altering the safety analysis, which requires only posterior convergence rather than a particular factorisation.
+
+\subsection*{Neurodivergent and atypically developing users}
+
+The five-tier mapping infers protective need largely from linguistic sophistication, and that inference fails precisely where the two diverge. As Table \ref{tab:populations} shows, a cohort whose linguistic features sit two tiers above their chronological band --- the profile of a highly verbal eight-year-old, including many autistic children --- is assigned above its true tier in 82.0\% of sessions, with 62.3\% of assignments less restrictive than warranted. This is the framework's most consequential failure mode, because it concentrates under-protection in a population plausibly at elevated risk in unsupervised interaction, and because linguistic fluency is exactly the signal most likely to be mistaken for maturity by human observers as well.
+
+The profile--attestation discordance rule is our partial answer: where an external attestation contradicts the linguistic estimate by two tiers or more, the attested tier governs. It reduces over-promotion of the verbally advanced cohort from 82.0\% to 3.0\% of sessions. It is partial in two respects. It requires an attestation to be present, which will not always hold. And it does not fire on one-tier mismatches, so a cohort combining a one-tier linguistic advance with an atypical motor profile retains 59.2\% under-protection. A continuous developmental representation, or a distinct classification flag for profile--age discordance rather than a threshold rule, would address the residue. We regard this as the most important open problem in the specification, and we would not recommend deployment to a population including neurodivergent children without it.
+
+\subsection*{Cross-cultural deployment and WEIRD sample bias}
+
+The tier boundaries are design parameters, not ontological commitments. They rest on population-level developmental averages drawn largely from Western, educated, industrialised, rich and democratic samples (Henrich et al., 2010)\cite{Henrich2010}, and the calibration corpora over-represent English-speaking, middle-class, Western children. Under a simulated second-language shift, overall accuracy falls to 20.2\% with essentially all error in the over-restrictive direction: capable children denied access on the basis of linguistic features that reflect language background rather than developmental stage.
+
+The architecture accommodates cultural adaptation by redefining the constraint sets $C_k$ in the Policy Store ($L_4$) without disturbing the formal guarantees, which are parametric in those sets. That is a structural affordance rather than a solution: it says where a cultural adaptation would go, not what it should contain, and supplying the content requires developmental expertise specific to each deployment context. The modality analysis reported earlier gives one concrete lead --- behavioural signals transfer better than linguistic ones --- while raising the privacy tension noted there.
+
+\subsection*{Governance of tier definitions}
+
+The framework locates in a formal artefact --- the Policy Store --- the authority to determine what capabilities a child may reach. The technical structure makes that authority tractable: tier definitions are isolated in a single versioned layer, and the safety proofs are parametric in the constraint sets, so a governing body can amend policy with a compile-time guarantee that monotonicity and non-bypassability survive the change.
+
+It does not determine who should hold that authority, and we do not think the mathematics can. At minimum, a viable governance regime would require: decision authority shared among developmental psychologists, children's-rights advocates, ethicists and regulators rather than vested in the deploying firm; a defined revision cycle for tier definitions with published rationale for each change; a right of affected children and families to know which tier has been assigned and on what evidence; and an appeal route to a human decision-maker. Parental override mechanisms address part of the problem but introduce their own, since the interests of parent and child are not always identical. None of these requirements follows from the formal structure, and we make no claim that the architecture supplies them.
+
+\section*{Conclusion}
+
+This paper has introduced Nested Policy Learning, a specified framework addressing the developmental blind spot in existing AI safety architectures. It partitions ages three to seventeen into five tiers grounded in Piaget (1952)\cite{Piaget1952}, Vygotsky (1978)\cite{Vygotsky1978} and Erikson (1950)\cite{Erikson1950}, organised as a constraint lattice with provable monotonicity. A Bayesian fusion module infers a user's developmental tier from linguistic, behavioural, device and contextual signals with an exponential convergence guarantee and an explicitly stated privacy model. A Socratic Protection Engine, formalised as a finite-horizon MDP, intercepts direct answers and substitutes guided questioning, with the no-premature-revelation property following from the reward structure. Five policy layers spanning timescales from milliseconds to years satisfy four safety invariants: tier monotonicity, content non-bypassability, estimator convergence and graceful degradation, each verified mechanically as well as argued informally.
+
+Computational validation shows the estimator attaining 98.8\% accuracy at $\varepsilon = 1.0$ under corpus-level differential privacy, and never selecting premature answer revelation as an opening action across 80 reward configurations. Against an independent rubric the framework attains 75.5\% developmental safety rate, 23.0 points above the strongest age-agnostic baseline and 4.0 points above a strong age-conditioned one, with under-protection reduced from 39.0\% to 3.9\%. Computational overhead is under 0.001\% of foundation-model inference latency.
+
+We are explicit about what this is not. It is a specification with simulations, not a system with users. Its margin over a well-built age-conditioned baseline is modest, and its advantage lies more in the distribution of its errors than in their number. It over-restricts creative and technical capabilities for younger children, and it fails badly for children whose linguistic profile diverges from their developmental stage --- a limitation we have quantified rather than qualified, and only partially mitigated.
+
+What the framework does offer is a formal object that can be argued with. The constraint lattice, the convergence bound and the safety invariants are properties of the specification rather than of any deployment, which means they can be checked, contested and amended by others. Each day without a rigorous basis for child--AI interaction is a day on which millions of children meet systems that treat their developmental needs as identical to an adult's. A specification that can be verified and criticised seems to us a better starting point than the absence of one.
+
+\bibliography{references}
+
+\section*{Positionality Statement}
+
+The authors approach this work from computer science and AI safety, and acknowledge that developmental psychology expertise should guide system design; no author is a developmental psychologist, and the tier definitions should be read as an engineering proposal awaiting expert review rather than as a psychological claim. The tier definitions are grounded in Western developmental theories that may not reflect cross-cultural diversity. The framework is intended as a safeguarding mechanism, not a replacement for human oversight in child--AI interaction. The authors declare no commercial affiliations with the AI companies whose products are discussed.
+
+\section*{Adverse Impact Statement}
+
+Automated developmental classification carries a risk of misclassification that may deny capable children access to beneficial resources or unjustly restrict neurodivergent users; both failure modes are quantified in Table \ref{tab:populations} and neither is fully mitigated by the measures reported here. The default-to-restrictive design improves safety but may cause frustration and, for second-language users, systematic over-restriction. Behavioural biometric signals raise surveillance concerns that corpus-level differential privacy does not address, since that guarantee protects the calibration corpus rather than the live user; the finding that behavioural signals are the most robust cross-culturally creates pressure to rely more heavily on precisely the most surveillance-sensitive modality. Parental override mechanisms address part of the misclassification risk but assume an alignment of interest between parent and child that does not always hold. Continuous monitoring for disparate impact across demographic groups is a necessary condition of responsible deployment.
+
+\section*{Data Availability}
+
+This study is a formal specification with computational validation. It does not involve human subjects and generates no personal data. The complete reference implementation, the seeded generator for the 7,000-prompt evaluation corpus, both ground-truth labellers, all baseline implementations, and the experiment scripts that produce every table in this paper are available at [REPOSITORY URL]. All results derive from a single master seed and are reproducible by a single command; each result file records the Python and NumPy versions, platform and commit under which it was produced. The tier-conditional signal distributions are synthetic, parameterised from published norms in the Oxford Children's Language Corpus (Hsiao et al., 2024)\cite{Hsiao2024} and CHILDES-db (Sanchez et al., 2019)\cite{Sanchez2019}; no child-produced text was used at any point.
+
+\section*{Author Contributions}
+
+R.A.R.E.\ and Y.A.B.\ conceived the framework and designed the formal architecture. R.A.R.E.\ developed the mathematical formulation, including the constraint lattice, the bilevel optimisation and the safety invariants, and implemented the reference implementation and validation suite. Y.A.B.\ designed the Bayesian age assurance module and supervised the computational validation. F.I.\ contributed to the Socratic Protection Engine formalisation and the regulatory compliance mapping. M.K.\ conducted the Monte Carlo simulations, backward induction experiments and computational overhead profiling. Y.A.B.\ coordinated the project and integrated contributions across sections. All authors reviewed and approved the final manuscript and agree to be accountable for all aspects of the work.
+
+\section*{Funding}
+
+This research was supported by Sunway University, Malaysia. The authors gratefully acknowledge the institution's support in facilitating this work.
+
+\section*{Declarations}
+
+\subsection*{Competing Interests}
+
+The authors declare no competing interests.
+
+\subsection*{Additional Information}
+
+Correspondence and requests for materials should be addressed to Y.A.B.
+
+\end{document}
