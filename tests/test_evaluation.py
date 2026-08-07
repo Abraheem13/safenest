@@ -70,7 +70,7 @@ def test_wilson_interval_brackets_the_point_estimate():
 
 
 def test_matrix_labeller_makes_npl_look_near_perfect(corpus):
-    """Demonstrates the circularity Reviewer 2 identified: scored against its own
+    """Demonstrates the circularity
     specification, NPL is near-perfect by construction."""
     npl = make_npl()
     r = evaluate_framework(npl, corpus, matrix_label)["overall"]

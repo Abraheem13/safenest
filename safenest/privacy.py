@@ -1,8 +1,9 @@
 """Differential privacy for the age-assurance module.
 
-This module exists to answer Reviewer 1 major comment 3 ("define the privacy
-unit, adjacency relation, sensitivity assumptions, and what output is
-protected") in a form that is auditable rather than asserted.
+A differential-privacy claim is only meaningful once the privacy unit, the
+adjacency relation, the sensitivity bound and the protected output are all
+fixed. This module fixes them in code, so the guarantee is auditable rather
+than asserted.
 
 Every DP claim needs four things pinned down. Each has a name here:
 

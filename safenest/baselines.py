@@ -1,8 +1,8 @@
 """Frameworks under comparison.
 
-Reviewer 1's major comment 5 is that comparing NPL only against age-agnostic
-guardrails is an unfair fight. Three stronger, age-*aware* baselines are
-therefore included, and the paper should report the full table:
+Comparing a developmental architecture only against age-agnostic guardrails is
+not an informative test, so three stronger age-*aware* baselines are included
+alongside them:
 
   age-agnostic   NeMo-style, LlamaGuard-style, LlamaFirewall-style,
                  Constitutional-AI-style. Content filters with no user model.

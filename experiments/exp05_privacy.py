@@ -1,11 +1,10 @@
-"""Experiment 05 -- privacy/utility (regenerates Table 12 and Figure 8), and the
-formal privacy statement Reviewer 1 asks for in major comment 3.
+"""Experiment 05 -- privacy/utility trade-off and the formal privacy statement.
 
 The headline finding is negative and load-bearing: under a rigorous *local* DP
-accounting at the live user's own signals, eps = 1.0 cannot support a five-way
-developmental classification at any accuracy. The manuscript's 98.6% at eps=1.0
-is only attainable if the eps guarantee is understood as protecting the
-calibration corpus, not the live user. Both readings are measured here.
+accounting over the live user's own signals, eps = 1.0 cannot support a five-way
+developmental classification at any usable accuracy. High accuracy at eps = 1.0
+is attainable only when the guarantee is understood as protecting the
+calibration corpus rather than the live user. Both readings are measured here.
 """
 from __future__ import annotations
 
@@ -31,7 +30,7 @@ N_INTERACTIONS = 10
 def run() -> dict:
     rng = rng_for("privacy")
 
-    print("Formal privacy statements (Reviewer 1, major comment 3):")
+    print("Formal privacy statements:")
     statements = {}
     for mode in PrivacyMode:
         d = PrivacyConfig(mode=mode).describe()
@@ -103,12 +102,12 @@ def run() -> dict:
         "n_trials": N_TRIALS,
         "n_interactions": N_INTERACTIONS,
         "verdict": (
-            "The 98.6% at eps=1.0 reported in the manuscript is reproducible only "
-            "under CORPUS-mode DP, where eps protects the children in the "
-            "calibration corpora. Under local DP applied to the live user's own "
-            "signals, eps=1.0 gives near-chance accuracy, and the cumulative loss "
-            "over a 10-interaction session is eps=10 under basic composition. The "
-            "paper must state which reading it intends."
+            "High accuracy at eps=1.0 is reproducible only under CORPUS-mode DP, "
+            "where eps protects the children in the calibration corpora. Under "
+            "local DP applied to the live user's own signals, eps=1.0 gives "
+            "near-chance accuracy, and the cumulative loss over a 10-interaction "
+            "session is eps=10 under basic composition. Any eps claim must state "
+            "which reading it intends."
         ),
     }
 

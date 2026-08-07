@@ -1,11 +1,10 @@
-"""Experiment 02 -- signal separability, and the D_min/convergence reconciliation
-that Reviewer 2 asks for in concern 2.3 (regenerates Tables 4 and 9).
+"""Experiment 02 -- signal separability and convergence reconciliation.
 
-The reviewer suspected the discrepancy ran one way (theory optimistic, simulation
-pessimistic, with DP noise as the explanation). Recomputing both sides from the
-same parameters shows the manuscript's Table 8 was instead *too pessimistic*
-relative to its own Table 9: the two tables were not generated from a single
-signal model.
+Computes the pairwise KL divergence matrix over the linguistic feature space,
+derives D_min and the Sanov interaction bound from it, and compares that bound
+against the convergence measured in Experiment 01. Both sides are computed from
+the same signal model, so the theoretical and empirical figures cannot drift
+apart.
 """
 from __future__ import annotations
 
@@ -108,7 +107,7 @@ def _reconcile(d_min: float) -> dict:
     emp = json.loads(path.read_text())
     predicted = sanov_interactions(d_min, 0.10)
     observed = emp["first_milestone_above_90"]
-    print(f"\n  Reconciliation (Reviewer 2, concern 2.3):")
+    print(f"\n  Reconciliation :")
     print(f"    Sanov bound at measured D_min={d_min:.2f}, delta=0.10: "
           f"n >= {predicted:.1f} interactions")
     print(f"    Observed first milestone >=90% per tier: {observed}")

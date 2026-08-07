@@ -3,11 +3,11 @@
 This is the experiment the reviews hit hardest, so it reports:
 
   * both ground truths side by side -- the circular `matrix` labeller and the
-    independent `rubric` labeller (Reviewer 2, concern 1.2);
+    independent `rubric` labeller ;
   * three age-aware baselines alongside the four age-agnostic ones
-    (Reviewer 1, major comment 5);
+    ;
   * Wilson confidence intervals and paired McNemar tests, so the headline gap
-    comes with a significance statement (Reviewer 1, major comment 4);
+    comes with a significance statement ;
   * an end-to-end condition in which tiers are *estimated* rather than known,
     which is the number that actually corresponds to a deployment.
 """

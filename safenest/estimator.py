@@ -1,9 +1,8 @@
 """Multi-signal Bayesian age assurance (Section 3.3).
 
 Sequential posterior update over tiers from per-modality log-likelihood ratios,
-with a fail-safe default to t1, Mahalanobis bypass detection, and an explicit
-profile/attested-age discordance check (added in response to Reviewer 2's
-concern 3.1 on neurodivergent users).
+with a fail-safe default to t1, Mahalanobis bypass detection and an explicit
+profile/attested-age discordance check for atypically developing users.
 """
 from __future__ import annotations
 
@@ -101,7 +100,7 @@ class BayesianAgeEstimator:
         return self.mahalanobis(linguistic, tier) ** 2 > MAHALANOBIS_CHI2_ALPHA01_DF5
 
     def discordance_flag(self, linguistic_tier: Tier, attested_tier: Tier | None) -> bool:
-        """Profile/attested-age discordance (Reviewer 2, concern 3.1).
+        """Profile/attested-age discordance.
 
         When an external attestation (parent, school device certificate,
         verified account) states a tier that the linguistic profile contradicts

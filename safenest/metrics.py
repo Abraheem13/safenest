@@ -1,8 +1,8 @@
 """Evaluation metrics.
 
-Reviewer 2's concern 4.2 is that the Developmental Safety Rate is used in
-Table 14 but never defined. It is defined here, once, and the definition is
-exported as `DSR_DEFINITION` so the paper can quote the implementation.
+The Developmental Safety Rate is defined here, once. The definition is exported
+as `DSR_DEFINITION` so that prose describing the metric and the code computing
+it cannot drift apart.
 """
 from __future__ import annotations
 

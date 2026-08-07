@@ -1,8 +1,8 @@
-"""Experiment 07 -- computational overhead (regenerates Table 13) and the cost
-of the conditional-independence assumption (Reviewer 2, concern 1.3).
+"""Experiment 07 -- computational overhead and the cost of the
+conditional-independence assumption.
 
-Latencies are measured on this machine rather than asserted; the paper should
-report the hardware alongside them.
+Latencies are measured on the host machine rather than asserted, and the
+platform is recorded alongside them in the result file.
 """
 from __future__ import annotations
 
@@ -77,8 +77,8 @@ def run() -> dict:
         print(f"    as a share of a {llm_ms} ms LLM response: "
               f"{100 * sync / (llm_ms / 1000):.4f}%")
 
-    # ---- conditional independence (Reviewer 2, concern 1.3) ----------------
-    print("\n  Cost of the conditional-independence assumption (concern 1.3):")
+    # ---- cost of the conditional-independence assumption -------------------
+    print("\n  Cost of the conditional-independence assumption:")
     ci_rows = []
     ci = {}
     for rho in CORRELATIONS:

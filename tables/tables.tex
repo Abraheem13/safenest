@@ -93,8 +93,8 @@ Local DP at inference & 33.0 & 36.5 & 34.2 & 35.5 & 37.2 & 37.0 & 39.0 & 48.0 & 
 \begin{table}[t]
 \centering
 \caption{Measured per-operation latency (single core, macOS-26.5.2-arm64-arm-64bit-Mach-O).
-Total synchronous per-response overhead is 3.3\,$\mu$s,
-or 0.0007\% of a 500\,ms foundation-model response.
+Total synchronous per-response overhead is 3.2\,$\mu$s,
+or 0.0006\% of a 500\,ms foundation-model response.
 Regenerated from \texttt{experiments/exp07\_overhead.py}.}
 \label{tab:overhead}
 \begin{tabular}{lc}
@@ -102,11 +102,11 @@ Regenerated from \texttt{experiments/exp07\_overhead.py}.}
 Component & Latency \\
 \midrule
 L0: Token Filter (per response, 40 tokens) & 1.4\,$\mu$s \\
-L1: Socratic Guard (per response) & 90\,ns \\
-L4: Policy Store (per query) & 990\,ns \\
-Full engine (per response) & 3.3\,$\mu$s \\
-L2: Bayesian update (per interaction) & 29.1\,$\mu$s \\
-Socratic MDP lookup (per step) & 142\,ns \\
+L1: Socratic Guard (per response) & 94\,ns \\
+L4: Policy Store (per query) & 1.0\,$\mu$s \\
+Full engine (per response) & 3.2\,$\mu$s \\
+L2: Bayesian update (per interaction) & 28.2\,$\mu$s \\
+Socratic MDP lookup (per step) & 135\,ns \\
 \bottomrule
 \end{tabular}
 \end{table}

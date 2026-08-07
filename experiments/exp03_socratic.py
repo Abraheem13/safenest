@@ -1,5 +1,5 @@
 """Experiment 03 -- optimal Socratic policy and reward-weight sensitivity
-(regenerates Tables 10 and 11, and answers Reviewer 2 concern 2.2).
+(regenerates Tables 10 and 11, ).
 
 The manuscript states the qualitative claims but never reports alpha_learn,
 alpha_reveal, alpha_frust or gamma. All four are printed here, and the sweep
@@ -25,7 +25,7 @@ def run() -> dict:
     params = RewardParams()
     mdp = SocraticMDP(params=params)
 
-    print("Reward parameters actually used (Reviewer 2, concern 2.2):")
+    print("Reward parameters actually used :")
     for k, v in vars(params).items():
         print(f"  {k:24s} = {v}")
     print(f"  binding condition: alpha_reveal={params.alpha_reveal} > "
@@ -74,7 +74,7 @@ def run() -> dict:
     print("    does not follow from its own reward function; it requires the")
     print("    metacognition term reported above.")
 
-    # ---- sensitivity analysis (the reviewer's explicit request) -------------
+    # ---- sensitivity analysis  -------------
     sweep = sensitivity_analysis(
         alpha_reveal_grid=np.array([0.45, 0.6, 0.8, 1.0, 1.5]),
         alpha_frust_grid=np.array([0.0, 0.15, 0.25, 0.5]),

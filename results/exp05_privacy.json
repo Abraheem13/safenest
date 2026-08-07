@@ -1,10 +1,10 @@
 {
   "provenance": {
-    "timestamp": "2026-08-07T00:31:59",
+    "timestamp": "2026-08-07T01:15:22",
     "python": "3.13.5",
     "numpy": "2.4.4",
     "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
-    "git_commit": "38cb393",
+    "git_commit": "d16499f",
     "master_seed": 20260806
   },
   "privacy_statements": {
@@ -105,5 +105,5 @@
   "local_snr_at_eps1": 0.05,
   "n_trials": 400,
   "n_interactions": 10,
-  "verdict": "The 98.6% at eps=1.0 reported in the manuscript is reproducible only under CORPUS-mode DP, where eps protects the children in the calibration corpora. Under local DP applied to the live user's own signals, eps=1.0 gives near-chance accuracy, and the cumulative loss over a 10-interaction session is eps=10 under basic composition. The paper must state which reading it intends."
+  "verdict": "High accuracy at eps=1.0 is reproducible only under CORPUS-mode DP, where eps protects the children in the calibration corpora. Under local DP applied to the live user's own signals, eps=1.0 gives near-chance accuracy, and the cumulative loss over a 10-interaction session is eps=10 under basic composition. Any eps claim must state which reading it intends."
 }

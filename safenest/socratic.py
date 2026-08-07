@@ -1,9 +1,9 @@
 """Socratic Protection Engine (Section 3.5): a finite-horizon MDP over
 pedagogical actions, solved by backward induction.
 
-Reviewer 2 concern 2.2 asks for the reward weights to be reported and for a
-sensitivity analysis. Every weight is therefore a named field of `RewardParams`
-with a documented default, and `sensitivity_analysis` sweeps them.
+Every reward weight is a named field of `RewardParams` with a documented
+default, and `sensitivity_analysis` sweeps them, so no qualitative claim about
+the optimal policy rests on an unstated parameter choice.
 """
 from __future__ import annotations
 

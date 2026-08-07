@@ -1,10 +1,9 @@
 """Generate the manuscript's tables as LaTeX, straight from results/*.json.
 
-Run after `run_all.py`. Writes `paper/tables.tex`, ready to \\input.
+Run after `run_all.py`. Writes `tables/tables.tex`, ready to \\input.
 
-The point of generating rather than transcribing: the Table 8 / Table 9
-contradiction a reviewer found got in because numbers were copied by hand from
-two different models. Nothing here is typed twice.
+Generating rather than transcribing keeps every published number identical to
+the number the code produced. Nothing here is typed twice.
 """
 from __future__ import annotations
 
@@ -16,8 +15,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from experiments.common import RESULTS, ROOT  # noqa: E402
 
-PAPER = ROOT / "paper"
-PAPER.mkdir(exist_ok=True)
+TABLES = ROOT / "tables"
+TABLES.mkdir(exist_ok=True)
 
 TIERS = ["t1", "t2", "t3", "t4", "t5"]
 TIER_AGES = {"t1": "3--6", "t2": "7--9", "t3": "10--12", "t4": "13--15", "t5": "16--17"}
@@ -291,7 +290,7 @@ def main() -> None:
             rf"of prompts (Cohen's $\kappa={agree['cohens_kappa']:.3f}$).",
         ),
     ]
-    out = PAPER / "tables.tex"
+    out = TABLES / "tables.tex"
     out.write_text("\n".join(parts))
     print(f"wrote {out.relative_to(ROOT)} ({len(parts) - 2} tables)")
     print("\\input{tables} in your manuscript, or paste the individual environments.")

@@ -1,14 +1,14 @@
 """Ground-truth labelling for the comparative evaluation.
 
-Reviewer 2's concern 1.2 is the sharpest methodological objection in either
-review: in the original evaluation the ground truth was "derived from the
-feature-gating matrix (Table 7)" -- the same artefact being evaluated. Any
-system that implements Table 7 correctly scores ~100% by construction.
+Deriving ground-truth labels from the feature-gating matrix would make the
+evaluation circular: the matrix is part of the specification under test, so any
+system implementing it correctly scores ~100% by construction.
 
 Two labellers are therefore provided:
 
-  matrix_label   the original, circular labeller. Retained only so the paper
-                 can report both numbers and quantify the circularity.
+  matrix_label   the circular labeller, reading the specification directly.
+                 Retained only so both numbers can be reported and the
+                 circularity quantified.
   rubric_label   an independent labeller written from the *external* sources --
                  chronological age, the regulatory instruments (COPPA, CA SB
                  243, EU AI Act Art. 5 / Annex III, ICO AADC), and Piagetian
@@ -16,9 +16,8 @@ Two labellers are therefore provided:
                  FEATURE_GATING, and it decides from the prompt's own features
                  rather than from the tier index.
 
-`agreement` reports Cohen's kappa between them, which is the number the paper
-should quote when characterising how much of the headline improvement survives
-an independent ground truth.
+`agreement` reports Cohen's kappa between them, which quantifies how much of
+any measured improvement survives an independent ground truth.
 """
 from __future__ import annotations
 

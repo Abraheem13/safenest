@@ -17,7 +17,7 @@ RESULTS.mkdir(exist_ok=True)
 FIGURES.mkdir(exist_ok=True)
 
 #: Master seed. Every experiment derives its own stream from this, so the whole
-#: results set is reproducible from one number (Reviewer 1, major comment 4).
+#: results set is reproducible from this one number.
 MASTER_SEED = 20260806
 
 

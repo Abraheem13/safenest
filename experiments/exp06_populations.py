@@ -1,12 +1,10 @@
-"""Experiment 06 -- neurodivergent and non-WEIRD populations.
+"""Experiment 06 -- atypically developing and non-Western populations.
 
-Answers Reviewer 2 concern 3.1 (neurodivergent users) and 3.2 (WEIRD sample
-bias) with measurements rather than caveats, and evaluates the concrete
-mitigation the reviewer asked for: an attestation/profile discordance flag that
-holds a linguistically-advanced young child at the protective tier.
+Quantifies how the tier estimator behaves when linguistic profile and protective
+need diverge, and evaluates the profile/attestation discordance rule that holds a
+linguistically advanced young child at the protective tier.
 
-Also reports which signal modality is most robust to cross-cultural shift,
-which is the specific question Reviewer 2 poses in concern 3.2.
+Also reports which signal modality is most robust to cross-cultural shift.
 """
 from __future__ import annotations
 
@@ -65,8 +63,8 @@ def run() -> dict:
           "Tier estimation by population (n=10 interactions). Under-protection means "
           "the child was assigned a *less* restrictive tier than their true one.")
 
-    # ---- the worked case the reviewer describes ----------------------------
-    print("\n  Worked case (Reviewer 2, concern 3.1): a highly verbal 8-year-old")
+    # ---- worked case: linguistic profile two tiers above chronological band --
+    print("\n  Worked case: a highly verbal 8-year-old")
     print("  whose MTLD and parse depth read as t4.")
     gen = SignalModel(profile=PROFILES["neurodivergent_verbal"])
     unflagged = [
@@ -84,7 +82,7 @@ def run() -> dict:
     print(f"    assigned above t2 with the flag:    {100 * up_fl:.1f}% of sessions")
 
     # ---- modality robustness to cross-cultural shift -----------------------
-    print("\n  Modality robustness under non-WEIRD shift (Reviewer 2, concern 3.2):")
+    print("\n  Modality robustness under non-Western / L2 shift:")
     robustness = {}
     base = SignalModel()
     shifted = SignalModel(profile=PROFILES["non_weird_l2"])

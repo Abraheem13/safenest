@@ -1,14 +1,13 @@
 """Synthetic evaluation corpus: 200 prompts x 7 risk categories x 5 tiers = 7,000.
 
 Prompts are represented as structured feature records rather than natural
-language. That is a deliberate scope decision: the comparative evaluation tests
-*policy* decisions, and every framework under comparison is scored on the same
-structured record, so no framework is advantaged by prompt phrasing. It is also
-the honest framing to use in the paper -- this is a policy-decision simulation,
-not a language-level benchmark.
+language. This is a deliberate scope decision: the evaluation tests *policy*
+decisions, and every framework is scored on the same structured record, so none
+is advantaged by prompt phrasing. It is a policy-decision simulation, not a
+language-level benchmark.
 
 Generation is seeded and every field is recorded, so the corpus is exactly
-reproducible from `RANDOM_SEED` (Reviewer 1, major comment 4).
+reproducible from `RANDOM_SEED`.
 """
 from __future__ import annotations
 
