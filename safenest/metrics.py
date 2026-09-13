@@ -116,13 +116,17 @@ def mcnemar(
     b01 = sum(1 for a, b in zip(a_correct, b_correct) if a and not b)
     b10 = sum(1 for a, b in zip(a_correct, b_correct) if b and not a)
     if b01 + b10 == 0:
-        return {"b01": 0, "b10": 0, "chi2": 0.0, "p_value": 1.0}
+        return {"b01": 0, "b10": 0, "chi2": 0.0, "p_value": 1.0, "odds_ratio": 1.0}
     chi2 = (abs(b01 - b10) - 1) ** 2 / (b01 + b10)
+    # Effect size: the ratio of discordant pairs. Reported alongside chi2
+    # because a p-value on 7,000 paired items says little about magnitude.
+    odds_ratio = (b01 + 0.5) / (b10 + 0.5)
     # Survival function of chi-square with 1 df, via the error function.
     from math import erfc, sqrt
 
     p = erfc(sqrt(chi2 / 2.0))
-    return {"b01": float(b01), "b10": float(b10), "chi2": float(chi2), "p_value": float(p)}
+    return {"b01": float(b01), "b10": float(b10), "chi2": float(chi2),
+            "p_value": float(p), "odds_ratio": float(odds_ratio)}
 
 
 def correctness_vector(

@@ -1,0 +1,19 @@
+\begin{table}[H]
+\caption{Paired McNemar comparisons of the full framework against each alternative, with Holm--Bonferroni correction.\label{tab:stats}}
+\small
+\begin{tabularx}{\textwidth}{Lcccc}
+\toprule
+\textbf{Full NPL versus} & \boldmath{$\Delta$} \textbf{(pp)} & \boldmath{$p$} \textbf{raw} & \boldmath{$p$} \textbf{Holm} & \textbf{Significant} \\
+\midrule
+Llama Guard-style & $+30.1$ & $<10^{-300}$ & $<10^{-300}$ & yes \\
+LlamaFirewall-style & $+36.5$ & $<10^{-300}$ & $<10^{-300}$ & yes \\
+NPL without Socratic substitution & $+21.3$ & $<10^{-300}$ & $<10^{-300}$ & yes \\
+NeMo Guardrails-style & $+33.5$ & $3.6\times10^{-320}$ & $1.8\times10^{-319}$ & yes \\
+Constitutional AI-style & $+23.0$ & $6.6\times10^{-263}$ & $2.6\times10^{-262}$ & yes \\
+COPPA binary rule & $+14.8$ & $1.2\times10^{-103}$ & $3.5\times10^{-103}$ & yes \\
+Child-safety classifier & $+12.0$ & $1.7\times10^{-84}$ & $3.5\times10^{-84}$ & yes \\
+Age-conditioned (oracle band) & $+4.0$ & $5.0\times10^{-10}$ & $5.0\times10^{-10}$ & yes \\
+\bottomrule
+\end{tabularx}
+\noindent{\footnotesize{Family of eight comparisons on $N = 7000$ paired prompts, independent rubric. McNemar's test with continuity correction; significance at $\alpha = 0.05$ after correction. Raw $p$-values below the double-precision floor are reported as bounds.}}
+\end{table}

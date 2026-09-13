@@ -69,7 +69,7 @@ def run() -> dict:
         for k, v in measurements.items()
     ]
     table(rows, ["Component", "Latency", "seconds"],
-          f"Table 13 (regenerated) -- measured overhead on {platform.processor() or platform.machine()}")
+          f"Measured overhead on {platform.processor() or platform.machine()}")
 
     sync = measurements["Full engine (per response)"]
     print(f"\n  Synchronous per-response overhead: {_fmt(sync)}")

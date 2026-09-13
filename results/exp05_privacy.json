@@ -1,10 +1,10 @@
 {
   "provenance": {
-    "timestamp": "2026-08-07T01:15:22",
+    "timestamp": "2026-09-13T16:29:42",
     "python": "3.13.5",
     "numpy": "2.4.4",
-    "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
-    "git_commit": "d16499f",
+    "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+    "git_commit": "af4dcbc",
     "master_seed": 20260806
   },
   "privacy_statements": {
@@ -59,13 +59,14 @@
       "post_processing": "posterior, tier assignment and response are post-processing",
       "epsilon_total": 1.0,
       "delta": 1e-05,
-      "adjacency": "add or remove all transcripts of one child from the calibration corpus",
-      "protected_output": "released tier-conditional likelihood parameters (means and covariances), computed offline",
-      "mechanism": "Gaussian",
-      "l2_sensitivity": 1.0,
-      "sigma": 4.844805262605389,
-      "per_parameter_noise_std": 0.0024224026313026943,
-      "corpus_n_children": 2000,
+      "adjacency": "replace one child in the calibration corpus; tier sizes are public",
+      "protected_output": "per-tier means of clipped, standardised linguistic feature vectors, computed offline; dispersions are public design constants and are not released",
+      "mechanism": "analytic Gaussian (Balle and Wang, 2018)",
+      "clip_sd": 3.0,
+      "n_per_tier": 400,
+      "l2_sensitivity": 0.0474341649025257,
+      "sigma": 0.1769593961564387,
+      "sigma_classical": 0.22980929174704837,
       "caveat": "live-user signals are not themselves DP-protected; they are protected architecturally (see PrivacyMode.NONE) and by retention limits"
     }
   },
@@ -81,29 +82,54 @@
     100.0
   ],
   "accuracy_corpus_dp": {
-    "0.1": 0.9825,
-    "0.3": 0.9975,
-    "0.5": 0.995,
-    "0.7": 0.99,
-    "1.0": 0.9875,
-    "3.0": 0.9925,
-    "10.0": 0.995,
-    "30.0": 0.9875,
-    "100.0": 0.9975
+    "0.1": 0.5940000000000001,
+    "0.3": 0.9620000000000003,
+    "0.5": 0.983125,
+    "0.7": 0.9873750000000001,
+    "1.0": 0.9893749999999999,
+    "3.0": 0.9906250000000002,
+    "10.0": 0.9908749999999997,
+    "30.0": 0.991625,
+    "100.0": 0.9922500000000001
   },
+  "accuracy_corpus_dp_sd_over_releases": {
+    "0.1": 0.0827095822743653,
+    "0.3": 0.0222710574513201,
+    "0.5": 0.006268721959059927,
+    "0.7": 0.006248749874975003,
+    "1.0": 0.0052365900164133596,
+    "3.0": 0.005054391654788934,
+    "10.0": 0.0030898017735770714,
+    "30.0": 0.004628377145393421,
+    "100.0": 0.005238081709939239
+  },
+  "corpus_noise_sigma_sd_units": {
+    "0.1": 1.458579990585346,
+    "0.3": 0.5330672543106704,
+    "0.5": 0.3335488260955595,
+    "0.7": 0.2450682582392009,
+    "1.0": 0.1769593961564387,
+    "3.0": 0.06596163933627322,
+    "10.0": 0.02371179922017308,
+    "30.0": 0.010185070838273191,
+    "100.0": 0.004490587980644255
+  },
+  "accuracy_nonprivate_release": 0.9904999999999999,
+  "accuracy_nonprivate_release_sd": 0.0053967582862307194,
+  "n_releases": 20,
   "accuracy_local_dp": {
-    "0.1": 0.33,
-    "0.3": 0.365,
-    "0.5": 0.3425,
-    "0.7": 0.355,
-    "1.0": 0.3725,
-    "3.0": 0.37,
-    "10.0": 0.39,
-    "30.0": 0.48,
-    "100.0": 0.62
+    "0.1": 0.3775,
+    "0.3": 0.355,
+    "0.5": 0.4375,
+    "0.7": 0.3675,
+    "1.0": 0.4,
+    "3.0": 0.42,
+    "10.0": 0.3825,
+    "30.0": 0.4225,
+    "100.0": 0.5925
   },
   "local_snr_at_eps1": 0.05,
   "n_trials": 400,
   "n_interactions": 10,
-  "verdict": "High accuracy at eps=1.0 is reproducible only under CORPUS-mode DP, where eps protects the children in the calibration corpora. Under local DP applied to the live user's own signals, eps=1.0 gives near-chance accuracy, and the cumulative loss over a 10-interaction session is eps=10 under basic composition. Any eps claim must state which reading it intends."
+  "verdict": "High accuracy at eps=1.0 is attainable only under CORPUS-mode DP, where (eps, delta) protects the children in the calibration corpus and the release is a clipped mean with analytically calibrated Gaussian noise. Under local DP applied to the live user's own signals, eps=1.0 gives near-chance accuracy, and the cumulative loss over a 10-interaction session is eps=10 under basic composition. Any eps claim must state which reading it intends."
 }

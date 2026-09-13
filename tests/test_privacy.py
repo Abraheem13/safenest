@@ -1,9 +1,15 @@
 import numpy as np
 import pytest
 
+import math
+
+from safenest.estimator import BayesianAgeEstimator, EstimatorState
 from safenest.privacy import (
-    Accounting, PrivacyConfig, PrivacyMode, PrivacyUnit, clip_llr, laplace_noise,
+    Accounting, PrivacyConfig, PrivacyMode, PrivacyUnit, analytic_gaussian_sigma,
+    clip_llr, gaussian_mechanism_delta, laplace_noise,
 )
+from safenest.signals import SignalModel, release_corpus_parameters
+from safenest.tiers import Tier
 
 
 def test_budget_must_sum_to_one():
@@ -53,10 +59,60 @@ def test_privacy_units_are_mode_specific():
     assert PrivacyConfig(mode=PrivacyMode.CORPUS).accounting is Accounting.ONE_SHOT
 
 
-def test_corpus_parameter_noise_shrinks_with_corpus_size():
-    small = PrivacyConfig(mode=PrivacyMode.CORPUS, corpus_n_children=100)
-    large = PrivacyConfig(mode=PrivacyMode.CORPUS, corpus_n_children=10_000)
-    assert large.corpus_parameter_noise_std() < small.corpus_parameter_noise_std()
+def test_corpus_sensitivity_matches_the_closed_form():
+    c = PrivacyConfig(mode=PrivacyMode.CORPUS, corpus_n_per_tier=400,
+                      corpus_clip_sd=3.0, corpus_n_features=5)
+    assert c.corpus_l2_sensitivity() == pytest.approx(math.sqrt(2) * 6 * math.sqrt(5) / 400)
+
+
+def test_corpus_noise_shrinks_with_corpus_size():
+    small = PrivacyConfig(mode=PrivacyMode.CORPUS, corpus_n_per_tier=100)
+    large = PrivacyConfig(mode=PrivacyMode.CORPUS, corpus_n_per_tier=10_000)
+    assert large.corpus_gaussian_sigma() < small.corpus_gaussian_sigma()
+
+
+def test_analytic_gaussian_sigma_attains_the_target_delta():
+    for eps in (0.1, 1.0, 10.0):
+        sigma = analytic_gaussian_sigma(eps, 1e-5, 1.0)
+        assert gaussian_mechanism_delta(eps, sigma, 1.0) <= 1e-5
+        assert gaussian_mechanism_delta(eps, 0.99 * sigma, 1.0) > 1e-5
+
+
+def test_analytic_gaussian_is_never_looser_than_the_classical_bound_below_eps_1():
+    for eps in (0.1, 0.5, 0.9):
+        c = PrivacyConfig(mode=PrivacyMode.CORPUS, epsilon_total=eps)
+        assert c.corpus_gaussian_sigma() <= c.corpus_classical_sigma() + 1e-12
+
+
+def test_corpus_release_perturbs_only_the_linguistic_means():
+    rng = np.random.default_rng(0)
+    cfg = PrivacyConfig(mode=PrivacyMode.CORPUS, epsilon_total=1.0)
+    base = SignalModel()
+    released = release_corpus_parameters(base, cfg, rng)
+    for t in Tier:
+        m0, s0 = base.linguistic_params(t)
+        m1, s1 = released.linguistic_params(t)
+        assert np.array_equal(s0, s1)
+        assert not np.array_equal(m0, m1)
+        assert base.typing_params(t) == released.typing_params(t)
+
+
+def test_local_release_is_k_minus_1_clipped_ratios_against_t1(monkeypatch):
+    """Noise is drawn for exactly K-1 released coordinates per modality, which is
+    what the 2C(K-1) sensitivity assumes."""
+    import safenest.estimator as estimator_module
+    shapes = []
+
+    def spy(scale, shape, rng):
+        shapes.append(shape)
+        return np.zeros(shape)
+
+    monkeypatch.setattr(estimator_module, "laplace_noise", spy)
+    rng = np.random.default_rng(1)
+    est = BayesianAgeEstimator(
+        privacy=PrivacyConfig(mode=PrivacyMode.LOCAL_INFERENCE, epsilon_total=1.0))
+    est.observe(EstimatorState(), SignalModel().sample(Tier.T3, rng), rng)
+    assert shapes == [(4,)] * 4
 
 
 def test_describe_reports_the_four_required_elements():

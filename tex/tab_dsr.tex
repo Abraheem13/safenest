@@ -1,0 +1,23 @@
+\begin{table}[H]
+\caption{Developmental Safety Rate (DSR) against the independent rubric, $N = 7000$ prompts.\label{tab:dsr}}
+\small
+\begin{tabularx}{\textwidth}{Lccccc}
+\toprule
+\textbf{Framework} & \textbf{DSR} & \textbf{95\% CI} & \textbf{Under} & \textbf{Over} & \textbf{SD (seeds)} \\
+\midrule
+\multicolumn{6}{l}{\emph{Age-agnostic}} \\
+\quad NeMo Guardrails-style & 42.0 & [40.8, 43.1] & 58.0 & 0.0 & 0.45 \\
+\quad LlamaFirewall-style & 39.0 & [37.9, 40.1] & 56.0 & 5.0 & 0.47 \\
+\quad Llama Guard-style & 45.3 & [44.2, 46.5] & 47.0 & 7.7 & 0.58 \\
+\quad Constitutional AI-style & 52.5 & [51.3, 53.7] & 39.0 & 8.5 & 0.52 \\
+\multicolumn{6}{l}{\emph{Age-aware}} \\
+\quad COPPA binary rule & 60.6 & [59.5, 61.8] & 26.1 & 13.3 & 0.47 \\
+\quad Child-safety classifier & 63.4 & [62.3, 64.6] & 27.4 & 9.1 & 0.59 \\
+\quad Age-conditioned (oracle band) & 71.5 & [70.4, 72.6] & 10.0 & 18.5 & 0.48 \\
+\multicolumn{6}{l}{\emph{Nested Policy Learning}} \\
+\quad NPL without Socratic substitution & 54.2 & [53.0, 55.3] & 1.9 & 44.0 & 0.27 \\
+\quad \textbf{NPL (full)} & \textbf{75.5} & [74.5, 76.5] & 3.9 & 20.6 & 0.67 \\
+\bottomrule
+\end{tabularx}
+\noindent{\footnotesize{All values are percentages; DSR, under-protection and over-restriction sum to 100. The confidence interval is the Wilson score interval. ``SD (seeds)'' is the standard deviation of DSR across 20 independently generated corpora. ``-style'' marks a re-implementation of the system's documented decision rule, not the shipped product.}}
+\end{table}

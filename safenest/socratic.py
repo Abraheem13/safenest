@@ -1,4 +1,4 @@
-"""Socratic Protection Engine (Section 3.5): a finite-horizon MDP over
+"""Socratic Protection Engine: a finite-horizon MDP over
 pedagogical actions, solved by backward induction.
 
 Every reward weight is a named field of `RewardParams` with a documented
@@ -32,7 +32,7 @@ ACTIONS: tuple[Action, ...] = tuple(Action)
 
 @dataclass(frozen=True)
 class RewardParams:
-    """Reward weights of Equation 15. These are the values used everywhere.
+    """Reward weights. These are the values used everywhere.
 
     alpha_reveal must exceed the largest achievable one-step learning reward,
     alpha_learn * max(delta), or the optimal policy could open with a partial
@@ -44,11 +44,11 @@ class RewardParams:
     alpha_reveal: float = 0.60
     alpha_frust: float = 0.25
     #: Credit for metacognitive confirmation, scaled by the tier's metacognitive
-    #: capacity. Equation 15 as published rewards only knowledge gain, and under
+    #: capacity. the reward without the metacognition term rewards only knowledge gain, and under
     #: that reward VerifyRequest is dominated at every tier -- so the
     #: manuscript's claim that VerifyRequest usage rises with tier does not
     #: follow from its own reward function. Setting alpha_meta = 0 reproduces
-    #: the published Equation 15 exactly; the default credits metacognition and
+    #: the reward without the metacognition term; the default credits metacognition and
     #: makes the claim reproducible. Experiment 03 reports both.
     alpha_meta: float = 0.06
     discount: float = 0.95
@@ -66,7 +66,7 @@ class RewardParams:
             )
 
 
-#: delta(a, t_k): expected knowledge gain per action and tier (Table 6).
+#: delta(a, t_k): expected knowledge gain per action and tier.
 #: Rows follow ACTIONS order; columns follow t1..t5.
 DELTA = np.array(
     [
@@ -111,7 +111,7 @@ class SocraticMDP:
 
     # -- dynamics ----------------------------------------------------------
     def transition_matrix(self, action: Action, tier: Tier) -> np.ndarray:
-        """P(q' | q, a, t_k), Equation 14: a ZPD-centred Gaussian kernel,
+        """P(q' | q, a, t_k): a ZPD-centred Gaussian kernel,
         truncated to the grid and renormalised. Row i is the distribution of q'
         given q = q_grid[i]."""
         key = ("P", action, int(tier))
@@ -125,7 +125,7 @@ class SocraticMDP:
         return self._cache[key]
 
     def reward_vector(self, action: Action, tier: Tier) -> np.ndarray:
-        """R(s, a) of Equation 15, as an expectation over q'."""
+        """R(s, a), as an expectation over q'."""
         p = self.transition_matrix(action, tier)
         q = self.q_grid
         expected_gain = p @ q - q
@@ -140,7 +140,7 @@ class SocraticMDP:
 
     # -- solution ----------------------------------------------------------
     def solve(self, tier: Tier) -> tuple[np.ndarray, np.ndarray]:
-        """Backward induction on Equation 16.
+        """Backward induction.
 
         Returns (policy, value) each of shape (H, n_q); row p-1 is protocol step p.
         """
@@ -168,7 +168,7 @@ class SocraticMDP:
         return self.params.horizon * self.params.n_q * len(ACTIONS) * len(ALL_TIERS)
 
     def action_distribution(self, tier: Tier, step: int = 1) -> dict[Action, float]:
-        """Percentage of knowledge states for which each action is optimal (Table 10)."""
+        """Percentage of knowledge states for which each action is optimal."""
         policy, _ = self.solve(tier)
         choices = policy[step - 1]
         return {
@@ -180,7 +180,7 @@ class SocraticMDP:
         return float(value[0].mean())
 
     def trajectory(self, tier: Tier, q0: float) -> list[tuple[int, Action, float, float]]:
-        """A representative optimal trajectory (Table 11)."""
+        """A representative optimal trajectory."""
         policy, _ = self.solve(tier)
         q = q0
         out = []

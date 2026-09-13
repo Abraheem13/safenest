@@ -66,7 +66,7 @@ def run() -> dict:
             rows.append(row)
         table(rows,
               ["Framework", *[t.label for t in ALL_TIERS], "Mean", "95% CI", "Under", "Over"],
-              f"Tables 14+15 (regenerated) -- DSR by tier, {lname} ground truth (%)")
+              f"Tables 14+15 -- DSR by tier, {lname} ground truth (%)")
         results[lname] = per_framework
 
         npl = per_framework["NPL (ours)"]["overall"]
@@ -99,7 +99,18 @@ def run() -> dict:
         })
     table(rows, ["Risk category", "NPL", REFERENCE_BASELINE, "delta vs CAI",
                  STRONGEST_BASELINE, "delta vs age-cond"],
-          "Table 16 (regenerated) -- per-category DSR at t2, rubric ground truth (%)")
+          "Per-category DSR at t2, rubric ground truth (%)")
+
+    # Every framework on every t2 category, so no per-cell claim about "all
+    # baselines" has to be read off a three-framework table.
+    per_category_t2_all = {
+        cat.value: {
+            name: evaluate_framework(f, [p for p in t2 if p.category is cat], rubric)[
+                "overall"]["dsr"]
+            for name, f in frameworks.items()
+        }
+        for cat in sorted({p.category for p in t2}, key=lambda c: c.value)
+    }
 
     # ---- end-to-end: estimated rather than oracle tiers ---------------------
     e2e = _end_to_end(prompts, frameworks, rubric)
@@ -117,6 +128,7 @@ def run() -> dict:
             for lname, per in results.items()
         },
         "per_category_t2_rubric": rows,
+        "per_category_t2_rubric_all_frameworks": per_category_t2_all,
         "end_to_end_estimated_tiers": e2e,
     }
 

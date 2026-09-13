@@ -1,4 +1,4 @@
-"""Tier-conditional signal models (Table 3) and synthetic user generation.
+"""Tier-conditional signal models and synthetic user generation.
 
 Four modalities, matching the manuscript:
 
@@ -8,14 +8,15 @@ Four modalities, matching the manuscript:
   device       Bernoulli child-account / parental-controls flag
   contextual   Bernoulli presence of an external attestation
 
-Parameters are calibrated to published developmental-linguistics norms
-(CHILDES-db; Oxford Children's Language Corpus; developmental typing norms).
-They are declared here in one place so the paper's Table 3 can be regenerated
-from code rather than transcribed.
+Parameters are author-specified simulation assumptions. The choice of features
+is motivated by developmental-linguistics work (CHILDES-db; the Oxford
+Children's Corpus; MTLD), but no source-to-parameter calibration is claimed and
+no child-produced text is used. They are declared here in one place so the
+paper's parameter table can be regenerated from code rather than transcribed.
 
 `UserProfile` lets an experiment perturb a synthetic cohort away from the
-corpus-derived norms, which is what Experiments 06 (neurodivergent) and 07
-(non-WEIRD / multilingual) need.
+corpus-derived norms, which is what Experiment 06 (atypical and
+non-Western populations) needs.
 """
 from __future__ import annotations
 
@@ -133,8 +134,8 @@ class SignalModel:
     """Tier-conditional distributions the estimator uses as its likelihoods.
 
     `correlation` is the equicorrelation coefficient among linguistic features.
-    The estimator's likelihood always assumes independence (Equation 7); setting
-    `correlation > 0` on the *generating* model is how Experiment 08 measures
+    The estimator's likelihood always assumes independence; setting
+    `correlation > 0` on the *generating* model is how Experiment 07 measures
     the cost of that assumption.
     """
 
@@ -190,7 +191,7 @@ class SignalModel:
     def log_likelihood(self, modality: str, value, tier: Tier) -> float:
         if modality == "linguistic":
             mean, std = self.linguistic_params(tier)
-            # Estimator-side likelihood is diagonal by construction (Equation 7).
+            # Estimator-side likelihood is diagonal by construction.
             z = (np.asarray(value) - mean) / std
             return float(-0.5 * np.sum(z**2) - np.sum(np.log(std)) - 0.5 * len(std) * np.log(2 * np.pi))
         if modality == "behavioural":
@@ -219,18 +220,34 @@ class SignalModel:
         return ll - ll.mean()
 
 
-def with_corpus_dp_noise(
-    model: SignalModel, per_parameter_std: float, rng: np.random.Generator
+def release_corpus_parameters(
+    model: SignalModel, config, rng: np.random.Generator, private: bool = True
 ) -> SignalModel:
-    """Return a copy of `model` whose linguistic means carry CORPUS-mode DP noise.
+    """Simulate the CORPUS-mode release end to end and return the released model.
 
-    The noise is applied once, offline, to the released parameters -- not to any
-    live user's signals.
+    For each tier, `config.corpus_n_per_tier` synthetic corpus children are drawn
+    from `model`. Each child's linguistic vector is standardised by the tier's
+    public design scale, centred on the public prior mean, clipped to
+    [-c, c] per feature, and averaged. Gaussian noise with the analytically
+    calibrated sigma (`config.corpus_gaussian_sigma()`) is added to the mean, and
+    the result is mapped back to feature units. Both the sampling error of a
+    finite corpus and the privacy noise therefore reach the estimator. The
+    noise is applied once, offline, to released parameters, never to a live
+    user's signals. `private=False` omits the noise, isolating sampling error.
     """
+    c = config.corpus_clip_sd
+    n = config.corpus_n_per_tier
+    sigma = config.corpus_gaussian_sigma() if private else 0.0
     d = len(LINGUISTIC_FEATURES)
-    scale = np.array([LINGUISTIC_STD[t] for t in ALL_TIERS])  # noise in units of feature sd
-    noise = rng.normal(0.0, per_parameter_std, size=(K_TIERS, d)) * scale
-    return replace(model, param_noise=noise, _cache={})
+    shift = np.zeros((K_TIERS, d))
+    for i, tier in enumerate(ALL_TIERS):
+        mean, std = model.linguistic_params(tier)
+        draws = rng.multivariate_normal(mean, model.linguistic_cov(tier), size=n)
+        z = np.clip((draws - mean) / std, -c, c)
+        released_z = z.mean(axis=0) + rng.normal(0.0, sigma, size=d)
+        shift[i] = released_z * std
+    base = model.param_noise if model.param_noise is not None else 0.0
+    return replace(model, param_noise=base + shift, _cache={})
 
 
 # -- analytic divergences -------------------------------------------------
@@ -241,7 +258,7 @@ def kl_gaussian(m0: np.ndarray, s0: np.ndarray, m1: np.ndarray, s1: np.ndarray) 
 
 
 def linguistic_kl_matrix(model: SignalModel | None = None) -> np.ndarray:
-    """Pairwise KL divergence over the linguistic feature space (Table 9)."""
+    """Pairwise KL divergence over the linguistic feature space."""
     model = model or SignalModel()
     out = np.zeros((K_TIERS, K_TIERS))
     for i, ti in enumerate(ALL_TIERS):
@@ -256,11 +273,74 @@ def linguistic_kl_matrix(model: SignalModel | None = None) -> np.ndarray:
 
 def min_adjacent_kl(model: SignalModel | None = None) -> float:
     """D_min: smallest divergence between *adjacent* tiers, which governs the
-    worst-case convergence rate in Equation 10."""
+    the KL heuristic; see `chernoff_exponent` for the exponent that governs the proved bound."""
     m = linguistic_kl_matrix(model)
     return float(min(min(m[i, i + 1], m[i + 1, i]) for i in range(K_TIERS - 1)))
 
 
 def sanov_interactions(d_min: float, delta: float, k: int = K_TIERS) -> float:
-    """n >= (1/D_min) ln((K-1)/delta), the bound quoted below Equation 10."""
+    """n >= (1/D_min) ln((K-1)/delta), a KL-based heuristic; Proposition 1 gives the proved Chernoff bound."""
     return float(np.log((k - 1) / delta) / d_min)
+
+
+# -- Chernoff error exponents ---------------------------------------------
+def _gaussian_log_chernoff(a: float, sa: float, b: float, sb: float, s: float) -> float:
+    """log E_{x~N(a,sa^2)} [ (N(x;b,sb^2) / N(x;a,sa^2))^s ], in closed form."""
+    A = (1.0 - s) / sa**2 + s / sb**2
+    B = (1.0 - s) * a / sa**2 + s * b / sb**2
+    return float(
+        -0.5 * ((1.0 - s) * a**2 / sa**2 + s * b**2 / sb**2 - B**2 / A)
+        + 0.5 * np.log(2.0 * np.pi / A)
+        - (1.0 - s) * np.log(sa * np.sqrt(2.0 * np.pi))
+        - s * np.log(sb * np.sqrt(2.0 * np.pi))
+    )
+
+
+def log_mgf_llr(model: SignalModel, true_tier: Tier, rival: Tier, s: float) -> float:
+    """g(s) = log E_{x ~ true_tier} [ exp(s * l(x)) ] for one interaction, where
+    l(x) is the log-likelihood ratio of `rival` over `true_tier` exactly as the
+    estimator computes it: diagonal linguistic Gaussian, log-normal typing,
+    Bernoulli device flag, and the attenuated (weight 0.25) absent-attestation
+    term. Modalities are independent under the model, so their terms add.
+    """
+    ma, sa = model.linguistic_params(true_tier)
+    mb, sb = model.linguistic_params(rival)
+    g = sum(_gaussian_log_chernoff(ma[k], sa[k], mb[k], sb[k], s) for k in range(len(ma)))
+    mu_a, sig_a = model.typing_params(true_tier)
+    mu_b, sig_b = model.typing_params(rival)
+    g += _gaussian_log_chernoff(mu_a, sig_a, mu_b, sig_b, s)
+    p, q = model.device_p(true_tier), model.device_p(rival)
+    g += float(np.log(p ** (1 - s) * q ** s + (1 - p) ** (1 - s) * (1 - q) ** s))
+    p, q = model.context_p(true_tier), model.context_p(rival)
+    g += float(np.log(p * (q / p) ** s + (1 - p) * ((1 - q) / (1 - p)) ** (0.25 * s)))
+    return g
+
+
+_S_GRID = np.linspace(0.005, 0.995, 199)
+
+
+def chernoff_exponent(model: SignalModel, true_tier: Tier, rival: Tier) -> float:
+    """C = -min_{s in (0,1)} g(s): per-interaction error exponent for one rival."""
+    return float(-min(log_mgf_llr(model, true_tier, rival, s) for s in _S_GRID))
+
+
+def misassignment_bound(
+    model: SignalModel, true_tier: Tier, n: int, gamma: float, k: int = K_TIERS
+) -> float:
+    """Upper bound on P(assigned tier != true tier) after n interactions.
+
+    Proposition 1 of the manuscript. With a uniform prior, the confidence-
+    thresholded MAP rule assigns the true tier whenever
+    sum_{j != *} exp(Lambda_j) <= (1 - gamma)/gamma, where Lambda_j is the summed
+    log-likelihood ratio of rival j. A union bound and Markov's inequality on
+    exp(s Lambda_j) give, for every s in (0, 1),
+        P(error) <= sum_j ((K-1) gamma / (1-gamma))^s exp(n g_j(s)).
+    The bound is minimised over s on a grid and capped at 1.
+    """
+    c = (k - 1) * gamma / (1.0 - gamma)
+    rivals = [t for t in ALL_TIERS if t is not true_tier]
+    best = min(
+        sum(c ** s * np.exp(n * log_mgf_llr(model, true_tier, r, s)) for r in rivals)
+        for s in _S_GRID
+    )
+    return float(min(best, 1.0))

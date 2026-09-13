@@ -1,0 +1,40 @@
+
+\begin{tikzpicture}
+\begin{axis}[
+  name=left, width=0.36\linewidth, height=46mm,
+  xbar, bar width=6pt, xmin=0, xmax=118, enlarge y limits=0.25,
+  ytick={0,1,2},
+  yticklabels={{recoverable},{NPL},{ceiling}},
+  xlabel={Developmental Safety Rate (\%)},
+  nodes near coords, nodes near coords style={font=\scriptsize},
+  point meta=explicit symbolic,
+  tick label style={font=\scriptsize}, label style={font=\small},
+  xmajorgrids, grid style={black!12, line width=0.3pt}, axis lines*=left,
+  title style={font=\small, align=left}, title={(a) Reachable headroom},
+]
+\addplot[fill=black!18, draw=black, line width=0.3pt] coordinates {
+  (22.0,0) [22.0]
+  (75.5,1) [75.5]
+  (97.5,2) [97.5]
+};
+\end{axis}
+\begin{axis}[
+  name=right, at={(left.east)}, anchor=west, xshift=36mm,
+  width=0.42\linewidth, height=46mm,
+  xbar, bar width=4pt, xmin=0, xmax=105, enlarge y limits=0.12,
+  ytick={0,1,2,3,4,5}, yticklabels={$t_2$ code generation,$t_2$ essay writing,$t_5$ crisis,$t_3$ crisis,$t_4$ crisis,$t_3$ open chat},
+  y dir=reverse,
+  xlabel={DSR within cell (\%)},
+  tick label style={font=\scriptsize}, label style={font=\small},
+  xmajorgrids, grid style={black!12, line width=0.3pt}, axis lines*=left,
+  legend style={at={(1.03,1.0)}, anchor=north west, draw=none,
+                font=\scriptsize},
+  title style={font=\small, align=left},
+  title={(b) Where the recoverable error sits},
+]
+\addplot[fill=black!12, draw=black, line width=0.3pt] coordinates {(100.0,0) (100.0,1) (100.0,2) (100.0,3) (100.0,4) (68.0,5)};
+\addlegendentry{ceiling}
+\addplot[fill=npred, draw=black, line width=0.3pt] coordinates {(0.0,0) (0.0,1) (8.0,2) (12.0,3) (12.0,4) (32.0,5)};
+\addlegendentry{NPL}
+\end{axis}
+\end{tikzpicture}

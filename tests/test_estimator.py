@@ -122,3 +122,39 @@ def test_min_adjacent_kl_is_at_the_t4_t5_boundary():
     adjacent = [min(m[i, i + 1], m[i + 1, i]) for i in range(K_TIERS - 1)]
     assert np.argmin(adjacent) == 3
     assert np.isclose(min(adjacent), min_adjacent_kl())
+
+
+def test_proposition_1_bound_dominates_simulated_error():
+    """The proved misassignment bound must sit above the simulated error rate
+    for every tier at every milestone the manuscript reports."""
+    from safenest.signals import misassignment_bound
+    from safenest.estimator import DEFAULT_GAMMA
+    model = SignalModel()
+    est = BayesianAgeEstimator(privacy=PrivacyConfig(mode=PrivacyMode.CORPUS))
+    rng = np.random.default_rng(11)
+    for tier in Tier:
+        errors = {1: 0, 3: 0}
+        trials = 300
+        for _ in range(trials):
+            state = EstimatorState()
+            for n in range(1, 4):
+                est.observe(state, model.sample(tier, rng), rng)
+                if n in errors:
+                    errors[n] += est.assign(state) is not tier
+        for n, e in errors.items():
+            # three standard errors of slack for the finite simulation
+            slack = 3 * np.sqrt(max(e / trials, 1e-3) / trials)
+            assert e / trials <= misassignment_bound(model, tier, n, DEFAULT_GAMMA) + slack
+
+
+def test_chernoff_closed_form_matches_monte_carlo():
+    from safenest.signals import log_mgf_llr
+    model = SignalModel()
+    rng = np.random.default_rng(5)
+    t, r, s = Tier.T4, Tier.T5, 0.4
+    vals = []
+    for _ in range(60_000):
+        x = model.sample(t, rng)
+        l = sum(model.log_likelihood(m, x[m], r) - model.log_likelihood(m, x[m], t) for m in x)
+        vals.append(np.exp(s * l))
+    assert np.log(np.mean(vals)) == pytest.approx(log_mgf_llr(model, t, r, s), abs=0.03)

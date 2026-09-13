@@ -21,21 +21,31 @@ then eps-DP directly bounds how much the released tier may depend on that data,
 and the achievable accuracy is capped near chance. Concretely, for a clipped
 per-modality log-likelihood-ratio vector the per-release signal-to-noise ratio
 is  eps_m / (2 (K-1))  and is *independent of the clip bound C* -- tightening
-the clip shrinks noise and signal by the same factor. At eps = 1.0 and K = 5
-that ratio is at most 0.125, so tens of interactions cannot recover a reliable
-five-way decision. `LOCAL_INFERENCE` implements this honestly and Experiment 05
-reports the resulting curve.
+the clip shrinks noise and signal by the same factor. At eps = 1.0 and K = 5 that
+ratio is at most 0.125 (whole budget on one modality) and 0.05 for the linguistic
+share eps_m = 0.40, so tens of interactions cannot recover a reliable five-way
+decision. `LOCAL_INFERENCE` implements this honestly and Experiment 05
+reports the resulting curve. The released vector is the K-1 log-likelihood
+ratios against the reference tier t1, each clipped to [-C, C]; that is what
+makes the L1 sensitivity 2C(K-1).
 
 The defensible reading of the architecture is therefore `CORPUS` (plus
 `NONE`'s data minimisation, which is architectural rather than statistical):
 
-  CORPUS  The eps-DP guarantee protects the children in the *calibration
-          corpora* (CHILDES-db, Oxford Children's Language Corpus) whose data
-          parameterise the tier-conditional likelihoods. The privacy unit is
-          one corpus child; adjacency is add/remove one child's transcripts;
-          the protected output is the released likelihood parameter vector.
-          Live inference then runs on noise-free released parameters, so
-          classification accuracy is preserved.
+  CORPUS  The (eps, delta)-DP guarantee protects the children in a
+          *calibration corpus* whose data would parameterise the tier-conditional
+          linguistic likelihoods. The privacy unit is one corpus child, who
+          contributes one averaged feature vector. Tier sizes n_k are public, so
+          adjacency is replace-one (bounded DP). Each child's vector is
+          standardised by the public design scale of its tier, centred on a
+          public prior mean and clipped to [-c, c] per feature; the protected
+          output is the vector of per-tier clipped means. Replacing one child can
+          change two tier means (if the replacement sits in another tier), so the
+          L2 sensitivity is sqrt(2) * 2c * sqrt(d) / n_k. Noise is calibrated by
+          the analytic Gaussian mechanism (Balle and Wang, 2018), which is exact
+          for every eps > 0, unlike the classical bound that needs eps < 1.
+          Dispersions are public design constants and are not released.
+          Live inference then runs on the released parameters.
 
   NONE    No statistical noise; the guarantee is architectural only. Raw
           features never leave the per-modality enclave, only clipped LLRs
@@ -50,6 +60,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from enum import Enum
+
+import math
 
 import numpy as np
 
@@ -72,7 +84,7 @@ class Accounting(str, Enum):
     ONE_SHOT = "one_shot"  # corpus release happens once, offline
 
 
-# Table 3 budget split across modalities. Shares must sum to 1.0.
+# Local-DP budget split across modalities. Shares must sum to 1.0.
 DEFAULT_BUDGET: dict[str, float] = {
     "linguistic": 0.40,
     "behavioural": 0.30,
@@ -94,10 +106,13 @@ class PrivacyConfig:
     budget: dict[str, float] = field(default_factory=lambda: dict(DEFAULT_BUDGET))
     clip: float = DEFAULT_CLIP
     n_tiers: int = 5
-    #: CORPUS mode: (delta, per-child L2 sensitivity of the parameter vector).
+    #: CORPUS mode: delta, public per-tier corpus size, per-feature clip bound
+    #: in units of the tier's public design standard deviation, and the number
+    #: of released linguistic features per tier.
     corpus_delta: float = 1e-5
-    corpus_l2_sensitivity: float = 1.0
-    corpus_n_children: int = 2000
+    corpus_n_per_tier: int = 400
+    corpus_clip_sd: float = 3.0
+    corpus_n_features: int = 5
 
     def __post_init__(self) -> None:
         total = sum(self.budget.values())
@@ -127,14 +142,14 @@ class PrivacyConfig:
     def llr_sensitivity(self) -> float:
         """L1 sensitivity of one clipped LLR vector.
 
-        The vector has K-1 free coordinates once a reference tier is fixed;
-        each is a difference of two clipped log-likelihoods and so spans
-        [-2C, 2C], and one privacy unit can move all of them at once.
+        The released vector holds the K-1 ratios log P(s|t_k) / P(s|t_1),
+        k = 2..K, each clipped to [-C, C]. One privacy unit can move every
+        coordinate by at most 2C, so the L1 sensitivity is 2C(K-1).
         """
         return 2.0 * self.clip * (self.n_tiers - 1)
 
     def noise_scale(self, modality: str) -> float:
-        """Laplace scale b = Delta / eps_m for `modality` (Equation 8)."""
+        """Laplace scale b = Delta / eps_m for `modality`."""
         eps_m = self.epsilon_total * self.budget[modality]
         if eps_m <= 0:
             raise ValueError(f"modality {modality!r} has zero privacy budget")
@@ -166,25 +181,34 @@ class PrivacyConfig:
         )
 
     # -- corpus-time (CORPUS) ---------------------------------------------
-    def corpus_gaussian_sigma(self) -> float:
-        """Gaussian-mechanism sigma for a one-shot release of the tier-conditional
-        likelihood parameters, per the analytic calibration
-        sigma = Delta_2 sqrt(2 ln(1.25/delta)) / eps."""
+    def corpus_l2_sensitivity(self) -> float:
+        """L2 sensitivity of the vector of per-tier clipped means.
+
+        Replace-one adjacency with public tier sizes. A replacement can remove a
+        child from one tier and add one to another, changing two tier means;
+        within one tier each of the d standardised coordinates moves by at most
+        2c / n_k. Hence sqrt(2) * 2c * sqrt(d) / n_k, in standard-deviation units.
+        """
         return float(
-            self.corpus_l2_sensitivity
-            * np.sqrt(2.0 * np.log(1.25 / self.corpus_delta))
-            / self.epsilon_total
+            math.sqrt(2.0) * 2.0 * self.corpus_clip_sd * math.sqrt(self.corpus_n_features)
+            / self.corpus_n_per_tier
         )
 
-    def corpus_parameter_noise_std(self) -> float:
-        """Per-parameter noise std after averaging over `corpus_n_children`.
+    def corpus_gaussian_sigma(self) -> float:
+        """Noise standard deviation, in standard-deviation units, for the corpus
+        release, calibrated by the analytic Gaussian mechanism."""
+        return analytic_gaussian_sigma(
+            self.epsilon_total, self.corpus_delta, self.corpus_l2_sensitivity()
+        )
 
-        A parameter estimated as a mean over N children has per-child
-        sensitivity Delta_2 / N, so the released estimate is perturbed by
-        sigma / N -- negligible for corpus sizes in the thousands, which is why
-        CORPUS mode preserves inference accuracy.
-        """
-        return self.corpus_gaussian_sigma() / max(self.corpus_n_children, 1)
+    def corpus_classical_sigma(self) -> float:
+        """Classical calibration Delta sqrt(2 ln(1.25/delta)) / eps (Dwork and
+        Roth, 2014, Theorem 3.22). Valid only for eps < 1; reported for contrast."""
+        return float(
+            self.corpus_l2_sensitivity()
+            * math.sqrt(2.0 * math.log(1.25 / self.corpus_delta))
+            / self.epsilon_total
+        )
 
     # -- reporting ---------------------------------------------------------
     def describe(self) -> dict[str, object]:
@@ -227,15 +251,17 @@ class PrivacyConfig:
         common.update(
             epsilon_total=self.epsilon_total,
             delta=self.corpus_delta,
-            adjacency="add or remove all transcripts of one child from the "
-                      "calibration corpus",
-            protected_output="released tier-conditional likelihood parameters "
-                             "(means and covariances), computed offline",
-            mechanism="Gaussian",
-            l2_sensitivity=self.corpus_l2_sensitivity,
+            adjacency="replace one child in the calibration corpus; tier sizes "
+                      "are public",
+            protected_output="per-tier means of clipped, standardised linguistic "
+                             "feature vectors, computed offline; dispersions are "
+                             "public design constants and are not released",
+            mechanism="analytic Gaussian (Balle and Wang, 2018)",
+            clip_sd=self.corpus_clip_sd,
+            n_per_tier=self.corpus_n_per_tier,
+            l2_sensitivity=self.corpus_l2_sensitivity(),
             sigma=self.corpus_gaussian_sigma(),
-            per_parameter_noise_std=self.corpus_parameter_noise_std(),
-            corpus_n_children=self.corpus_n_children,
+            sigma_classical=self.corpus_classical_sigma(),
             caveat="live-user signals are not themselves DP-protected; they are "
                    "protected architecturally (see PrivacyMode.NONE) and by retention limits",
         )
@@ -249,3 +275,39 @@ def clip_llr(llr: np.ndarray, clip: float) -> np.ndarray:
 
 def laplace_noise(scale: float, shape: tuple[int, ...], rng: np.random.Generator) -> np.ndarray:
     return rng.laplace(loc=0.0, scale=scale, size=shape)
+
+
+def _std_normal_cdf(x: float) -> float:
+    return 0.5 * math.erfc(-x / math.sqrt(2.0))
+
+
+def gaussian_mechanism_delta(epsilon: float, sigma: float, sensitivity: float) -> float:
+    """Exact delta of the Gaussian mechanism at a given (epsilon, sigma).
+
+    Balle and Wang (2018), Theorem 8:
+        delta = Phi(D/(2 sigma) - eps sigma / D) - e^eps Phi(-D/(2 sigma) - eps sigma / D).
+    When the second term underflows the returned delta is an over-estimate, so a
+    sigma calibrated against it is conservative.
+    """
+    a = sensitivity / (2.0 * sigma)
+    b = epsilon * sigma / sensitivity
+    second = _std_normal_cdf(-a - b)
+    tail = math.exp(epsilon) * second if second > 0.0 else 0.0
+    return max(_std_normal_cdf(a - b) - tail, 0.0)
+
+
+def analytic_gaussian_sigma(epsilon: float, delta: float, sensitivity: float) -> float:
+    """Smallest sigma for which the Gaussian mechanism is (epsilon, delta)-DP.
+
+    delta(sigma) is decreasing in sigma, so bisection on a log scale suffices.
+    """
+    if epsilon <= 0 or not 0 < delta < 1 or sensitivity <= 0:
+        raise ValueError("need epsilon > 0, 0 < delta < 1 and sensitivity > 0")
+    lo, hi = 1e-12 * sensitivity, 1e6 * sensitivity
+    for _ in range(200):
+        mid = math.sqrt(lo * hi)
+        if gaussian_mechanism_delta(epsilon, mid, sensitivity) > delta:
+            lo = mid
+        else:
+            hi = mid
+    return float(hi)

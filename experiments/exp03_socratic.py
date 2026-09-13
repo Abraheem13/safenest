@@ -47,7 +47,7 @@ def run() -> dict:
             "E[V]": f"{mdp.expected_value(tier):.3f}",
         })
     table(rows, ["Tier", "Elicit", "Hint", "Guide", "P.Expl.", "Verify", "E[V]"],
-          "Table 10 (regenerated) -- optimal action distribution at protocol step 1 (%)")
+          "Optimal action distribution at protocol step 1 (%)")
 
     traj = mdp.trajectory(ALL_TIERS[1], q0=0.15)
     rows = [
@@ -56,19 +56,19 @@ def run() -> dict:
         for s, a, qb, qa in traj
     ]
     table(rows, ["Step", "Optimal action", "q before", "q after"],
-          "Table 11 (regenerated) -- optimal trajectory, t2, q0=0.15")
+          "Optimal trajectory, t2, q0=0.15")
 
     never_reveals = {t.label: not mdp.opens_with_revelation(t) for t in ALL_TIERS}
     verify_by_tier = [dist[t.label][Action.VERIFY_REQUEST.value] for t in ALL_TIERS]
     print(f"\n  PartialExplain never optimal at step 1: {all(never_reveals.values())}")
     print(f"  VerifyRequest usage t1..t5: {[f'{v:.1f}' for v in verify_by_tier]}")
 
-    # ---- published Equation 15 exactly (alpha_meta = 0) ---------------------
+    # ---- reward without the metacognition term (alpha_meta = 0) ---------------------
     plain = SocraticMDP(params=RewardParams(alpha_meta=0.0))
     plain_verify = [
         plain.action_distribution(t)[Action.VERIFY_REQUEST] for t in ALL_TIERS
     ]
-    print("\n  Under Equation 15 exactly as published (no metacognition term):")
+    print("\n  Without the metacognition term:")
     print(f"    VerifyRequest usage t1..t5: {[f'{v:.1f}' for v in plain_verify]}")
     print("    The manuscript's claim that VerifyRequest usage rises with tier")
     print("    does not follow from its own reward function; it requires the")

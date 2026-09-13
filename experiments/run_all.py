@@ -18,12 +18,17 @@ from experiments.common import save  # noqa: E402
 
 EXPERIMENTS = [
     ("exp01_convergence", "Bayesian estimator convergence (Table 8, Figure 6)"),
-    ("exp02_separability", "Signal separability and D_min reconciliation (Tables 4, 9)"),
-    ("exp03_socratic", "Optimal Socratic policy and reward sensitivity (Tables 10, 11)"),
-    ("exp04_comparative", "Comparative evaluation (Tables 14, 15, 16)"),
-    ("exp05_privacy", "Privacy/utility and the formal DP statement (Table 12)"),
+    ("exp02_separability", "Signal separability and D_min reconciliation"),
+    ("exp03_socratic", "Optimal Socratic policy and reward sensitivity"),
+    ("exp04_comparative", "Comparative evaluation"),
+    ("exp05_privacy", "Privacy/utility and the formal DP statement"),
     ("exp06_populations", "Neurodivergent and non-WEIRD populations"),
-    ("exp07_overhead", "Computational overhead (Table 13)"),
+    ("exp07_overhead", "Computational overhead"),
+    ("exp08_ceiling", "Achievable ceiling on the Developmental Safety Rate"),
+    ("exp09_operating", "Operating characteristics of gamma and the severity gate"),
+    ("exp10_bypass", "Bypass detection against a graded impersonation adversary"),
+    ("exp11_reliability", "Seed variance, calibration, multiplicity, symmetry"),
+    ("exp12_ablation", "Component ablation"),
 ]
 
 

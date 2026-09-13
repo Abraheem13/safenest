@@ -1,4 +1,4 @@
-"""Multi-signal Bayesian age assurance (Section 3.3).
+"""Multi-signal Bayesian age assurance.
 
 Sequential posterior update over tiers from per-modality log-likelihood ratios,
 with a fail-safe default to t1, Mahalanobis bypass detection and an explicit
@@ -54,6 +54,28 @@ class BayesianAgeEstimator:
     upgrade_confirmations: int = 2
     _pending_upgrade: tuple[Tier, int] | None = field(default=None, repr=False)
 
+    # -- cross-session tier authority --------------------------------------
+    def confirm_upgrade(self, current: Tier, proposed: Tier) -> Tier:
+        """Two-session confirmation for tier *upgrades* (Invariant II).
+
+        A downgrade takes effect immediately: moving to a more restrictive tier
+        is always safe. An upgrade must be proposed by `upgrade_confirmations`
+        consecutive sessions before it is granted, so a single anomalous session
+        cannot raise a child's tier. Any intervening disagreement resets the
+        count. This is session-level state and is therefore exercised across
+        sessions rather than within `run_session`.
+        """
+        if int(proposed) <= int(current):
+            self._pending_upgrade = None
+            return proposed
+        pending, count = self._pending_upgrade or (proposed, 0)
+        count = count + 1 if pending is proposed else 1
+        if count >= self.upgrade_confirmations:
+            self._pending_upgrade = None
+            return proposed
+        self._pending_upgrade = (proposed, count)
+        return current
+
     # -- single interaction ------------------------------------------------
     def observe(
         self, state: EstimatorState, signals: dict, rng: np.random.Generator
@@ -63,14 +85,17 @@ class BayesianAgeEstimator:
         for modality in MODALITIES:
             llr = self.model.llr_vector(modality, signals[modality])
             if self.privacy.mode is PrivacyMode.LOCAL_INFERENCE:
-                # Clipping exists to bound sensitivity, so it applies only where
-                # a sensitivity bound is needed. Clipping unconditionally would
-                # saturate the t4/t5 contrast and destroy accuracy for no
-                # privacy benefit.
-                llr = clip_llr(llr, self.privacy.clip)
-                llr = llr + laplace_noise(
-                    self.privacy.noise_scale(modality), llr.shape, rng
+                # The released quantity is the K-1 ratios against the reference
+                # tier t1, each clipped to [-C, C], which is what fixes the L1
+                # sensitivity at 2C(K-1). The t1 coordinate is the reference and
+                # is not released. Clipping applies only here, where a
+                # sensitivity bound is needed; clipping unconditionally would
+                # saturate the t4/t5 contrast for no privacy benefit.
+                ratios = clip_llr(llr[1:] - llr[0], self.privacy.clip)
+                ratios = ratios + laplace_noise(
+                    self.privacy.noise_scale(modality), ratios.shape, rng
                 )
+                llr = np.concatenate(([0.0], ratios))
             total += llr
         state.log_posterior = state.log_posterior + total
         state.log_posterior -= state.log_posterior.max()
@@ -79,7 +104,7 @@ class BayesianAgeEstimator:
 
     # -- decision ----------------------------------------------------------
     def assign(self, state: EstimatorState) -> Tier:
-        """Equation 9: MAP tier when confident, else the most restrictive tier."""
+        """MAP tier when confident, else the most restrictive tier."""
         post = state.posterior
         k = int(np.argmax(post))
         if post[k] >= self.gamma:
@@ -130,7 +155,11 @@ class BayesianAgeEstimator:
             return Tier(min(int(attested_tier), int(estimated)))
         if linguistic is not None and self.bypass_detected(linguistic, estimated):
             state.bypass_flags += 1
+            # Hold at the last confirmed tier; t1 when nothing is yet confirmed.
             return state.held_tier or Tier.T1
+        # Record the assignment so a later flagged session is held here rather
+        # than dropped to t1 (Section "Convergence and bypass detection").
+        state.held_tier = estimated
         return estimated
 
     # -- convenience -------------------------------------------------------

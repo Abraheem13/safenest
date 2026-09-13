@@ -1,0 +1,57 @@
+
+\begin{tikzpicture}[
+  x=1cm, y=1cm,
+  box/.style={draw, thin, rectangle, text width=34mm, align=center,
+              inner sep=3.5pt, minimum height=8.5mm, font=\scriptsize,
+              execute at begin node={\hyphenpenalty=10000\relax}},
+  dec/.style={draw, thin, diamond, aspect=2.4, align=center,
+              inner sep=1.2pt, font=\scriptsize},
+  term/.style={draw, thin, rectangle, rounded corners=2pt, fill=black!8,
+               align=center, inner sep=3.5pt, font=\scriptsize, text width=28mm,
+               execute at begin node={\hyphenpenalty=10000\relax}},
+  hd/.style={font=\scriptsize\bfseries},
+  ar/.style={-latex, thin},
+  lb/.style={font=\tiny, inner sep=1.5pt},
+]
+% ================= 1. corpus and ground truth =================
+\node[hd] at (0,0) {1.\ Corpus and ground truth};
+\node[box] (a1) at (0,-1.00) {seeded generator\\7 risk categories, 5 tiers,\\200 prompts each};
+\node[box] (a2) at (0,-2.55) {7{,}000 records; label twice,\\gating matrix and rubric};
+\node[dec] (a3) at (0,-4.30) {$\kappa<0.9$?};
+\node[term] (a4) at (0,-5.90) {labellers not\\independent};
+\draw[ar] (a1) -- (a2);
+\draw[ar] (a2) -- (a3);
+\draw[ar] (a3) -- node[lb,right] {no} (a4);
+
+% ================= 2. specification under test =================
+\node[hd] at (6.0,0) {2.\ Specification under test};
+\node[box] (b1) at (6.0,-1.00) {monotone tier policy\\$a(c,t)$, nine capabilities};
+\node[dec] (b2) at (6.0,-2.75) {monotone at\\compile time?};
+\node[term] (b3) at (6.0,-4.35) {reject policy edit};
+\node[box] (b4) at (6.0,-5.90) {enumerate 8{,}640 region-\\complete responses $\times$ 5 tiers};
+\node[dec] (b5) at (6.0,-7.65) {invariants hold?};
+\node[term] (b6) at (6.0,-9.20) {specification defect};
+\draw[ar] (b1) -- (b2);
+\draw[ar] (b2) -- node[lb,right] {no} (b3);
+\draw[ar] (b4) -- (b5);
+\draw[ar] (b5) -- node[lb,right] {no} (b6);
+% monotone-yes bypasses the failure terminal on the left
+\draw[ar] (b2.west) -- ++(-1.05,0) node[lb,above right] {yes} |- (b4.west);
+% corpus feeds the specification through the gap between the columns
+\draw[ar] (a3.east) -- node[lb,above] {yes} ++(1.20,0) |- (b1.west);
+
+% ================= 3. measurement =================
+\node[hd] at (12.0,0) {3.\ Measurement};
+\node[box] (c1) at (12.0,-1.00) {nine frameworks and\\five ablation variants};
+\node[box] (c2) at (12.0,-2.55) {both ground truths;\\20 seeds, Wilson CIs, Holm};
+\node[dec] (c3) at (12.0,-4.30) {at the achievable\\ceiling?};
+\node[term] (c4) at (12.0,-5.90) {report recoverable\\headroom};
+\node[term, fill=black!75, text=white] (c5) at (12.0,-7.65) {DSR verdict};
+\draw[ar] (c1) -- (c2);
+\draw[ar] (c2) -- (c3);
+\draw[ar] (c3) -- node[lb,right] {no} (c4);
+\draw[ar] (c4) -- (c5);
+\draw[ar] (c3.east) -- node[lb,above] {yes} ++(0.55,0) |- (c5.east);
+% a validated specification feeds measurement through the right-hand gap
+\draw[ar] (b5.east) -- node[lb,above] {yes} ++(1.35,0) |- (c1.west);
+\end{tikzpicture}

@@ -1,5 +1,4 @@
-"""Developmental constraint lattice (Section 3.1) and the feature-gating matrix
-(Table 7).
+"""Developmental constraint lattice and the feature-gating matrix.
 
 The lattice is over constraint sets C_k subset of U. Tier order is
 t_i <= t_j  iff  C_j subset-or-equal C_i, so t1 (most restrictive) is bottom and
@@ -30,7 +29,7 @@ UNIVERSE: frozenset[Capability] = frozenset(Capability)
 
 
 class Access(str, Enum):
-    """Access levels of the feature-gating matrix (Table 7)."""
+    """Access levels of the feature-gating matrix."""
 
     BLOCKED = "blocked"
     SOCRATIC = "socratic"      # guided scaffolding only, never a direct answer
@@ -43,9 +42,9 @@ class Access(str, Enum):
         return self is not Access.AVAILABLE
 
 
-# Table 7. Rows are capabilities, columns are tiers.
+# Feature-gating matrix. Rows are capabilities, columns are tiers.
 FEATURE_GATING: dict[Capability, dict[Tier, Access]] = {
-    # Table 7 of the manuscript records "Blocked" for t2-t4 here, but the prose
+    # An earlier manuscript table recorded "Blocked" for t2-t4 here, but the prose
     # of Section 3.5 says a direct answer to assessed work is *intercepted and
     # replaced* by guided questioning -- which is SOCRATIC, not BLOCKED. The
     # two readings differ: BLOCKED refuses the child outright and scores as
@@ -100,7 +99,7 @@ def constraint_set(tier: Tier) -> frozenset[Capability]:
 
 
 def allowed_set(tier: Tier) -> frozenset[Capability]:
-    """A(t_k) = U \\ C_k (Equation 1)."""
+    """A(t_k) = U \\ C_k."""
     return UNIVERSE - constraint_set(tier)
 
 
@@ -110,7 +109,7 @@ def leq(a: Tier, b: Tier) -> bool:
 
 
 def meet(a: Tier, b: Tier) -> Tier:
-    """t_i meet t_j: most restrictive, C = C_i union C_j (Equation 2).
+    """t_i meet t_j: most restrictive, C = C_i union C_j.
 
     The tier set is a chain under `leq`, so the union of two constraint sets is
     realised by the lower tier; `validate_lattice` checks that the chain holds.
@@ -119,7 +118,7 @@ def meet(a: Tier, b: Tier) -> Tier:
 
 
 def join(a: Tier, b: Tier) -> Tier:
-    """t_i join t_j: least restrictive, C = C_i intersect C_j (Equation 3)."""
+    """t_i join t_j: least restrictive, C = C_i intersect C_j."""
     return a if int(a) >= int(b) else b
 
 
@@ -132,9 +131,10 @@ def validate_lattice() -> None:
     for lo, hi in zip(ALL_TIERS, ALL_TIERS[1:]):
         c_lo, c_hi = constraint_set(lo), constraint_set(hi)
         if not c_hi <= c_lo:
+            offending = sorted(c.value for c in (c_hi - c_lo))
             raise ValueError(
                 f"lattice violation: C({hi.label}) is not a subset of C({lo.label}); "
-                f"offending capabilities: {sorted(c - c_lo for c in [c_hi])}"
+                f"offending capabilities: {offending}"
             )
     # Monotonicity of the *access level* per capability, not just set membership:
     # a capability may never become more restricted as the tier increases.

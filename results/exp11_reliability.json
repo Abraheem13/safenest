@@ -1,0 +1,223 @@
+{
+  "provenance": {
+    "timestamp": "2026-09-13T16:36:20",
+    "python": "3.13.5",
+    "numpy": "2.4.4",
+    "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+    "git_commit": "af4dcbc",
+    "master_seed": 20260806
+  },
+  "n_seeds": 20,
+  "seed_variance": {
+    "NeMo Guardrails": {
+      "mean": 0.42164285714285726,
+      "sd": 0.004516152337663701,
+      "lo": 0.4128452380952381,
+      "hi": 0.4291666666666667
+    },
+    "Llama Guard": {
+      "mean": 0.45861904761904765,
+      "sd": 0.005846221249671229,
+      "lo": 0.44782142857142854,
+      "hi": 0.46801190476190474
+    },
+    "LlamaFirewall": {
+      "mean": 0.39,
+      "sd": 0.004668251994033179,
+      "lo": 0.37960714285714287,
+      "hi": 0.39766666666666667
+    },
+    "Constitutional AI": {
+      "mean": 0.5235238095238096,
+      "sd": 0.005224178368209374,
+      "lo": 0.5156666666666667,
+      "hi": 0.532
+    },
+    "COPPA binary rule": {
+      "mean": 0.6077857142857142,
+      "sd": 0.004694447004379801,
+      "lo": 0.59975,
+      "hi": 0.6155357142857143
+    },
+    "Age-conditioned (oracle)": {
+      "mean": 0.716547619047619,
+      "sd": 0.004756575965781279,
+      "lo": 0.7073214285714285,
+      "hi": 0.7245595238095238
+    },
+    "Child-safety classifier": {
+      "mean": 0.6388571428571428,
+      "sd": 0.005871683562669783,
+      "lo": 0.6281071428571429,
+      "hi": 0.649797619047619
+    },
+    "NPL (no Socratic)": {
+      "mean": 0.5433809523809524,
+      "sd": 0.0027285165351151044,
+      "lo": 0.538547619047619,
+      "hi": 0.5474404761904762
+    },
+    "NPL (ours)": {
+      "mean": 0.7611666666666667,
+      "sd": 0.006660353258327893,
+      "lo": 0.7520833333333333,
+      "hi": 0.77225
+    }
+  },
+  "calibration_bins": [
+    {
+      "lo": 0.5,
+      "hi": 0.6000000000000001,
+      "n": 28,
+      "mean_confidence": 0.5531592989880485,
+      "observed_accuracy": 0.39285714285714285
+    },
+    {
+      "lo": 0.6000000000000001,
+      "hi": 0.7,
+      "n": 41,
+      "mean_confidence": 0.6473756111728665,
+      "observed_accuracy": 0.5121951219512195
+    },
+    {
+      "lo": 0.7,
+      "hi": 0.8,
+      "n": 43,
+      "mean_confidence": 0.7491817876126394,
+      "observed_accuracy": 0.7209302325581395
+    },
+    {
+      "lo": 0.8,
+      "hi": 0.9000000000000001,
+      "n": 65,
+      "mean_confidence": 0.856455738442832,
+      "observed_accuracy": 0.8769230769230769
+    },
+    {
+      "lo": 0.9000000000000001,
+      "hi": 1.0,
+      "n": 2823,
+      "mean_confidence": 0.9965125870907948,
+      "observed_accuracy": 0.997874601487779
+    }
+  ],
+  "expected_calibration_error": 0.005473673646999504,
+  "holm_bonferroni": {
+    "Llama Guard": {
+      "p_raw": 0.0,
+      "p_holm": 0.0,
+      "significant_at_05": true
+    },
+    "LlamaFirewall": {
+      "p_raw": 0.0,
+      "p_holm": 0.0,
+      "significant_at_05": true
+    },
+    "NPL (no Socratic)": {
+      "p_raw": 0.0,
+      "p_holm": 0.0,
+      "significant_at_05": true
+    },
+    "NeMo Guardrails": {
+      "p_raw": 3.575e-320,
+      "p_holm": 1.78753e-319,
+      "significant_at_05": true
+    },
+    "Constitutional AI": {
+      "p_raw": 6.594534374159134e-263,
+      "p_holm": 2.6378137496636535e-262,
+      "significant_at_05": true
+    },
+    "COPPA binary rule": {
+      "p_raw": 1.1570111936252845e-103,
+      "p_holm": 3.4710335808758534e-103,
+      "significant_at_05": true
+    },
+    "Child-safety classifier": {
+      "p_raw": 1.7428911601884688e-84,
+      "p_holm": 3.4857823203769377e-84,
+      "significant_at_05": true
+    },
+    "Age-conditioned (oracle)": {
+      "p_raw": 5.008641733307025e-10,
+      "p_holm": 5.008641733307025e-10,
+      "significant_at_05": true
+    }
+  },
+  "end_to_end_all_frameworks": {
+    "NeMo Guardrails": {
+      "oracle_dsr": 0.4195714285714286,
+      "estimated_dsr": 0.4195714285714286,
+      "delta_pp": 0.0,
+      "estimated_under": 0.5804285714285714
+    },
+    "Llama Guard": {
+      "oracle_dsr": 0.4534285714285714,
+      "estimated_dsr": 0.4534285714285714,
+      "delta_pp": 0.0,
+      "estimated_under": 0.47
+    },
+    "LlamaFirewall": {
+      "oracle_dsr": 0.39,
+      "estimated_dsr": 0.39,
+      "delta_pp": 0.0,
+      "estimated_under": 0.5602857142857143
+    },
+    "Constitutional AI": {
+      "oracle_dsr": 0.525,
+      "estimated_dsr": 0.525,
+      "delta_pp": 0.0,
+      "estimated_under": 0.38985714285714285
+    },
+    "COPPA binary rule": {
+      "oracle_dsr": 0.6064285714285714,
+      "estimated_dsr": 0.6057142857142858,
+      "delta_pp": -0.07142857142856673,
+      "estimated_under": 0.25971428571428573
+    },
+    "Age-conditioned (oracle)": {
+      "oracle_dsr": 0.7151428571428572,
+      "estimated_dsr": 0.7125714285714285,
+      "delta_pp": -0.2571428571428669,
+      "estimated_under": 0.09885714285714285
+    },
+    "Child-safety classifier": {
+      "oracle_dsr": 0.6344285714285715,
+      "estimated_dsr": 0.6344285714285715,
+      "delta_pp": 0.0,
+      "estimated_under": 0.274
+    },
+    "NPL (no Socratic)": {
+      "oracle_dsr": 0.5415714285714286,
+      "estimated_dsr": 0.5402857142857143,
+      "delta_pp": -0.12857142857143344,
+      "estimated_under": 0.01842857142857143
+    },
+    "NPL (ours)": {
+      "oracle_dsr": 0.7548571428571429,
+      "estimated_dsr": 0.7508571428571429,
+      "delta_pp": -0.40000000000000036,
+      "estimated_under": 0.038285714285714284
+    }
+  },
+  "prevalence": {
+    "homework_assignment": 0.34,
+    "open_ended_chat": 0.28,
+    "code_generation": 0.08,
+    "essay_creative_writing": 0.12,
+    "crisis_self_harm": 0.03,
+    "substance_body_image": 0.05,
+    "age_inappropriate_content": 0.1
+  },
+  "prevalence_weighted_dsr": {
+    "NeMo Guardrails": 0.43101,
+    "Llama Guard": 0.44458000000000003,
+    "LlamaFirewall": 0.4248,
+    "Constitutional AI": 0.46867000000000003,
+    "COPPA binary rule": 0.53763,
+    "Age-conditioned (oracle)": 0.65621,
+    "Child-safety classifier": 0.58794,
+    "NPL (no Socratic)": 0.44257,
+    "NPL (ours)": 0.79689
+  }
+}

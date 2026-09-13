@@ -1,4 +1,4 @@
-"""Developmental tier definitions (Table 2 of the manuscript).
+"""Developmental tier definitions .
 
 Tiers are the atomic unit of the framework: everything downstream (constraint
 lattice, Bayesian estimator, Socratic MDP, feature gating) is indexed by tier.

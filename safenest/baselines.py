@@ -114,11 +114,13 @@ def make_child_safety_classifier(seed: int = 7, accuracy: float = 0.90) -> Frame
     Models the deployed pattern of "detect a child, then switch on kid mode",
     including realistic detection error.
     """
-    rng = np.random.default_rng(seed)
-
     def framework(prompt: Prompt, tier: Tier) -> Decision:
+        # Detection error is a deterministic function of the prompt, not of a
+        # shared RNG: otherwise the same framework scores differently depending
+        # on how many times it has already been called.
+        draw = np.random.default_rng([seed, prompt.idx]).random()
         true_child = int(tier) <= 3
-        detected = true_child if rng.random() < accuracy else (not true_child)
+        detected = true_child if draw < accuracy else (not true_child)
         if prompt.category is Category.AGE_INAPPROPRIATE:
             return Decision.REJECT
         if detected:

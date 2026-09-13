@@ -1,9 +1,8 @@
-"""The Nested Policy Engine (Section 3.4) and the four safety invariants
-(Section 4).
+"""The Nested Policy Engine and the three safety invariants.
 
 Five layers with strictly ordered update frequencies f0 >> f1 >> ... >> f4.
 Each layer is a constraint function C_i : (response, tier) -> Decision, and the
-composite is the conjunction (Equation 12): a response is emitted only if every
+composite is the conjunction: a response is emitted only if every
 layer accepts it. No layer can weaken another layer's decision -- that property
 is what Invariant II rests on, and `test_invariants.py` checks it by exhaustive
 search rather than by assertion.
@@ -32,7 +31,7 @@ _SEVERITY = {Decision.ACCEPT: 0, Decision.MODIFY: 1, Decision.REJECT: 2}
 
 
 def conjoin(*decisions: Decision) -> Decision:
-    """Equation 12. The most severe decision wins; no layer can relax another."""
+    """the conjunction rule. The most severe decision wins; no layer can relax another."""
     return max(decisions, key=lambda d: _SEVERITY[d])
 
 
@@ -83,8 +82,13 @@ class Layer:
     def evaluate(self, response: Response, tier: Tier) -> Decision:  # pragma: no cover
         raise NotImplementedError
 
-    def degraded_decision(self) -> Decision:
-        """Fail-closed behaviour when this layer is unavailable (Invariant IV)."""
+    def degraded_decision(self, response: Response, tier: Tier) -> Decision:
+        """Fail-closed behaviour when this layer is unavailable (Invariant III).
+
+        The fallback is evaluated against the response, because a decision that
+        ignores it can be *less* restrictive than the one the layer would have
+        made -- which breaks Invariant III rather than upholding it.
+        """
         return Decision.REJECT
 
 
@@ -95,32 +99,56 @@ class L0TokenFilter(Layer):
     update_frequency_hz = 1_000.0
 
     def evaluate(self, response: Response, tier: Tier) -> Decision:
+        """Conjoin all three gates rather than returning on the first that fires.
+
+        Returning early on readability would skip the session-limit check, and
+        because the readability ceiling and the session limit both rise with
+        tier, that produces a decision sequence that is *not* monotone in tier
+        -- a direct violation of Invariant I. Conjoining is what makes the
+        invariant hold; `test_invariants.py` covers the case that exposed it.
+        """
+        decisions = [Decision.ACCEPT]
         if response.fk_grade > READABILITY_CEILING[tier]:
-            return Decision.MODIFY  # simplify rather than refuse
+            decisions.append(Decision.MODIFY)  # simplify rather than refuse
         for token in response.tokens:
             required = _RESTRICTED_LEXICON.get(token.lower())
             if required is not None and int(tier) < int(required):
-                return Decision.REJECT
+                decisions.append(Decision.REJECT)
+                break
         limit = TIER_SPECS[tier].session_limit_min
         if limit is not None and response.session_minutes > limit:
-            return Decision.REJECT
-        return Decision.ACCEPT
+            decisions.append(Decision.REJECT)
+        return conjoin(*decisions)
 
-    def degraded_decision(self) -> Decision:
+    def degraded_decision(self, response: Response, tier: Tier) -> Decision:
         return Decision.REJECT  # suppress all output
 
 
 class L1SocraticGuard(Layer):
-    """Per-response direct-answer interception. O(|y|)."""
+    """Per-response direct-answer interception. O(|y|).
+
+    `scaffold_below_t3` toggles the amendment described in the manuscript: when
+    False the engine reproduces the pre-amendment specification, in which a
+    direct answer to a non-academic request was delivered to t1-t2 users. It
+    exists so both reported DSR figures are regenerable from this package.
+    """
 
     name = "L1_socratic_guard"
     update_frequency_hz = 1.0
+
+    def __init__(self, scaffold_below_t3: bool = True,
+                 severity_gate: bool = True) -> None:
+        self.scaffold_below_t3 = scaffold_below_t3
+        #: Disabling the gate reproduces the capability-indexed matrix alone,
+        #: which is what the component ablation isolates.
+        self.severity_gate = severity_gate
 
     def evaluate(self, response: Response, tier: Tier) -> Decision:
         # Severity gate first: applied uniformly across tiers, so it tightens
         # every tier equally and cannot break monotonicity (Invariant I).
         if (
-            response.capability in SEVERITY_GATED
+            self.severity_gate
+            and response.capability in SEVERITY_GATED
             and response.harm_severity > SEVERITY_REJECT_THRESHOLD
         ):
             return Decision.REJECT
@@ -140,13 +168,21 @@ class L1SocraticGuard(Layer):
             # child's question and helping them reason toward it. Grounded in
             # Piaget's account of preoperational and early concrete reasoning,
             # where an authoritative answer is accepted without evaluation.
-            if response.is_direct_answer and tier < Tier.T3:
+            if self.scaffold_below_t3 and response.is_direct_answer and tier < Tier.T3:
                 return Decision.MODIFY
             return Decision.ACCEPT
         return Decision.ACCEPT
 
-    def degraded_decision(self) -> Decision:
-        return Decision.MODIFY  # route everything through the t1 Socratic protocol
+    def degraded_decision(self, response: Response, tier: Tier) -> Decision:
+        """Route everything through the t1 Socratic protocol.
+
+        Returning a bare MODIFY would be unsafe: L1 is the only layer applying
+        the severity gate, so a flat MODIFY lets high-severity crisis and
+        substance content be scaffolded when it should be refused. Evaluating
+        at t1 -- the most restrictive tier -- is both what the manuscript
+        describes and what Invariant III requires.
+        """
+        return conjoin(Decision.MODIFY, self.evaluate(response, Tier.T1))
 
 
 class L2TierRefiner(Layer):
@@ -158,7 +194,7 @@ class L2TierRefiner(Layer):
     def evaluate(self, response: Response, tier: Tier) -> Decision:
         return Decision.ACCEPT
 
-    def degraded_decision(self) -> Decision:
+    def degraded_decision(self, response: Response, tier: Tier) -> Decision:
         return Decision.ACCEPT  # retain the last confirmed tier; no new emission risk
 
 
@@ -171,7 +207,7 @@ class L3MemoryLayer(Layer):
     def evaluate(self, response: Response, tier: Tier) -> Decision:
         return Decision.ACCEPT
 
-    def degraded_decision(self) -> Decision:
+    def degraded_decision(self, response: Response, tier: Tier) -> Decision:
         return Decision.ACCEPT  # stateless operation
 
 
@@ -185,15 +221,12 @@ class L4PolicyStore(Layer):
         validate_lattice()  # compile-time check; raises on a bad policy edit
 
     def evaluate(self, response: Response, tier: Tier) -> Decision:
-        return (
-            Decision.ACCEPT
-            if response.capability in allowed_set(tier) or access_level(response.capability, tier)
-            is not Access.BLOCKED
-            else Decision.REJECT
-        )
+        blocked = access_level(response.capability, tier) is Access.BLOCKED
+        return Decision.REJECT if blocked else Decision.ACCEPT
 
-    def degraded_decision(self) -> Decision:
-        return Decision.REJECT  # hardcoded minimal policy == t1 constraints
+    def degraded_decision(self, response: Response, tier: Tier) -> Decision:
+        # Hardcoded minimal policy: the t1 constraint set.
+        return self.evaluate(response, Tier.T1)
 
 
 @dataclass
@@ -204,7 +237,7 @@ class NestedPolicyEngine:
             L3MemoryLayer(), L4PolicyStore(),
         ]
     )
-    #: Names of layers currently failed, for Invariant IV case analysis.
+    #: Names of layers currently failed, for Invariant III case analysis.
     failed: frozenset[str] = frozenset()
 
     def __post_init__(self) -> None:
@@ -214,7 +247,7 @@ class NestedPolicyEngine:
 
     def evaluate(self, response: Response, tier: Tier) -> Decision:
         decisions = [
-            layer.degraded_decision() if layer.name in self.failed
+            layer.degraded_decision(response, tier) if layer.name in self.failed
             else layer.evaluate(response, tier)
             for layer in self.layers
         ]

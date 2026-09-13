@@ -1,0 +1,17 @@
+\begin{table}[H]
+\caption{Measured overhead per component on a single CPU core (median of five runs).\label{tab:overhead}}
+\small
+\begin{tabularx}{\textwidth}{LLccc}
+\toprule
+\textbf{Component} & \textbf{Granularity} & \textbf{Time (\boldmath{$\mu$}s)} & \textbf{Complexity} & \textbf{Synchronous} \\
+\midrule
+$L_0$ token filter & per response & 1.69 & $O(|y|)$ & yes \\
+$L_1$ Socratic guard & per response & 0.10 & $O(1)$ & yes \\
+$L_4$ policy store & per query & 0.07 & $O(1)$ & yes \\
+Socratic policy lookup & per step & 0.14 & $O(1)$ & yes \\
+Full engine, end to end & per response & 2.41 & $O(|y|)$ & yes \\
+$L_2$ Bayesian update & per interaction & 29.54 & $O(KM)$ & no \\
+\bottomrule
+\end{tabularx}
+\noindent{\footnotesize{The full-engine figure is measured end to end rather than summed from its parts; it is 0.0005\% of a 500 ms foundation-model response. $|y|$ is the response length in tokens, $K$ the number of tiers and $M$ the number of modalities. Platform: macOS, arm.}}
+\end{table}

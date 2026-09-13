@@ -1,10 +1,10 @@
 {
   "provenance": {
-    "timestamp": "2026-08-07T01:15:24",
+    "timestamp": "2026-09-13T16:29:43",
     "python": "3.13.5",
     "numpy": "2.4.4",
-    "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
-    "git_commit": "d16499f",
+    "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+    "git_commit": "af4dcbc",
     "master_seed": 20260806
   },
   "n_trials": 400,

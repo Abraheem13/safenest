@@ -1,0 +1,44 @@
+
+\begin{tikzpicture}
+\begin{axis}[
+  name=l, width=0.45\linewidth, height=46mm,
+  xmin=40, xmax=105, ymin=30, ymax=105,
+  xlabel={Mean posterior confidence (\%)},
+  ylabel={Observed accuracy (\%)},
+  tick label style={font=\scriptsize}, label style={font=\small},
+  xmajorgrids, ymajorgrids, grid style={black!12, line width=0.3pt},
+  axis lines*=left, title style={font=\small, align=left},
+  title={(a) Posterior calibration},
+  legend style={at={(0.97,0.05)}, anchor=south east, draw=none, font=\scriptsize},
+]
+\addplot[black!45, dotted, line width=0.8pt] coordinates {(40,40) (105,105)};
+\addlegendentry{perfect}
+\addplot[mark=*, mark size=1.6pt, black, line width=0.9pt]
+  coordinates {(55.3,39.3) (64.7,51.2) (74.9,72.1) (85.6,87.7) (99.7,99.8)};
+\addlegendentry{observed}
+\node[font=\scriptsize, anchor=west] at (axis cs:44,88)
+  {ECE 0.0055};
+\end{axis}
+\begin{axis}[
+  name=r, at={(l.east)}, anchor=west, xshift=14mm,
+  width=0.45\linewidth, height=46mm,
+  xmin=0.15, xmax=1.0, ymin=0, ymax=75,
+  xlabel={Confidence threshold $\gamma_{\mathrm{conf}}$},
+  ylabel={Error rate (\%)},
+  tick label style={font=\scriptsize}, label style={font=\small},
+  legend style={at={(0.03,0.62)}, anchor=north west, draw=none, font=\scriptsize},
+  xmajorgrids, ymajorgrids, grid style={black!12, line width=0.3pt},
+  axis lines*=left, title style={font=\small, align=left},
+  title={(b) The threshold is not a lever},
+]
+\addplot[mark=square*, mark size=1.5pt, npred, line width=0.9pt]
+  coordinates {(0.2,64.5) (0.3,62.3) (0.4,64.5) (0.55,61.0) (0.7,61.5) (0.85,59.0) (0.95,54.0)};
+\addlegendentry{under-protection, verbally advanced}
+\addplot[mark=*, mark size=1.5pt, black, dashed, line width=0.9pt]
+  coordinates {(0.2,0.5) (0.3,0.8) (0.4,0.8) (0.55,0.8) (0.7,0.2) (0.85,1.5) (0.95,2.2)};
+\addlegendentry{over-restriction, typical}
+\draw[black!45, dotted, line width=0.7pt]
+  (axis cs:0.55,0) -- (axis cs:0.55,75);
+\node[font=\scriptsize, anchor=west] at (axis cs:0.57,68) {adopted};
+\end{axis}
+\end{tikzpicture}

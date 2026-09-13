@@ -1,4 +1,4 @@
-"""Executable checks of the four safety invariants of Section 4.
+"""Executable checks of the three safety invariants of Section 4.
 
 These are the tests that matter most for the paper's claims: each invariant is
 checked by exhaustive or randomised search over admissible transitions rather
@@ -17,21 +17,36 @@ from safenest.policy import (
     Response, conjoin,
 )
 from safenest.tiers import ALL_TIERS, Tier
+from safenest.verification import abstract_responses, abstraction_size
 
 ENGINE = NestedPolicyEngine()
 LAYER_NAMES = ENGINE.layer_names()
 
 
 def _responses():
-    """A spanning set of candidate responses."""
-    for cap in Capability:
-        for fk in (0.0, 5.0, 14.0):
-            for direct in (True, False):
-                for academic in (True, False):
-                    yield Response(
-                        capability=cap, fk_grade=fk, is_direct_answer=direct,
-                        is_academic_query=academic,
-                    )
+    """Region-complete abstraction: one representative for every combination of
+    predicates any layer reads (see `safenest.verification`). Checking an
+    invariant here checks it for every response the engine can receive."""
+    return abstract_responses()
+
+
+def test_the_verification_space_is_region_complete():
+    from safenest.lattice import Capability as Cap
+    from safenest.verification import (
+        lexicon_representatives, readability_representatives, session_representatives,
+    )
+    responses = list(_responses())
+    assert len(responses) == abstraction_size()
+    # every readability ceiling, session limit and admissibility tier separates
+    # at least two representatives, so no threshold is left unexercised
+    fks = readability_representatives()
+    for g in (1.0, 3.0, 6.0, 9.0, 12.0):
+        assert any(x <= g for x in fks) and any(x > g for x in fks)
+    mins = session_representatives()
+    for limit in (15, 30, 45, 60):
+        assert any(x <= limit for x in mins) and any(x > limit for x in mins)
+    assert len(lexicon_representatives()) == 4
+    assert {r.capability for r in responses} == set(Cap)
 
 
 # --------------------------------------------------- Invariant I: monotonicity
@@ -78,6 +93,17 @@ def test_invariant_II_socratic_capability_never_yields_a_direct_answer():
                 assert not ENGINE.evaluate(r, t).emits_direct_answer
 
 
+def test_invariant_II_session_limit_is_never_exceeded():
+    """No response longer than the tier's session limit is ever emitted."""
+    from safenest.tiers import TIER_SPECS
+
+    for r in _responses():
+        for t in ALL_TIERS:
+            limit = TIER_SPECS[t].session_limit_min
+            if limit is not None and r.session_minutes > limit:
+                assert ENGINE.evaluate(r, t) is Decision.REJECT
+
+
 def test_invariant_II_severity_gate_applies_at_every_tier():
     """High-severity harm content is refused even at t5."""
     for cap in SEVERITY_GATED:
@@ -116,13 +142,13 @@ def test_invariant_II_session_limit_is_enforced_per_tier():
         assert ENGINE.evaluate(r, t) is Decision.REJECT
 
 
-# ------------------------------------------- Invariant IV: graceful degradation
+# ------------------------------------------- Invariant III: graceful degradation
 #: Layers that actually gate emission. L2 and L3 are asynchronous and
 #: contribute no synchronous constraint, so their failure is a no-op.
 ENFORCING = {"L0_token_filter", "L1_socratic_guard", "L4_policy_store"}
 
 
-def test_invariant_IV_all_single_and_pairwise_failures_are_safe():
+def test_invariant_III_all_single_and_pairwise_failures_are_safe():
     """Exhaustive case analysis over the 15 single- and pairwise-layer failures.
 
     Safe means: whenever any *enforcing* layer fails, no direct answer is
@@ -143,7 +169,7 @@ def test_invariant_IV_all_single_and_pairwise_failures_are_safe():
                     assert d == ENGINE.evaluate(r, t), (combo, r, t)
 
 
-def test_invariant_IV_degradation_is_never_less_restrictive_than_nominal():
+def test_invariant_III_degradation_is_never_less_restrictive_than_nominal():
     combos = [(n,) for n in LAYER_NAMES] + list(itertools.combinations(LAYER_NAMES, 2))
     sev = {Decision.ACCEPT: 0, Decision.MODIFY: 1, Decision.REJECT: 2}
     for combo in combos:
@@ -194,3 +220,71 @@ def test_npl_never_under_protects_on_the_harm_categories():
             continue
         if rubric_label(p) is Label.BLOCK:
             assert decision_to_label(npl(p, p.tier)) is not Label.ALLOW
+
+
+# ------------------------------------------- cross-session tier authority
+def test_tier_upgrade_requires_two_consecutive_sessions():
+    """Invariant II relies on this: one anomalous session cannot raise a tier."""
+    from safenest.estimator import BayesianAgeEstimator
+
+    est = BayesianAgeEstimator()
+    assert est.confirm_upgrade(Tier.T2, Tier.T4) is Tier.T2   # first proposal held
+    assert est.confirm_upgrade(Tier.T2, Tier.T4) is Tier.T4   # confirmed
+
+
+def test_a_contradicted_upgrade_proposal_resets_the_count():
+    from safenest.estimator import BayesianAgeEstimator
+
+    est = BayesianAgeEstimator()
+    assert est.confirm_upgrade(Tier.T2, Tier.T4) is Tier.T2
+    assert est.confirm_upgrade(Tier.T2, Tier.T5) is Tier.T2   # different target: restart
+    assert est.confirm_upgrade(Tier.T2, Tier.T5) is Tier.T5
+
+
+def test_downgrades_take_effect_immediately():
+    from safenest.estimator import BayesianAgeEstimator
+
+    est = BayesianAgeEstimator()
+    assert est.confirm_upgrade(Tier.T4, Tier.T1) is Tier.T1
+
+
+def test_a_flagged_session_is_held_at_the_last_confirmed_tier():
+    """The manuscript says the tier is held, not dropped to t1."""
+    import numpy as np
+
+    from safenest.estimator import BayesianAgeEstimator, EstimatorState
+
+    est = BayesianAgeEstimator()
+    state = EstimatorState()
+    state.log_posterior = np.log(np.array([0.01, 0.01, 0.96, 0.01, 0.01]))
+    assert est.resolve(state) is Tier.T3          # confirms t3
+    assert state.held_tier is Tier.T3
+    implausible = est.model.linguistic_params(Tier.T1)[0]
+    assert est.resolve(state, linguistic=implausible) is Tier.T3   # held, not t1
+
+
+# ------------------------------------------------- reproducibility guards
+def test_the_pre_amendment_specification_is_reproducible():
+    """Both DSR figures reported in the manuscript must be regenerable."""
+    engine = NestedPolicyEngine(
+        layers=[L0TokenFilter(), L1SocraticGuard(scaffold_below_t3=False),
+                *NestedPolicyEngine().layers[2:]]
+    )
+    r = Response(capability=Capability.OPEN_ENDED_CHAT, is_direct_answer=True,
+                 is_academic_query=False)
+    assert ENGINE.evaluate(r, Tier.T2) is Decision.MODIFY     # amended
+    assert engine.evaluate(r, Tier.T2) is Decision.ACCEPT     # pre-amendment
+
+
+def test_the_child_safety_baseline_is_order_independent():
+    """A published baseline number must not depend on how often it was called."""
+    from safenest.baselines import make_child_safety_classifier
+    from safenest.corpus import build_corpus
+    from safenest.labeling import rubric_label
+    from safenest.metrics import evaluate_framework
+
+    corpus = build_corpus(n_per_cell=20, seed=3)
+    fw = make_child_safety_classifier()
+    a = evaluate_framework(fw, corpus, rubric_label)["overall"]["dsr"]
+    b = evaluate_framework(fw, corpus, rubric_label)["overall"]["dsr"]
+    assert a == b

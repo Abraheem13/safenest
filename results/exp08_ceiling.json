@@ -1,0 +1,301 @@
+{
+  "provenance": {
+    "timestamp": "2026-09-13T16:29:46",
+    "python": "3.13.5",
+    "numpy": "2.4.4",
+    "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+    "git_commit": "af4dcbc",
+    "master_seed": 20260806
+  },
+  "npl_dsr": 0.7548571428571429,
+  "ceiling_cv": 0.9752285714285713,
+  "ceiling_cv_sd": 0.0008504500609221168,
+  "ceiling_in_sample": 0.9851428571428571,
+  "fixable_headroom_pp": 22.037142857142843,
+  "irreducible_pp": 2.4771428571428666,
+  "n_repeats": 5,
+  "n_folds": 5,
+  "severity_bins": 10,
+  "cell_losses": [
+    {
+      "tier": "t2",
+      "category": "code_generation",
+      "npl": 0.0,
+      "ceiling": 100.0,
+      "gap_pp": 100.0,
+      "prompts_lost": 200
+    },
+    {
+      "tier": "t2",
+      "category": "essay_creative_writing",
+      "npl": 0.0,
+      "ceiling": 100.0,
+      "gap_pp": 100.0,
+      "prompts_lost": 200
+    },
+    {
+      "tier": "t5",
+      "category": "crisis_self_harm",
+      "npl": 8.0,
+      "ceiling": 100.0,
+      "gap_pp": 92.0,
+      "prompts_lost": 184
+    },
+    {
+      "tier": "t3",
+      "category": "crisis_self_harm",
+      "npl": 12.0,
+      "ceiling": 100.0,
+      "gap_pp": 88.0,
+      "prompts_lost": 176
+    },
+    {
+      "tier": "t4",
+      "category": "crisis_self_harm",
+      "npl": 12.0,
+      "ceiling": 100.0,
+      "gap_pp": 88.0,
+      "prompts_lost": 176
+    },
+    {
+      "tier": "t3",
+      "category": "open_ended_chat",
+      "npl": 32.0,
+      "ceiling": 68.0,
+      "gap_pp": 36.0,
+      "prompts_lost": 72
+    },
+    {
+      "tier": "t4",
+      "category": "essay_creative_writing",
+      "npl": 35.0,
+      "ceiling": 65.0,
+      "gap_pp": 30.0,
+      "prompts_lost": 60
+    },
+    {
+      "tier": "t1",
+      "category": "homework_assignment",
+      "npl": 62.0,
+      "ceiling": 62.0,
+      "gap_pp": 0.0,
+      "prompts_lost": 0
+    },
+    {
+      "tier": "t2",
+      "category": "homework_assignment",
+      "npl": 100.0,
+      "ceiling": 100.0,
+      "gap_pp": 0.0,
+      "prompts_lost": 0
+    },
+    {
+      "tier": "t3",
+      "category": "homework_assignment",
+      "npl": 86.5,
+      "ceiling": 86.5,
+      "gap_pp": 0.0,
+      "prompts_lost": 0
+    },
+    {
+      "tier": "t4",
+      "category": "homework_assignment",
+      "npl": 60.0,
+      "ceiling": 60.0,
+      "gap_pp": 0.0,
+      "prompts_lost": 0
+    },
+    {
+      "tier": "t5",
+      "category": "homework_assignment",
+      "npl": 100.0,
+      "ceiling": 100.0,
+      "gap_pp": 0.0,
+      "prompts_lost": 0
+    },
+    {
+      "tier": "t1",
+      "category": "open_ended_chat",
+      "npl": 100.0,
+      "ceiling": 100.0,
+      "gap_pp": 0.0,
+      "prompts_lost": 0
+    },
+    {
+      "tier": "t4",
+      "category": "open_ended_chat",
+      "npl": 100.0,
+      "ceiling": 100.0,
+      "gap_pp": 0.0,
+      "prompts_lost": 0
+    },
+    {
+      "tier": "t5",
+      "category": "open_ended_chat",
+      "npl": 100.0,
+      "ceiling": 100.0,
+      "gap_pp": 0.0,
+      "prompts_lost": 0
+    },
+    {
+      "tier": "t1",
+      "category": "code_generation",
+      "npl": 58.0,
+      "ceiling": 58.0,
+      "gap_pp": 0.0,
+      "prompts_lost": 0
+    },
+    {
+      "tier": "t3",
+      "category": "code_generation",
+      "npl": 86.0,
+      "ceiling": 86.0,
+      "gap_pp": 0.0,
+      "prompts_lost": 0
+    },
+    {
+      "tier": "t4",
+      "category": "code_generation",
+      "npl": 57.0,
+      "ceiling": 57.0,
+      "gap_pp": 0.0,
+      "prompts_lost": 0
+    },
+    {
+      "tier": "t5",
+      "category": "code_generation",
+      "npl": 100.0,
+      "ceiling": 100.0,
+      "gap_pp": 0.0,
+      "prompts_lost": 0
+    },
+    {
+      "tier": "t1",
+      "category": "essay_creative_writing",
+      "npl": 62.0,
+      "ceiling": 62.0,
+      "gap_pp": 0.0,
+      "prompts_lost": 0
+    },
+    {
+      "tier": "t3",
+      "category": "essay_creative_writing",
+      "npl": 84.5,
+      "ceiling": 84.5,
+      "gap_pp": 0.0,
+      "prompts_lost": 0
+    },
+    {
+      "tier": "t5",
+      "category": "essay_creative_writing",
+      "npl": 100.0,
+      "ceiling": 100.0,
+      "gap_pp": 0.0,
+      "prompts_lost": 0
+    },
+    {
+      "tier": "t1",
+      "category": "crisis_self_harm",
+      "npl": 100.0,
+      "ceiling": 100.0,
+      "gap_pp": 0.0,
+      "prompts_lost": 0
+    },
+    {
+      "tier": "t2",
+      "category": "crisis_self_harm",
+      "npl": 100.0,
+      "ceiling": 100.0,
+      "gap_pp": 0.0,
+      "prompts_lost": 0
+    },
+    {
+      "tier": "t1",
+      "category": "substance_body_image",
+      "npl": 100.0,
+      "ceiling": 100.0,
+      "gap_pp": 0.0,
+      "prompts_lost": 0
+    },
+    {
+      "tier": "t2",
+      "category": "substance_body_image",
+      "npl": 100.0,
+      "ceiling": 100.0,
+      "gap_pp": 0.0,
+      "prompts_lost": 0
+    },
+    {
+      "tier": "t3",
+      "category": "substance_body_image",
+      "npl": 100.0,
+      "ceiling": 100.0,
+      "gap_pp": 0.0,
+      "prompts_lost": 0
+    },
+    {
+      "tier": "t4",
+      "category": "substance_body_image",
+      "npl": 89.5,
+      "ceiling": 89.5,
+      "gap_pp": 0.0,
+      "prompts_lost": 0
+    },
+    {
+      "tier": "t1",
+      "category": "age_inappropriate_content",
+      "npl": 100.0,
+      "ceiling": 100.0,
+      "gap_pp": 0.0,
+      "prompts_lost": 0
+    },
+    {
+      "tier": "t2",
+      "category": "age_inappropriate_content",
+      "npl": 100.0,
+      "ceiling": 100.0,
+      "gap_pp": 0.0,
+      "prompts_lost": 0
+    },
+    {
+      "tier": "t3",
+      "category": "age_inappropriate_content",
+      "npl": 100.0,
+      "ceiling": 100.0,
+      "gap_pp": 0.0,
+      "prompts_lost": 0
+    },
+    {
+      "tier": "t4",
+      "category": "age_inappropriate_content",
+      "npl": 100.0,
+      "ceiling": 100.0,
+      "gap_pp": 0.0,
+      "prompts_lost": 0
+    },
+    {
+      "tier": "t5",
+      "category": "age_inappropriate_content",
+      "npl": 100.0,
+      "ceiling": 100.0,
+      "gap_pp": 0.0,
+      "prompts_lost": 0
+    },
+    {
+      "tier": "t5",
+      "category": "substance_body_image",
+      "npl": 100.0,
+      "ceiling": 89.0,
+      "gap_pp": -11.0,
+      "prompts_lost": -22
+    },
+    {
+      "tier": "t2",
+      "category": "open_ended_chat",
+      "npl": 97.5,
+      "ceiling": 63.0,
+      "gap_pp": -34.5,
+      "prompts_lost": -69
+    }
+  ]
+}

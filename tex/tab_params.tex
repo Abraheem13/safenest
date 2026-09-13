@@ -1,0 +1,22 @@
+\begin{table}[H]
+\caption{Tier-conditional signal parameters and local privacy budget shares.\label{tab:params}}
+\small
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{3.3cm}*{5}{C}}
+\toprule
+& \boldmath{$t_1$} & \boldmath{$t_2$} & \boldmath{$t_3$} & \boldmath{$t_4$} & \boldmath{$t_5$} \\
+\midrule
+\multicolumn{6}{l}{\emph{Linguistic}, $\mathcal{N}(\mu_k,\mathrm{diag}\,\sigma_k^2)$; local share $\varepsilon_m = 0.40$} \\
+\quad MTLD & 12 (4) & 22 (5.5) & 34 (7) & 48 (9) & 60 (11) \\
+\quad Flesch--Kincaid grade & 0.8 (0.6) & 2.5 (0.9) & 5 (1.2) & 7.5 (1.5) & 9.5 (1.8) \\
+\quad Mean sentence length & 4 (1.2) & 6.5 (1.6) & 9 (2) & 12 (2.6) & 14.5 (3) \\
+\quad Parse-tree depth & 2.2 (0.5) & 3 (0.6) & 3.8 (0.7) & 4.5 (0.8) & 5.1 (0.9) \\
+\quad Spelling error rate & 0.35 (0.1) & 0.18 (0.07) & 0.09 (0.04) & 0.05 (0.03) & 0.03 (0.02) \\
+\multicolumn{6}{l}{\emph{Behavioural}, $\mathrm{LN}(\log\mathrm{median},\sigma^2)$; local share $\varepsilon_m = 0.30$} \\
+\quad Typing speed (WPM) & 5 (0.45) & 10 (0.4) & 18 (0.35) & 28 (0.32) & 38 (0.3) \\
+\multicolumn{6}{l}{\emph{Device} and \emph{contextual}, $\mathrm{Bern}(p_k)$; local shares $\varepsilon_m = 0.20$ and $0.10$} \\
+\quad Child-account flag & 0.90 & 0.80 & 0.60 & 0.35 & 0.15 \\
+\quad External attestation & 0.70 & 0.60 & 0.45 & 0.30 & 0.20 \\
+\bottomrule
+\end{tabularx}
+\noindent{\footnotesize{Values are author-specified simulation assumptions, not measured developmental norms. Standard deviations in parentheses; for typing speed the parenthesised figure is the log-scale $\sigma$. An absent attestation contributes an attenuated log-likelihood (weight 0.25), so a missing external signal cannot by itself drive the estimate. The budget shares apply only to the local-DP analysis of Section~\ref{sec:privacy-results}.}}
+\end{table}

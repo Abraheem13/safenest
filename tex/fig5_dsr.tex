@@ -1,0 +1,69 @@
+
+\begin{tikzpicture}
+\begin{axis}[
+  width=\linewidth, height=64mm,
+  ybar=0.35pt, bar width=3.4pt,
+  enlarge x limits=0.11,
+  ymin=0, ymax=100,
+  xtick={1,2,3,4,5},
+  xticklabels={$t_1$,$t_2$,$t_3$,$t_4$,$t_5$},
+  xlabel={Developmental tier}, ylabel={Developmental Safety Rate (\%)},
+  legend style={at={(0.5,1.03)}, anchor=south, legend columns=4,
+                draw=none, font=\scriptsize, column sep=0.7ex,
+                /tikz/every even column/.append style={column sep=0.5ex}},
+  legend image code/.code={\draw[#1] (0cm,-0.08cm) rectangle (0.26cm,0.14cm);},
+  tick label style={font=\scriptsize},
+  label style={font=\small},
+  ymajorgrids, grid style={black!12, line width=0.3pt},
+  axis lines*=left,
+]
+\addplot[ybar, fill=black!8, draw=black, line width=0.3pt,
+  error bars/.cd, y dir=both, y explicit,
+  error bar style={line width=0.3pt, black!55},
+  error mark options={line width=0.3pt, mark size=0.6pt, black!55}]
+  coordinates {(1,14.3) +- (0,1.83) (2,19.6) +- (0,2.08) (3,35.6) +- (0,2.50) (4,56.1) +- (0,2.60) (5,84.3) +- (0,1.91)};
+\addlegendentry{NeMo Guardrails-style}
+\addplot[ybar, fill=black!20, draw=black, line width=0.3pt,
+  error bars/.cd, y dir=both, y explicit,
+  error bar style={line width=0.3pt, black!55},
+  error mark options={line width=0.3pt, mark size=0.6pt, black!55}]
+  coordinates {(1,23.1) +- (0,2.21) (2,28.5) +- (0,2.36) (3,25.0) +- (0,2.27) (4,45.4) +- (0,2.60) (5,73.0) +- (0,2.32)};
+\addlegendentry{LlamaFirewall-style}
+\addplot[ybar, fill=black!32, draw=black, line width=0.3pt,
+  error bars/.cd, y dir=both, y explicit,
+  error bar style={line width=0.3pt, black!55},
+  error mark options={line width=0.3pt, mark size=0.6pt, black!55}]
+  coordinates {(1,32.6) +- (0,2.45) (2,37.1) +- (0,2.53) (3,29.5) +- (0,2.39) (4,50.4) +- (0,2.62) (5,77.1) +- (0,2.20)};
+\addlegendentry{Llama Guard-style}
+\addplot[ybar, fill=black!44, draw=black, line width=0.3pt,
+  error bars/.cd, y dir=both, y explicit,
+  error bar style={line width=0.3pt, black!55},
+  error mark options={line width=0.3pt, mark size=0.6pt, black!55}]
+  coordinates {(1,39.4) +- (0,2.56) (2,45.1) +- (0,2.60) (3,36.9) +- (0,2.52) (4,58.6) +- (0,2.58) (5,82.4) +- (0,1.99)};
+\addlegendentry{Constitutional AI-style}
+\addplot[ybar, fill=black!56, draw=black, line width=0.3pt,
+  error bars/.cd, y dir=both, y explicit,
+  error bar style={line width=0.3pt, black!55},
+  error mark options={line width=0.3pt, mark size=0.6pt, black!55}]
+  coordinates {(1,68.9) +- (0,2.42) (2,48.1) +- (0,2.61) (3,39.3) +- (0,2.55) (4,61.2) +- (0,2.55) (5,85.7) +- (0,1.83)};
+\addlegendentry{COPPA binary rule}
+\addplot[ybar, fill=black!68, draw=black, line width=0.3pt,
+  error bars/.cd, y dir=both, y explicit,
+  error bar style={line width=0.3pt, black!55},
+  error mark options={line width=0.3pt, mark size=0.6pt, black!55}]
+  coordinates {(1,42.5) +- (0,2.59) (2,71.2) +- (0,2.37) (3,61.4) +- (0,2.55) (4,61.8) +- (0,2.54) (5,80.4) +- (0,2.08)};
+\addlegendentry{Child-safety classifier}
+\addplot[ybar, fill=black!82, draw=black, line width=0.3pt,
+  error bars/.cd, y dir=both, y explicit,
+  error bar style={line width=0.3pt, black!55},
+  error mark options={line width=0.3pt, mark size=0.6pt, black!55}]
+  coordinates {(1,68.9) +- (0,2.42) (2,56.8) +- (0,2.59) (3,84.1) +- (0,1.91) (4,87.2) +- (0,1.75) (5,60.6) +- (0,2.56)};
+\addlegendentry{Age-conditioned (oracle band)}
+\addplot[ybar, fill=npred, draw=black, line width=0.3pt,
+  error bars/.cd, y dir=both, y explicit,
+  error bar style={line width=0.3pt, black!55},
+  error mark options={line width=0.3pt, mark size=0.6pt, black!55}]
+  coordinates {(1,83.1) +- (0,1.96) (2,71.1) +- (0,2.37) (3,71.6) +- (0,2.36) (4,64.8) +- (0,2.50) (5,86.9) +- (0,1.77)};
+\addlegendentry{NPL (full)}
+\end{axis}
+\end{tikzpicture}

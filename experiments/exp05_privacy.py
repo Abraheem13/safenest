@@ -19,12 +19,15 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from experiments.common import pct, rng_for, save, table  # noqa: E402
 from safenest.estimator import BayesianAgeEstimator  # noqa: E402
 from safenest.privacy import PrivacyConfig, PrivacyMode  # noqa: E402
-from safenest.signals import SignalModel, with_corpus_dp_noise  # noqa: E402
+from safenest.signals import SignalModel, release_corpus_parameters  # noqa: E402
 from safenest.tiers import ALL_TIERS  # noqa: E402
 
 EPSILONS = (0.1, 0.3, 0.5, 0.7, 1.0, 3.0, 10.0, 30.0, 100.0)
 N_TRIALS = 400
 N_INTERACTIONS = 10
+#: Independent corpus releases per epsilon. Accuracy under corpus DP depends on
+#: the particular noise draw, so it is reported as a mean over releases.
+N_RELEASES = 20
 
 
 def run() -> dict:
@@ -57,34 +60,48 @@ def run() -> dict:
         local_acc[eps] = hits / (N_TRIALS // len(ALL_TIERS) * len(ALL_TIERS))
 
     # ---- corpus DP ------------------------------------------------------
-    corpus_acc = {}
+    # Each release simulates the whole mechanism: draw a finite calibration
+    # corpus, clip and average it, add analytically calibrated Gaussian noise,
+    # then classify fresh users drawn from the true model with the released
+    # parameters. `None` is the non-private release (sampling error only).
+    def corpus_accuracy(eps: float | None) -> tuple[float, float]:
+        accs = []
+        for _ in range(N_RELEASES):
+            cfg = PrivacyConfig(mode=PrivacyMode.CORPUS, epsilon_total=eps or 1.0)
+            released = release_corpus_parameters(
+                SignalModel(), cfg, rng, private=eps is not None)
+            est = BayesianAgeEstimator(model=released, privacy=cfg)
+            hits = total = 0
+            for tier in ALL_TIERS:
+                for _ in range(N_TRIALS // len(ALL_TIERS)):
+                    got, _ = est.run_session(
+                        tier, N_INTERACTIONS, rng, generating_model=SignalModel()
+                    )
+                    hits += got is tier
+                    total += 1
+            accs.append(hits / total)
+        return float(np.mean(accs)), float(np.std(accs))
+
+    corpus_acc, corpus_sd, corpus_sigma = {}, {}, {}
     for eps in EPSILONS:
-        cfg = PrivacyConfig(mode=PrivacyMode.CORPUS, epsilon_total=eps)
-        released = with_corpus_dp_noise(SignalModel(), cfg.corpus_parameter_noise_std(), rng)
-        est = BayesianAgeEstimator(model=released, privacy=cfg)
-        hits = 0
-        for tier in ALL_TIERS:
-            for _ in range(N_TRIALS // len(ALL_TIERS)):
-                # Users are drawn from the true distribution; the estimator uses
-                # the DP-released parameters.
-                got, _ = est.run_session(
-                    tier, N_INTERACTIONS, rng, generating_model=SignalModel()
-                )
-                hits += got is tier
-        corpus_acc[eps] = hits / (N_TRIALS // len(ALL_TIERS) * len(ALL_TIERS))
+        corpus_acc[eps], corpus_sd[eps] = corpus_accuracy(eps)
+        corpus_sigma[eps] = PrivacyConfig(
+            mode=PrivacyMode.CORPUS, epsilon_total=eps).corpus_gaussian_sigma()
+    nonprivate_acc, nonprivate_sd = corpus_accuracy(None)
 
     rows = [
         {
             "epsilon": f"{eps:g}" + (" *" if eps == 1.0 else ""),
-            "CORPUS DP (%)": pct(corpus_acc[eps]),
+            "CORPUS DP (%)": f"{pct(corpus_acc[eps])} +- {pct(corpus_sd[eps])}",
+            "sigma (sd units)": f"{corpus_sigma[eps]:.3f}",
             "LOCAL DP at inference (%)": pct(local_acc[eps]),
             "cum. eps @ n=10 (local)": f"{eps * N_INTERACTIONS:g}",
         }
         for eps in EPSILONS
     ]
-    table(rows, ["epsilon", "CORPUS DP (%)", "LOCAL DP at inference (%)",
+    table(rows, ["epsilon", "CORPUS DP (%)", "sigma (sd units)", "LOCAL DP at inference (%)",
                  "cum. eps @ n=10 (local)"],
-          "Table 12 (regenerated) -- accuracy vs privacy budget, n=10 interactions")
+          "Accuracy vs privacy budget, n=10 interactions")
 
     cfg = PrivacyConfig(mode=PrivacyMode.LOCAL_INFERENCE, epsilon_total=1.0)
     snr = cfg.per_release_snr("linguistic")
@@ -97,13 +114,20 @@ def run() -> dict:
         "privacy_statements": statements,
         "epsilons": list(EPSILONS),
         "accuracy_corpus_dp": corpus_acc,
+        "accuracy_corpus_dp_sd_over_releases": corpus_sd,
+        "corpus_noise_sigma_sd_units": corpus_sigma,
+        "accuracy_nonprivate_release": nonprivate_acc,
+        "accuracy_nonprivate_release_sd": nonprivate_sd,
+        "n_releases": N_RELEASES,
         "accuracy_local_dp": local_acc,
         "local_snr_at_eps1": snr,
         "n_trials": N_TRIALS,
         "n_interactions": N_INTERACTIONS,
         "verdict": (
-            "High accuracy at eps=1.0 is reproducible only under CORPUS-mode DP, "
-            "where eps protects the children in the calibration corpora. Under "
+            "High accuracy at eps=1.0 is attainable only under CORPUS-mode DP, "
+            "where (eps, delta) protects the children in the calibration corpus "
+            "and the release is a clipped mean with analytically calibrated "
+            "Gaussian noise. Under "
             "local DP applied to the live user's own signals, eps=1.0 gives "
             "near-chance accuracy, and the cumulative loss over a 10-interaction "
             "session is eps=10 under basic composition. Any eps claim must state "

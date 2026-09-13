@@ -1,0 +1,18 @@
+\begin{table}[H]
+\caption{Tier estimation by simulated population after $n = 10$ interactions, $N = 400$ users each.\label{tab:pops}}
+\small
+\begin{tabularx}{\textwidth}{Lccccc}
+\toprule
+& \multicolumn{3}{c}{\textbf{Estimator alone}} & \multicolumn{2}{c}{\textbf{With discordance rule}} \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-6}
+\textbf{Population} & \textbf{Acc.} & \textbf{Under} & \textbf{Over} & \textbf{Acc.} & \textbf{Under} \\
+\midrule
+Typical & 98.8 & 0.0 & 1.2 & 98.8 & 0.0 \\
+Verbally advanced (+2 tiers) & 22.0 & 62.3 & 15.8 & 70.8 & 19.0 \\
+Advanced (+1), atypical motor & 24.2 & 59.2 & 16.5 & 24.2 & 59.2 \\
+Second-language ($-$1), shared device & 20.2 & 0.0 & 79.8 & 20.2 & 0.0 \\
+Dialect-switching (high variance) & 62.3 & 0.8 & 37.0 & 62.3 & 0.8 \\
+\bottomrule
+\end{tabularx}
+\noindent{\footnotesize{All values are percentages. Under-protection is assignment to a \emph{less} restrictive tier than the user's protective need. The discordance rule holds a user at an externally attested tier when the estimate differs from it by two tiers or more. Profiles are synthetic perturbations of the signal model (Section~\ref{sec:populations}), not measurements of real populations.}}
+\end{table}
