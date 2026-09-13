@@ -7,7 +7,7 @@ developmental tier of a child user aged 3 to 17.
 Every table and figure in the accompanying article is generated from this
 repository. Nothing is transcribed by hand.
 
-> Ejaz, R.A.R.; Bangash, Y.A.; Iradat, F.; Kumail, M. *SafeNest: Nested Policy
+> Ejaz, R.A.R.; Iradat, F.; Iqbal, W.; Bangash, Y.A.; Kumail, M. *SafeNest: Nested Policy
 > Learning for Developmentally Adaptive Child–AI Interaction.* Extended version
 > of the UKCI 2026 paper *A Multi-Timescale Safety Architecture for
 > Developmentally Adaptive Child–AI Interaction via Nested Policy Learning.*
