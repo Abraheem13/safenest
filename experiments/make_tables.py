@@ -144,7 +144,7 @@ def tab_convergence() -> None:
 \end{tabularx}""" + note(
         "Bold marks the first milestone at or above 90\\%. Simulation uses the exact "
         "likelihood parameters; the cost of a private parameter release is reported "
-        "separately (Figure~\\ref{fig:privacy}). Milestones are read from one "
+        "in Section~\\ref{sec:privacy-results}. Milestones are read from one "
         "trajectory per simulated user and are therefore paired, not independent. "
         "The bound applies to the assignment rule of Equation~\\eqref{eq:assign}; the "
         "simulation additionally applies the bypass check, which can only hold a "
