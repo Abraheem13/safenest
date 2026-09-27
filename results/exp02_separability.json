@@ -1,10 +1,11 @@
 {
   "provenance": {
-    "timestamp": "2026-09-13T16:50:16",
+    "timestamp": "2026-09-27T19:42:17",
     "python": "3.13.5",
     "numpy": "2.4.4",
     "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
-    "git_commit": "9071ab7",
+    "git_commit": "1a901f8",
+    "git_dirty": false,
     "master_seed": 20260806
   },
   "kl_matrix": [

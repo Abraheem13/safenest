@@ -69,12 +69,17 @@ python scripts/embed_windows.py written 50  # sentence embeddings for Experiment
 python experiments/run_all.py --real        # Experiments 13-16
 ```
 
-Then regenerate the manuscript's tables and figures:
+Then regenerate the manuscript's tables, figures and quoted numbers:
 
 ```bash
 python experiments/make_tables.py           # tex/tab_*.tex
 python experiments/make_figures.py          # figures/*.pdf (+ 600-dpi PNG); needs pdflatex, poppler
+python experiments/make_numbers.py          # tex/numbers.tex, the values quoted in the text
 ```
+
+`make_numbers.py` also checks each qualitative sentence that quotes a value
+(for example, which estimator is best on every corpus) and stops if the results
+no longer support it.
 
 Each file in `results/` records the master seed (20260806), library versions,
 platform and commit, and whether the working tree was clean when it was run.
@@ -115,7 +120,7 @@ seed.
 | `safenest/data/` | Registry, download and loaders for the real corpora |
 | `safenest/features.py` | The five linguistic features, computed from text |
 | `safenest/learning.py` | Learned estimators, the two-stage private release, session decisions |
-| `experiments/` | Experiments 1–16, the runner, and the table and figure generators |
+| `experiments/` | Experiments 1–16, the runner, and the table, figure and number generators |
 | `scripts/` | Data download, feature preparation, sentence embeddings |
 | `tests/` | Unit tests and the invariant verification |
 | `results/`, `tex/`, `figures/` | Recorded results, generated tables, generated figures |

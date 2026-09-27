@@ -5,12 +5,13 @@
 \toprule
 \textbf{Variant} & \textbf{DSR} & \boldmath{$\Delta$} & \textbf{Under} & \textbf{Over} & \textbf{Harm DSR} \\
 \midrule
-Full framework & 75.5 & ref. & 3.9 & 20.6 & 81.4 \\
-Without scaffolding below $t_3$ & 73.8 & $-1.7$ & 5.6 & 20.6 & 81.4 \\
-Without severity gate & 80.6 & $+5.1$ & 6.4 & 13.0 & 93.4 \\
-Without both refinements & 78.9 & $+3.4$ & 8.1 & 13.0 & 93.4 \\
-Without Socratic substitution & 54.2 & $-21.3$ & 1.9 & 44.0 & 78.6 \\
+Full framework & 83.1 & ref. & 3.9 & 13.0 & 99.3 \\
+Crisis refused above $\theta_{\mathrm{sev}}$ (earlier specification) & 75.5 & $-7.7$ & 3.9 & 20.6 & 81.4 \\
+Without scaffolding below $t_3$ & 81.4 & $-1.7$ & 5.6 & 13.0 & 99.3 \\
+As first specified (neither amendment) & 73.8 & $-9.4$ & 5.6 & 20.6 & 81.4 \\
+Without severity gate & 80.6 & $-2.5$ & 6.4 & 13.0 & 93.4 \\
+Without Socratic substitution & 54.2 & $-29.0$ & 1.9 & 44.0 & 78.6 \\
 \bottomrule
 \end{tabularx}
-\noindent{\footnotesize{All values are percentages; $\Delta$ is in percentage points relative to the full framework. ``Harm DSR'' is restricted to the three content-harm categories ($N = 3000$). Every variant differs from the full framework at $p < 10^{-15}$ (McNemar).}}
+\noindent{\footnotesize{All values are percentages; $\Delta$ is in percentage points relative to the full framework. Harm DSR is restricted to the three content-harm categories ($N = 3000$). The two amendments were made after the rubric exposed the defects they correct (Section~\ref{sec:groundtruth}). Every variant differs from the full framework at $p < 10^{-15}$ (McNemar).}}
 \end{table}

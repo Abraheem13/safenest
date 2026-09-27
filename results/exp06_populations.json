@@ -1,10 +1,11 @@
 {
   "provenance": {
-    "timestamp": "2026-09-13T16:51:09",
+    "timestamp": "2026-09-27T19:43:10",
     "python": "3.13.5",
     "numpy": "2.4.4",
     "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
-    "git_commit": "9071ab7",
+    "git_commit": "1a901f8",
+    "git_dirty": false,
     "master_seed": 20260806
   },
   "n_trials": 400,
@@ -24,7 +25,7 @@
         "n": 400
       }
     },
-    "neurodivergent_verbal": {
+    "verbally_advanced": {
       "unmitigated": {
         "correct": 88,
         "under": 249,
@@ -38,7 +39,7 @@
         "n": 400
       }
     },
-    "neurodivergent_motor": {
+    "advanced_atypical_motor": {
       "unmitigated": {
         "correct": 97,
         "under": 237,
@@ -52,7 +53,7 @@
         "n": 400
       }
     },
-    "non_weird_l2": {
+    "second_language_shared_device": {
       "unmitigated": {
         "correct": 81,
         "under": 0,
@@ -66,7 +67,7 @@
         "n": 400
       }
     },
-    "dialect_switching": {
+    "high_variance": {
       "unmitigated": {
         "correct": 249,
         "under": 3,
@@ -91,7 +92,7 @@
       "Under w/ flag (%)": "0.0"
     },
     {
-      "Population": "neurodivergent_verbal",
+      "Population": "verbally_advanced",
       "Acc (%)": "22.0",
       "Under-prot (%)": "62.3",
       "Over-prot (%)": "15.8",
@@ -99,7 +100,7 @@
       "Under w/ flag (%)": "19.0"
     },
     {
-      "Population": "neurodivergent_motor",
+      "Population": "advanced_atypical_motor",
       "Acc (%)": "24.2",
       "Under-prot (%)": "59.2",
       "Over-prot (%)": "16.5",
@@ -107,7 +108,7 @@
       "Under w/ flag (%)": "59.2"
     },
     {
-      "Population": "non_weird_l2",
+      "Population": "second_language_shared_device",
       "Acc (%)": "20.2",
       "Under-prot (%)": "0.0",
       "Over-prot (%)": "79.8",
@@ -115,7 +116,7 @@
       "Under w/ flag (%)": "0.0"
     },
     {
-      "Population": "dialect_switching",
+      "Population": "high_variance",
       "Acc (%)": "62.3",
       "Under-prot (%)": "0.8",
       "Over-prot (%)": "37.0",

@@ -633,9 +633,12 @@ def tab_category() -> None:
     table("tab_category",
           "Per-category DSR (\\%) at $t_2$ (ages 7--9) under the independent rubric, "
           "$N = 200$ per cell.",
-          "tab:percat", "Lccccc",
-          r"\textbf{Risk category} & \textbf{NPL} & \textbf{Constitutional rule} & \boldmath{$\Delta$} & \textbf{Age-band oracle} & \boldmath{$\Delta$} \\",
+          "tab:percat", "lCCCCC",
+          r"& & \multicolumn{2}{c}{\textbf{Constitutional rule}} & \multicolumn{2}{c}{\textbf{Age-band oracle}} \\" "\n"
+          r"\cmidrule(lr){3-4}\cmidrule(lr){5-6}" "\n"
+          r"\textbf{Risk category} & \textbf{NPL} & \textbf{DSR} & \boldmath{$\Delta$} & \textbf{DSR} & \boldmath{$\Delta$} \\",
           rows,
+          "$\\Delta$ is NPL's DSR minus the framework's, in percentage points. "
           "The rubric scaffolds code generation and essay writing at $t_2$; NPL and the "
           "age-band oracle block both and the constitutional rule allows both. On homework "
           f"at $t_2$ the best alternative is the {best[1].lower()} at {pc(best[0])}\\%.")

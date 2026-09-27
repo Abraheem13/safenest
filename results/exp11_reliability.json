@@ -1,67 +1,68 @@
 {
   "provenance": {
-    "timestamp": "2026-09-13T16:51:18",
+    "timestamp": "2026-09-27T19:52:40",
     "python": "3.13.5",
     "numpy": "2.4.4",
     "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
-    "git_commit": "9071ab7",
+    "git_commit": "1a901f8",
+    "git_dirty": false,
     "master_seed": 20260806
   },
   "n_seeds": 20,
   "seed_variance": {
-    "NeMo Guardrails": {
-      "mean": 0.42164285714285726,
-      "sd": 0.004516152337663701,
-      "lo": 0.4128452380952381,
-      "hi": 0.4291666666666667
+    "Topical rail": {
+      "mean": 0.42021428571428576,
+      "sd": 0.0029704958050138217,
+      "lo": 0.4155964285714286,
+      "hi": 0.42633571428571426
     },
-    "Llama Guard": {
-      "mean": 0.45861904761904765,
-      "sd": 0.005846221249671229,
-      "lo": 0.44782142857142854,
-      "hi": 0.46801190476190474
+    "Harm classifier": {
+      "mean": 0.45364999999999994,
+      "sd": 0.002997483728116334,
+      "lo": 0.44797857142857145,
+      "hi": 0.4591928571428571
     },
-    "LlamaFirewall": {
-      "mean": 0.39,
-      "sd": 0.004668251994033179,
-      "lo": 0.37960714285714287,
-      "hi": 0.39766666666666667
+    "Agent firewall": {
+      "mean": 0.3869,
+      "sd": 0.0024411879272683177,
+      "lo": 0.38356428571428575,
+      "hi": 0.3912178571428571
     },
-    "Constitutional AI": {
-      "mean": 0.5235238095238096,
-      "sd": 0.005224178368209374,
-      "lo": 0.5156666666666667,
-      "hi": 0.532
+    "Constitutional rule": {
+      "mean": 0.5214071428571427,
+      "sd": 0.002342011125444935,
+      "lo": 0.5168357142857143,
+      "hi": 0.5253678571428572
     },
     "COPPA binary rule": {
-      "mean": 0.6077857142857142,
-      "sd": 0.004694447004379801,
-      "lo": 0.59975,
-      "hi": 0.6155357142857143
-    },
-    "Age-conditioned (oracle)": {
-      "mean": 0.716547619047619,
-      "sd": 0.004756575965781279,
-      "lo": 0.7073214285714285,
-      "hi": 0.7245595238095238
+      "mean": 0.6062428571428572,
+      "sd": 0.0021511618522824746,
+      "lo": 0.6031357142857143,
+      "hi": 0.609375
     },
     "Child-safety classifier": {
-      "mean": 0.6388571428571428,
-      "sd": 0.005871683562669783,
-      "lo": 0.6281071428571429,
-      "hi": 0.649797619047619
+      "mean": 0.6345142857142857,
+      "sd": 0.0025497835884664517,
+      "lo": 0.6300321428571429,
+      "hi": 0.6388464285714286
     },
-    "NPL (no Socratic)": {
-      "mean": 0.5433809523809524,
-      "sd": 0.0027285165351151044,
-      "lo": 0.538547619047619,
-      "hi": 0.5474404761904762
+    "Age-band oracle": {
+      "mean": 0.7150357142857143,
+      "sd": 0.0019977834118561043,
+      "lo": 0.7117535714285714,
+      "hi": 0.7188249999999999
     },
-    "NPL (ours)": {
-      "mean": 0.7611666666666667,
-      "sd": 0.006660353258327893,
-      "lo": 0.7520833333333333,
-      "hi": 0.77225
+    "NPL without Socratic substitution": {
+      "mean": 0.5421785714285714,
+      "sd": 0.0018428454857706757,
+      "lo": 0.5392785714285715,
+      "hi": 0.5452392857142857
+    },
+    "NPL (full)": {
+      "mean": 0.8344071428571429,
+      "sd": 0.002246025251576585,
+      "lo": 0.8309928571428572,
+      "hi": 0.8383678571428571
     }
   },
   "calibration_bins": [
@@ -103,67 +104,67 @@
   ],
   "expected_calibration_error": 0.005473673646999504,
   "holm_bonferroni": {
-    "Llama Guard": {
+    "Topical rail": {
       "p_raw": 0.0,
       "p_holm": 0.0,
       "significant_at_05": true
     },
-    "LlamaFirewall": {
+    "Harm classifier": {
       "p_raw": 0.0,
       "p_holm": 0.0,
       "significant_at_05": true
     },
-    "NPL (no Socratic)": {
+    "Agent firewall": {
       "p_raw": 0.0,
       "p_holm": 0.0,
       "significant_at_05": true
     },
-    "NeMo Guardrails": {
-      "p_raw": 3.575e-320,
-      "p_holm": 1.78753e-319,
+    "Constitutional rule": {
+      "p_raw": 0.0,
+      "p_holm": 0.0,
       "significant_at_05": true
     },
-    "Constitutional AI": {
-      "p_raw": 6.594534374159134e-263,
-      "p_holm": 2.6378137496636535e-262,
+    "NPL without Socratic substitution": {
+      "p_raw": 0.0,
+      "p_holm": 0.0,
       "significant_at_05": true
     },
     "COPPA binary rule": {
-      "p_raw": 1.1570111936252845e-103,
-      "p_holm": 3.4710335808758534e-103,
+      "p_raw": 5.305239994393157e-256,
+      "p_holm": 1.591571998317947e-255,
       "significant_at_05": true
     },
     "Child-safety classifier": {
-      "p_raw": 1.7428911601884688e-84,
-      "p_holm": 3.4857823203769377e-84,
+      "p_raw": 1.0060713047935806e-173,
+      "p_holm": 2.0121426095871613e-173,
       "significant_at_05": true
     },
-    "Age-conditioned (oracle)": {
-      "p_raw": 5.008641733307025e-10,
-      "p_holm": 5.008641733307025e-10,
+    "Age-band oracle": {
+      "p_raw": 2.8185157890368474e-101,
+      "p_holm": 2.8185157890368474e-101,
       "significant_at_05": true
     }
   },
   "end_to_end_all_frameworks": {
-    "NeMo Guardrails": {
+    "Topical rail": {
       "oracle_dsr": 0.4195714285714286,
       "estimated_dsr": 0.4195714285714286,
       "delta_pp": 0.0,
       "estimated_under": 0.5804285714285714
     },
-    "Llama Guard": {
+    "Harm classifier": {
       "oracle_dsr": 0.4534285714285714,
       "estimated_dsr": 0.4534285714285714,
       "delta_pp": 0.0,
       "estimated_under": 0.47
     },
-    "LlamaFirewall": {
+    "Agent firewall": {
       "oracle_dsr": 0.39,
       "estimated_dsr": 0.39,
       "delta_pp": 0.0,
       "estimated_under": 0.5602857142857143
     },
-    "Constitutional AI": {
+    "Constitutional rule": {
       "oracle_dsr": 0.525,
       "estimated_dsr": 0.525,
       "delta_pp": 0.0,
@@ -175,28 +176,28 @@
       "delta_pp": -0.07142857142856673,
       "estimated_under": 0.25971428571428573
     },
-    "Age-conditioned (oracle)": {
-      "oracle_dsr": 0.7151428571428572,
-      "estimated_dsr": 0.7125714285714285,
-      "delta_pp": -0.2571428571428669,
-      "estimated_under": 0.09885714285714285
-    },
     "Child-safety classifier": {
       "oracle_dsr": 0.6344285714285715,
       "estimated_dsr": 0.6344285714285715,
       "delta_pp": 0.0,
       "estimated_under": 0.274
     },
-    "NPL (no Socratic)": {
+    "Age-band oracle": {
+      "oracle_dsr": 0.7151428571428572,
+      "estimated_dsr": 0.7125714285714285,
+      "delta_pp": -0.2571428571428669,
+      "estimated_under": 0.09885714285714285
+    },
+    "NPL without Socratic substitution": {
       "oracle_dsr": 0.5415714285714286,
       "estimated_dsr": 0.5402857142857143,
       "delta_pp": -0.12857142857143344,
       "estimated_under": 0.01842857142857143
     },
-    "NPL (ours)": {
-      "oracle_dsr": 0.7548571428571429,
-      "estimated_dsr": 0.7508571428571429,
-      "delta_pp": -0.40000000000000036,
+    "NPL (full)": {
+      "oracle_dsr": 0.8314285714285714,
+      "estimated_dsr": 0.8264285714285714,
+      "delta_pp": -0.5000000000000004,
       "estimated_under": 0.038285714285714284
     }
   },
@@ -210,14 +211,14 @@
     "age_inappropriate_content": 0.1
   },
   "prevalence_weighted_dsr": {
-    "NeMo Guardrails": 0.43101,
-    "Llama Guard": 0.44458000000000003,
-    "LlamaFirewall": 0.4248,
-    "Constitutional AI": 0.46867000000000003,
+    "Topical rail": 0.43101,
+    "Harm classifier": 0.44458000000000003,
+    "Agent firewall": 0.4248,
+    "Constitutional rule": 0.46867000000000003,
     "COPPA binary rule": 0.53763,
-    "Age-conditioned (oracle)": 0.65621,
     "Child-safety classifier": 0.58794,
-    "NPL (no Socratic)": 0.44257,
-    "NPL (ours)": 0.79689
+    "Age-band oracle": 0.65621,
+    "NPL without Socratic substitution": 0.44257,
+    "NPL (full)": 0.8129700000000001
   }
 }

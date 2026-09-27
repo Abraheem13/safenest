@@ -1,19 +1,19 @@
 \begin{table}[H]
-\caption{Paired McNemar comparisons of the full framework against each alternative, with Holm--Bonferroni correction.\label{tab:stats}}
+\caption{Paired comparisons of the full framework with each alternative, $N = 7000$.\label{tab:stats}}
 \small
 \begin{tabularx}{\textwidth}{Lcccc}
 \toprule
-\textbf{Full NPL versus} & \boldmath{$\Delta$} \textbf{(pp)} & \boldmath{$p$} \textbf{raw} & \boldmath{$p$} \textbf{Holm} & \textbf{Significant} \\
+\textbf{Full NPL versus} & \boldmath{$\Delta$} \textbf{(pp)} & \textbf{95\% interval} & \textbf{Discordant pairs} & \textbf{McNemar} \boldmath{$p$} \\
 \midrule
-Llama Guard-style & $+30.1$ & $<10^{-300}$ & $<10^{-300}$ & yes \\
-LlamaFirewall-style & $+36.5$ & $<10^{-300}$ & $<10^{-300}$ & yes \\
-NPL without Socratic substitution & $+21.3$ & $<10^{-300}$ & $<10^{-300}$ & yes \\
-NeMo Guardrails-style & $+33.5$ & $3.6\times10^{-320}$ & $1.8\times10^{-319}$ & yes \\
-Constitutional AI-style & $+23.0$ & $6.6\times10^{-263}$ & $2.6\times10^{-262}$ & yes \\
-COPPA binary rule & $+14.8$ & $1.2\times10^{-103}$ & $3.5\times10^{-103}$ & yes \\
-Child-safety classifier & $+12.0$ & $1.7\times10^{-84}$ & $3.5\times10^{-84}$ & yes \\
-Age-conditioned (oracle band) & $+4.0$ & $5.0\times10^{-10}$ & $5.0\times10^{-10}$ & yes \\
+Topical rail$^{\dagger}$ & $+41.2$ & [$+39.9$, $+42.5$] & 3{,}135 / 252 & $< 10^{-15}$ \\
+Harm classifier$^{\dagger}$ & $+37.8$ & [$+36.5$, $+39.1$] & 2{,}898 / 252 & $< 10^{-15}$ \\
+Agent firewall$^{\dagger}$ & $+44.1$ & [$+42.8$, $+45.4$] & 3{,}342 / 252 & $< 10^{-15}$ \\
+Constitutional rule$^{\dagger}$ & $+30.6$ & [$+29.4$, $+32.0$] & 2{,}418 / 273 & $< 10^{-15}$ \\
+COPPA binary rule & $+22.5$ & [$+21.4$, $+23.7$] & 1{,}848 / 273 & $< 10^{-15}$ \\
+Child-safety classifier & $+19.7$ & [$+18.4$, $+21.0$] & 1{,}892 / 513 & $< 10^{-15}$ \\
+Age-band oracle & $+11.6$ & [$+10.6$, $+12.7$] & 1{,}131 / 317 & $< 10^{-15}$ \\
+NPL without Socratic substitution & $+29.0$ & [$+27.9$, $+30.0$] & 2{,}029 / 0 & $< 10^{-15}$ \\
 \bottomrule
 \end{tabularx}
-\noindent{\footnotesize{Family of eight comparisons on $N = 7000$ paired prompts, independent rubric. McNemar's test with continuity correction; significance at $\alpha = 0.05$ after correction. Raw $p$-values below the double-precision floor are reported as bounds.}}
+\noindent{\footnotesize{The interval is a paired bootstrap percentile interval (2000 resamples). Discordant pairs count records NPL gets right and the alternative wrong, and the reverse. On a synthetic corpus whose size the authors choose, $p$-values measure that size as much as the effect, so values below $10^{-15}$ are reported as a bound and the interval is the primary statistic. $^{\dagger}$Decision rule modelled on the documented behaviour of, respectively, NeMo Guardrails~\cite{Rebedea2023}, Llama Guard~\cite{Inan2023}, LlamaFirewall~\cite{MetaAI2025} and Constitutional AI~\cite{Bai2022}; not the shipped systems.}}
 \end{table}

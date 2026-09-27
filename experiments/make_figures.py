@@ -159,17 +159,17 @@ def fig_gating() -> None:
                      f"{{{CAPABILITY_LABEL[cap.value]}}};")
         for i, tier in enumerate(ALL_TIERS):
             fill, tc, ch = marks[FEATURE_GATING[cap][tier]]
-            cells.append(f"\\node[cell, fill={fill}, text={tc}] at ({1.0 * i:.2f},{y:.2f}) {{{ch}}};")
+            cells.append(f"\\node[cell, fill={fill}, text={tc}] at ({1.12 * i:.2f},{y:.2f}) {{{ch}}};")
     heads = "\n".join(
-        f"\\node[font=\\footnotesize] at ({1.0 * i:.2f},0.78) {{$t_{i + 1}$}};\n"
-        f"\\node[font=\\footnotesize] at ({1.0 * i:.2f},0.40) "
+        f"\\node[font=\\footnotesize] at ({1.12 * i:.2f},0.98) {{$t_{i + 1}$}};\n"
+        f"\\node[font=\\footnotesize] at ({1.12 * i:.2f},0.56) "
         f"{{{TIER_SPECS[t].age_low}--{TIER_SPECS[t].age_high}}};"
         for i, t in enumerate(ALL_TIERS))
     body = (r"""
 \begin{tikzpicture}[cell/.style={draw, thin, rectangle, minimum width=9mm,
                     minimum height=5.4mm, font=\footnotesize}]
 """ + heads + "\n" + "\n".join(cells) + r"""
-\node[font=\footnotesize, anchor=north] at (2.0,-5.55)
+\node[font=\footnotesize, anchor=north] at (2.24,-5.55)
   {\textbf{B} blocked\quad \textbf{S} Socratic (scaffolded)\quad
    \textbf{L} limited (monitored)\quad \textbf{A} available};
 \end{tikzpicture}""")

@@ -1,0 +1,22 @@
+\begin{table}[H]
+\caption{What changed between the conference version~\cite{Ejaz2026UKCI} and this article.\label{tab:conference}}
+\small
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{2.3cm}LL}
+\toprule
+\textbf{Aspect} & \textbf{UKCI 2026 paper} & \textbf{This article} \\
+\midrule
+Ground truth & Labels derived from the policy's own feature-gating matrix & Independent rubric that never consults the policy; matrix labels reported for contrast \\
+Headline DSR & 88.6\% vs.\ 47.0\% (best age-agnostic) & 83.1\% vs.\ 52.5\% (best age-agnostic) and 71.5\% (oracle age bands); 73.8\% before two amendments; 94.0\% under matrix labels \\
+Baselines & Four age-agnostic filters, calibrated to a target under-protection range & Four age-agnostic rules at fixed and at tuned thresholds, three age-aware baselines (including an oracle age-band policy under six band partitions), an ablated NPL \\
+Privacy & Per-signal Laplace noise, described as an $\varepsilon$-DP posterior at $\varepsilon=1$ & \emph{Corrected}: local DP on the live child's signals gives near-chance accuracy; the guarantee is a corpus-level $(\varepsilon,\delta)$ release with stated sensitivity, also applied to parameters learned from real text \\
+Estimator theory & None & Proved finite-sample misassignment bound, tested against real text \\
+Formal properties & Four invariants (fail-safe default, complete mediation, monotonicity, crisis pre-emption), proofs by hand & Three invariants verified exhaustively over a region-complete abstraction and the tier-authority automaton; fail-safe default and complete mediation become assumptions and design rules (Section~\ref{sec:formal}); two defects found \\
+Optimisation & Bilevel formulation of safety and utility & Removed: no quantity is optimised jointly; the learned components are the tier estimators \\
+Socratic engine & Expected value said to peak at $t_2$ & Value rises with tier once the reward is stated in full (Table~\ref{tab:socratic}) \\
+Policy & Seven risk categories; crisis blocked at every tier & Nine capabilities; severity gate on substance and age-inappropriate content; crisis disclosures referred, not refused, from $t_3$ \\
+Real data & None & Tier estimators learned from three essay corpora (31{,}307 essays) and evaluated across corpora; real-subgroup and privacy analyses \\
+New analyses & --- & Ablation, achievable ceiling, threshold sweeps, simulated atypical profiles, impersonation adversary, calibration, overhead including feature extraction \\
+\bottomrule
+\end{tabularx}
+\noindent{\footnotesize{DSR: developmental safety rate (Section~\ref{sec:metrics}). The conference numbers are reproduced from~\cite{Ejaz2026UKCI}. The random seed also changed (20260720 to 20260806), but seed-to-seed variation is 0.22 points, so the differences come from the changes listed.}}
+\end{table}

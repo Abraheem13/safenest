@@ -1,0 +1,12 @@
+{
+  "provenance": {
+    "timestamp": "2026-09-27T19:51:59",
+    "python": "3.13.5",
+    "numpy": "2.4.4",
+    "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+    "git_commit": "1a901f8",
+    "git_dirty": false,
+    "master_seed": 20260806
+  },
+  "skipped": "no CHILDES corpus has been prepared; see data/README.md"
+}

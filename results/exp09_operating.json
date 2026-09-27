@@ -1,10 +1,11 @@
 {
   "provenance": {
-    "timestamp": "2026-09-13T16:51:13",
+    "timestamp": "2026-09-27T19:52:32",
     "python": "3.13.5",
     "numpy": "2.4.4",
     "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
-    "git_commit": "9071ab7",
+    "git_commit": "1a901f8",
+    "git_dirty": false,
     "master_seed": 20260806
   },
   "gamma_grid": [
@@ -101,6 +102,43 @@
     0.8
   ],
   "severity_sweep": {
+    "0.2": {
+      "dsr": 0.9856666666666667,
+      "under_protection": 0.0,
+      "over_restriction": 0.014333333333333333
+    },
+    "0.3": {
+      "dsr": 0.9866666666666667,
+      "under_protection": 0.0,
+      "over_restriction": 0.013333333333333334
+    },
+    "0.4": {
+      "dsr": 0.989,
+      "under_protection": 0.0,
+      "over_restriction": 0.011
+    },
+    "0.5": {
+      "dsr": 0.993,
+      "under_protection": 0.0,
+      "over_restriction": 0.007
+    },
+    "0.6": {
+      "dsr": 0.9836666666666667,
+      "under_protection": 0.009333333333333334,
+      "over_restriction": 0.007
+    },
+    "0.7": {
+      "dsr": 0.9693333333333334,
+      "under_protection": 0.023666666666666666,
+      "over_restriction": 0.007
+    },
+    "0.8": {
+      "dsr": 0.9526666666666667,
+      "under_protection": 0.04033333333333333,
+      "over_restriction": 0.007
+    }
+  },
+  "severity_sweep_earlier_crisis_refusal": {
     "0.2": {
       "dsr": 0.786,
       "under_protection": 0.0,

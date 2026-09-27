@@ -1,0 +1,21 @@
+\begin{table}[H]
+\begin{adjustwidth}{-\extralength}{0cm}
+\caption{Tier estimation from real writing, trained on two corpora and tested on the third, after $n = 10$ interactions (50-word windows).\label{tab:real-loco}}
+\small
+\begin{tabularx}{\fulllength}{L*{9}{c}}
+\toprule
+& \multicolumn{3}{c}{\textbf{PERSUADE held out}} & \multicolumn{3}{c}{\textbf{ASAP held out}} & \multicolumn{3}{c}{\textbf{ELLIPSE held out}} \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-7}\cmidrule(lr){8-10}
+\textbf{Estimator} & \textbf{Bal.} & \textbf{Under} & \textbf{Over} & \textbf{Bal.} & \textbf{Under} & \textbf{Over} & \textbf{Bal.} & \textbf{Under} & \textbf{Over} \\
+\midrule
+NPL (specified) & 50.7 & 52.9 & 0.3 & 53.4 & 29.6 & 2.5 & 68.3 & 21.6 & 3.4 \\
+NPL (learned) & 56.2 & 17.2 & 23.9 & 41.0 & 3.3 & 68.8 & 42.7 & 8.2 & 46.5 \\
+Logistic (features) & 50.1 & 22.1 & 27.8 & 34.7 & 3.7 & 74.1 & 31.8 & 4.2 & 63.5 \\
+Gradient boosting (features) & 52.6 & 30.3 & 18.8 & 42.4 & 5.2 & 58.9 & 40.6 & 3.6 & 62.0 \\
+Logistic (TF-IDF) & 58.5 & 33.0 & 3.4 & 55.8 & 24.5 & 10.7 & 73.0 & 3.6 & 43.5 \\
+Logistic (MiniLM) & 51.1 & 45.4 & 3.8 & 53.7 & 24.6 & 11.4 & 62.7 & 2.9 & 57.7 \\
+\bottomrule
+\end{tabularx}
+\noindent{\footnotesize{All values are percentages. Bal.: balanced accuracy over admissible-tier groups; Under: a less protective tier than any admissible one; Over: a more protective one, including the $t_1$ floor. NPL (specified) uses the simulation parameters of Table~\ref{tab:params}; every other estimator is fitted to the training corpora.}}
+\end{adjustwidth}
+\end{table}

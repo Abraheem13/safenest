@@ -1,10 +1,11 @@
 {
   "provenance": {
-    "timestamp": "2026-09-13T16:51:14",
+    "timestamp": "2026-09-27T19:52:33",
     "python": "3.13.5",
     "numpy": "2.4.4",
     "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
-    "git_commit": "9071ab7",
+    "git_commit": "1a901f8",
+    "git_dirty": false,
     "master_seed": 20260806
   },
   "true_tier": "t2",
@@ -40,9 +41,9 @@
   },
   "false_flag_rates": {
     "typical": 0.01,
-    "neurodivergent_verbal": 0.2275,
-    "non_weird_l2": 0.2975,
-    "dialect_switching": 0.4275
+    "verbally_advanced": 0.2275,
+    "second_language_shared_device": 0.2975,
+    "high_variance": 0.4275
   },
   "roc": {
     "0.5": [
@@ -2485,7 +2486,7 @@
       "fpr": 0.01,
       "tpr": 0.245
     },
-    "neurodivergent_verbal": {
+    "verbally_advanced": {
       "fpr": 0.2275,
       "tpr": 0.245
     }
