@@ -5,15 +5,15 @@
 \toprule
 \textbf{Component} & \textbf{Granularity} & \textbf{Time (\boldmath{$\mu$}s)} & \textbf{Complexity} & \textbf{Synchronous} \\
 \midrule
-$L_0$ token filter & per response & 1.79 & $O(|y|)$ & yes \\
+$L_0$ token filter & per response & 1.80 & $O(|y|)$ & yes \\
 $L_1$ Socratic guard & per response & 0.13 & $O(1)$ & yes \\
-$L_4$ policy store & per query & 0.08 & $O(1)$ & yes \\
+$L_4$ policy store & per query & 0.07 & $O(1)$ & yes \\
 Socratic policy lookup & per step & 0.14 & $O(1)$ & yes \\
-Full engine, end to end & per response & 2.55 & $O(|y|)$ & yes \\
-Tier update ($L_2$) & per interaction & 29.73 & $O(KM)$ & no \\
-Five linguistic features & per message & 3{,}238 & $O(|x|)$ & no \\
-Sentence embedding & per message & 4{,}908 & $O(|x|)$ & no \\
+Full engine, end to end & per response & 2.53 & $O(|y|)$ & yes \\
+Tier update ($L_2$) & per interaction & 27.92 & $O(KM)$ & no \\
+Five linguistic features & per message & 3{,}176 & $O(|x|)$ & no \\
+Sentence embedding & per message & 4{,}269 & $O(|x|)$ & no \\
 \bottomrule
 \end{tabularx}
-\noindent{\footnotesize{The synchronous engine costs 0.0005\% of a 500 ms model response. Computing the inputs dominates: the five features and a sentence embedding together take 8.1 ms per message (1.6\% of 500 ms), off the response path. $|y|$ is the response length and $|x|$ the message length in tokens, $K$ the number of tiers and $M$ the number of modalities. Platform: macOS, arm.}}
+\noindent{\footnotesize{The synchronous engine costs 0.0005\% of a 500 ms model response. Computing the inputs dominates: the five features and a sentence embedding together take 7.4 ms per message (1.5\% of 500 ms), off the response path. $|y|$ is the response length and $|x|$ the message length in tokens, $K$ the number of tiers and $M$ the number of modalities. Platform: macOS, arm.}}
 \end{table}

@@ -1,28 +1,28 @@
 {
   "provenance": {
-    "timestamp": "2026-09-27T23:42:40",
+    "timestamp": "2026-09-28T01:55:10",
     "python": "3.13.5",
     "numpy": "2.4.4",
     "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
-    "git_commit": "fedda2e",
+    "git_commit": "e073fb9",
     "git_dirty": false,
     "master_seed": 20260806
   },
   "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
   "processor": "arm",
   "measurements_seconds": {
-    "L0: Token Filter (per response, 40 tokens)": 1.7879854480270297e-06,
-    "L1: Socratic Guard (per response)": 1.2765210121870042e-07,
-    "L4: Policy Store (per query)": 7.527080015279352e-08,
-    "Full engine (per response)": 2.5515854475088416e-06,
-    "L2: Bayesian update (per interaction)": 2.9732020513620227e-05,
-    "Socratic MDP lookup (per step)": 1.447291491786018e-07,
-    "Feature extraction (per 50-word message)": 0.003237876665079966,
-    "Sentence embedding (per 50-word message, CPU)": 0.004907754159648903
+    "L0: Token Filter (per response, 40 tokens)": 1.7997374990954994e-06,
+    "L1: Socratic Guard (per response)": 1.348249992588535e-07,
+    "L4: Policy Store (per query)": 7.154374907258897e-08,
+    "Full engine (per response)": 2.5265666510676965e-06,
+    "L2: Bayesian update (per interaction)": 2.7921625005546957e-05,
+    "Socratic MDP lookup (per step)": 1.3988125137984752e-07,
+    "Feature extraction (per 50-word message)": 0.0031757827050751075,
+    "Sentence embedding (per 50-word message, CPU)": 0.004268981670029461
   },
-  "synchronous_per_response_seconds": 2.5515854475088416e-06,
-  "share_of_500ms_llm": 5.103170895017683e-06,
-  "share_of_2000ms_llm": 1.2757927237544208e-06,
+  "synchronous_per_response_seconds": 2.5265666510676965e-06,
+  "share_of_500ms_llm": 5.053133302135393e-06,
+  "share_of_2000ms_llm": 1.2632833255338482e-06,
   "conditional_independence": {
     "correlations": [
       0.0,

@@ -1,10 +1,10 @@
 {
   "provenance": {
-    "timestamp": "2026-09-27T23:41:29",
+    "timestamp": "2026-09-28T01:54:02",
     "python": "3.13.5",
     "numpy": "2.4.4",
     "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
-    "git_commit": "fedda2e",
+    "git_commit": "e073fb9",
     "git_dirty": false,
     "master_seed": 20260806
   },
@@ -97,11 +97,11 @@
             "over_restriction": 0.0,
             "n": 1000
           },
-          "homework_assignment": {
-            "dsr": 0.079,
-            "dsr_ci_low": 0.06384696504253543,
-            "dsr_ci_high": 0.0973752835672054,
-            "under_protection": 0.921,
+          "age_inappropriate_content": {
+            "dsr": 1.0,
+            "dsr_ci_low": 0.9961731014136095,
+            "dsr_ci_high": 1.0,
+            "under_protection": 0.0,
             "over_restriction": 0.0,
             "n": 1000
           },
@@ -113,19 +113,11 @@
             "over_restriction": 0.0,
             "n": 1000
           },
-          "age_inappropriate_content": {
-            "dsr": 1.0,
-            "dsr_ci_low": 0.9961731014136095,
-            "dsr_ci_high": 1.0,
-            "under_protection": 0.0,
-            "over_restriction": 0.0,
-            "n": 1000
-          },
-          "open_ended_chat": {
-            "dsr": 0.8,
-            "dsr_ci_low": 0.7740805389094014,
-            "dsr_ci_high": 0.8236233219387643,
-            "under_protection": 0.2,
+          "homework_assignment": {
+            "dsr": 0.079,
+            "dsr_ci_low": 0.06384696504253543,
+            "dsr_ci_high": 0.0973752835672054,
+            "under_protection": 0.921,
             "over_restriction": 0.0,
             "n": 1000
           },
@@ -142,6 +134,14 @@
             "dsr_ci_low": 0.42436628838567486,
             "dsr_ci_high": 0.48597813248710037,
             "under_protection": 0.545,
+            "over_restriction": 0.0,
+            "n": 1000
+          },
+          "open_ended_chat": {
+            "dsr": 0.8,
+            "dsr_ci_low": 0.7740805389094014,
+            "dsr_ci_high": 0.8236233219387643,
+            "under_protection": 0.2,
             "over_restriction": 0.0,
             "n": 1000
           }
@@ -207,11 +207,11 @@
             "over_restriction": 0.0,
             "n": 1000
           },
-          "homework_assignment": {
-            "dsr": 0.079,
-            "dsr_ci_low": 0.06384696504253543,
-            "dsr_ci_high": 0.0973752835672054,
-            "under_protection": 0.921,
+          "age_inappropriate_content": {
+            "dsr": 1.0,
+            "dsr_ci_low": 0.9961731014136095,
+            "dsr_ci_high": 1.0,
+            "under_protection": 0.0,
             "over_restriction": 0.0,
             "n": 1000
           },
@@ -223,19 +223,11 @@
             "over_restriction": 0.057,
             "n": 1000
           },
-          "age_inappropriate_content": {
-            "dsr": 1.0,
-            "dsr_ci_low": 0.9961731014136095,
-            "dsr_ci_high": 1.0,
-            "under_protection": 0.0,
-            "over_restriction": 0.0,
-            "n": 1000
-          },
-          "open_ended_chat": {
-            "dsr": 0.8,
-            "dsr_ci_low": 0.7740805389094014,
-            "dsr_ci_high": 0.8236233219387643,
-            "under_protection": 0.2,
+          "homework_assignment": {
+            "dsr": 0.079,
+            "dsr_ci_low": 0.06384696504253543,
+            "dsr_ci_high": 0.0973752835672054,
+            "under_protection": 0.921,
             "over_restriction": 0.0,
             "n": 1000
           },
@@ -253,6 +245,14 @@
             "dsr_ci_high": 0.3993560145593666,
             "under_protection": 0.095,
             "over_restriction": 0.536,
+            "n": 1000
+          },
+          "open_ended_chat": {
+            "dsr": 0.8,
+            "dsr_ci_low": 0.7740805389094014,
+            "dsr_ci_high": 0.8236233219387643,
+            "under_protection": 0.2,
+            "over_restriction": 0.0,
             "n": 1000
           }
         }
@@ -317,11 +317,11 @@
             "over_restriction": 0.0,
             "n": 1000
           },
-          "homework_assignment": {
-            "dsr": 0.079,
-            "dsr_ci_low": 0.06384696504253543,
-            "dsr_ci_high": 0.0973752835672054,
-            "under_protection": 0.921,
+          "age_inappropriate_content": {
+            "dsr": 1.0,
+            "dsr_ci_low": 0.9961731014136095,
+            "dsr_ci_high": 1.0,
+            "under_protection": 0.0,
             "over_restriction": 0.0,
             "n": 1000
           },
@@ -333,19 +333,11 @@
             "over_restriction": 0.0,
             "n": 1000
           },
-          "age_inappropriate_content": {
-            "dsr": 1.0,
-            "dsr_ci_low": 0.9961731014136095,
-            "dsr_ci_high": 1.0,
-            "under_protection": 0.0,
-            "over_restriction": 0.0,
-            "n": 1000
-          },
-          "open_ended_chat": {
-            "dsr": 0.8,
-            "dsr_ci_low": 0.7740805389094014,
-            "dsr_ci_high": 0.8236233219387643,
-            "under_protection": 0.2,
+          "homework_assignment": {
+            "dsr": 0.079,
+            "dsr_ci_low": 0.06384696504253543,
+            "dsr_ci_high": 0.0973752835672054,
+            "under_protection": 0.921,
             "over_restriction": 0.0,
             "n": 1000
           },
@@ -363,6 +355,14 @@
             "dsr_ci_high": 0.27569696725500037,
             "under_protection": 0.404,
             "over_restriction": 0.348,
+            "n": 1000
+          },
+          "open_ended_chat": {
+            "dsr": 0.8,
+            "dsr_ci_low": 0.7740805389094014,
+            "dsr_ci_high": 0.8236233219387643,
+            "under_protection": 0.2,
+            "over_restriction": 0.0,
             "n": 1000
           }
         }
@@ -427,11 +427,11 @@
             "over_restriction": 0.0,
             "n": 1000
           },
-          "homework_assignment": {
-            "dsr": 0.079,
-            "dsr_ci_low": 0.06384696504253543,
-            "dsr_ci_high": 0.0973752835672054,
-            "under_protection": 0.921,
+          "age_inappropriate_content": {
+            "dsr": 1.0,
+            "dsr_ci_low": 0.9961731014136095,
+            "dsr_ci_high": 1.0,
+            "under_protection": 0.0,
             "over_restriction": 0.0,
             "n": 1000
           },
@@ -443,19 +443,11 @@
             "over_restriction": 0.2,
             "n": 1000
           },
-          "age_inappropriate_content": {
-            "dsr": 1.0,
-            "dsr_ci_low": 0.9961731014136095,
-            "dsr_ci_high": 1.0,
-            "under_protection": 0.0,
-            "over_restriction": 0.0,
-            "n": 1000
-          },
-          "open_ended_chat": {
-            "dsr": 0.8,
-            "dsr_ci_low": 0.7740805389094014,
-            "dsr_ci_high": 0.8236233219387643,
-            "under_protection": 0.2,
+          "homework_assignment": {
+            "dsr": 0.079,
+            "dsr_ci_low": 0.06384696504253543,
+            "dsr_ci_high": 0.0973752835672054,
+            "under_protection": 0.921,
             "over_restriction": 0.0,
             "n": 1000
           },
@@ -473,6 +465,14 @@
             "dsr_ci_high": 0.44782110833042027,
             "under_protection": 0.009,
             "over_restriction": 0.574,
+            "n": 1000
+          },
+          "open_ended_chat": {
+            "dsr": 0.8,
+            "dsr_ci_low": 0.7740805389094014,
+            "dsr_ci_high": 0.8236233219387643,
+            "under_protection": 0.2,
+            "over_restriction": 0.0,
             "n": 1000
           }
         }
@@ -537,12 +537,12 @@
             "over_restriction": 0.117,
             "n": 1000
           },
-          "homework_assignment": {
-            "dsr": 0.203,
-            "dsr_ci_low": 0.17922776346679883,
-            "dsr_ci_high": 0.22904541429351719,
-            "under_protection": 0.578,
-            "over_restriction": 0.219,
+          "age_inappropriate_content": {
+            "dsr": 1.0,
+            "dsr_ci_low": 0.9961731014136095,
+            "dsr_ci_high": 1.0,
+            "under_protection": 0.0,
+            "over_restriction": 0.0,
             "n": 1000
           },
           "substance_body_image": {
@@ -553,20 +553,12 @@
             "over_restriction": 0.2,
             "n": 1000
           },
-          "age_inappropriate_content": {
-            "dsr": 1.0,
-            "dsr_ci_low": 0.9961731014136095,
-            "dsr_ci_high": 1.0,
-            "under_protection": 0.0,
-            "over_restriction": 0.0,
-            "n": 1000
-          },
-          "open_ended_chat": {
-            "dsr": 0.8,
-            "dsr_ci_low": 0.7740805389094014,
-            "dsr_ci_high": 0.8236233219387643,
-            "under_protection": 0.2,
-            "over_restriction": 0.0,
+          "homework_assignment": {
+            "dsr": 0.203,
+            "dsr_ci_low": 0.17922776346679883,
+            "dsr_ci_high": 0.22904541429351719,
+            "under_protection": 0.578,
+            "over_restriction": 0.219,
             "n": 1000
           },
           "code_generation": {
@@ -583,6 +575,14 @@
             "dsr_ci_high": 0.8236233219387643,
             "under_protection": 0.0,
             "over_restriction": 0.2,
+            "n": 1000
+          },
+          "open_ended_chat": {
+            "dsr": 0.8,
+            "dsr_ci_low": 0.7740805389094014,
+            "dsr_ci_high": 0.8236233219387643,
+            "under_protection": 0.2,
+            "over_restriction": 0.0,
             "n": 1000
           }
         }
@@ -647,11 +647,11 @@
             "over_restriction": 0.027,
             "n": 1000
           },
-          "homework_assignment": {
-            "dsr": 0.308,
-            "dsr_ci_low": 0.2801657299627953,
-            "dsr_ci_high": 0.3373037990943787,
-            "under_protection": 0.692,
+          "age_inappropriate_content": {
+            "dsr": 1.0,
+            "dsr_ci_low": 0.9961731014136095,
+            "dsr_ci_high": 1.0,
+            "under_protection": 0.0,
             "over_restriction": 0.0,
             "n": 1000
           },
@@ -663,19 +663,11 @@
             "over_restriction": 0.2,
             "n": 1000
           },
-          "age_inappropriate_content": {
-            "dsr": 1.0,
-            "dsr_ci_low": 0.9961731014136095,
-            "dsr_ci_high": 1.0,
-            "under_protection": 0.0,
-            "over_restriction": 0.0,
-            "n": 1000
-          },
-          "open_ended_chat": {
-            "dsr": 0.8,
-            "dsr_ci_low": 0.7740805389094014,
-            "dsr_ci_high": 0.8236233219387643,
-            "under_protection": 0.2,
+          "homework_assignment": {
+            "dsr": 0.308,
+            "dsr_ci_low": 0.2801657299627953,
+            "dsr_ci_high": 0.3373037990943787,
+            "under_protection": 0.692,
             "over_restriction": 0.0,
             "n": 1000
           },
@@ -693,6 +685,14 @@
             "dsr_ci_high": 0.44782110833042027,
             "under_protection": 0.001,
             "over_restriction": 0.582,
+            "n": 1000
+          },
+          "open_ended_chat": {
+            "dsr": 0.8,
+            "dsr_ci_low": 0.7740805389094014,
+            "dsr_ci_high": 0.8236233219387643,
+            "under_protection": 0.2,
+            "over_restriction": 0.0,
             "n": 1000
           }
         }
@@ -757,12 +757,12 @@
             "over_restriction": 0.253,
             "n": 1000
           },
-          "homework_assignment": {
-            "dsr": 0.72,
-            "dsr_ci_low": 0.6913693871201185,
-            "dsr_ci_high": 0.7469467775018697,
-            "under_protection": 0.08,
-            "over_restriction": 0.2,
+          "age_inappropriate_content": {
+            "dsr": 1.0,
+            "dsr_ci_low": 0.9961731014136095,
+            "dsr_ci_high": 1.0,
+            "under_protection": 0.0,
+            "over_restriction": 0.0,
             "n": 1000
           },
           "substance_body_image": {
@@ -773,20 +773,12 @@
             "over_restriction": 0.2,
             "n": 1000
           },
-          "age_inappropriate_content": {
-            "dsr": 1.0,
-            "dsr_ci_low": 0.9961731014136095,
-            "dsr_ci_high": 1.0,
-            "under_protection": 0.0,
-            "over_restriction": 0.0,
-            "n": 1000
-          },
-          "open_ended_chat": {
-            "dsr": 0.679,
-            "dsr_ci_low": 0.6494259520378269,
-            "dsr_ci_high": 0.7072040182682453,
-            "under_protection": 0.2,
-            "over_restriction": 0.121,
+          "homework_assignment": {
+            "dsr": 0.72,
+            "dsr_ci_low": 0.6913693871201185,
+            "dsr_ci_high": 0.7469467775018697,
+            "under_protection": 0.08,
+            "over_restriction": 0.2,
             "n": 1000
           },
           "code_generation": {
@@ -803,6 +795,14 @@
             "dsr_ci_high": 1.0,
             "under_protection": 0.0,
             "over_restriction": 0.0,
+            "n": 1000
+          },
+          "open_ended_chat": {
+            "dsr": 0.679,
+            "dsr_ci_low": 0.6494259520378269,
+            "dsr_ci_high": 0.7072040182682453,
+            "under_protection": 0.2,
+            "over_restriction": 0.121,
             "n": 1000
           }
         }
@@ -867,12 +867,12 @@
             "over_restriction": 0.2,
             "n": 1000
           },
-          "homework_assignment": {
-            "dsr": 0.2,
-            "dsr_ci_low": 0.17637667806123578,
-            "dsr_ci_high": 0.2259194610905986,
+          "age_inappropriate_content": {
+            "dsr": 1.0,
+            "dsr_ci_low": 0.9961731014136095,
+            "dsr_ci_high": 1.0,
             "under_protection": 0.0,
-            "over_restriction": 0.8,
+            "over_restriction": 0.0,
             "n": 1000
           },
           "substance_body_image": {
@@ -883,20 +883,12 @@
             "over_restriction": 0.2,
             "n": 1000
           },
-          "age_inappropriate_content": {
-            "dsr": 1.0,
-            "dsr_ci_low": 0.9961731014136095,
-            "dsr_ci_high": 1.0,
+          "homework_assignment": {
+            "dsr": 0.2,
+            "dsr_ci_low": 0.17637667806123578,
+            "dsr_ci_high": 0.2259194610905986,
             "under_protection": 0.0,
-            "over_restriction": 0.0,
-            "n": 1000
-          },
-          "open_ended_chat": {
-            "dsr": 0.6,
-            "dsr_ci_low": 0.5693088606220993,
-            "dsr_ci_high": 0.6299257596606225,
-            "under_protection": 0.0,
-            "over_restriction": 0.4,
+            "over_restriction": 0.8,
             "n": 1000
           },
           "code_generation": {
@@ -913,6 +905,14 @@
             "dsr_ci_high": 0.43069113937790077,
             "under_protection": 0.0,
             "over_restriction": 0.6,
+            "n": 1000
+          },
+          "open_ended_chat": {
+            "dsr": 0.6,
+            "dsr_ci_low": 0.5693088606220993,
+            "dsr_ci_high": 0.6299257596606225,
+            "under_protection": 0.0,
+            "over_restriction": 0.4,
             "n": 1000
           }
         }
@@ -977,11 +977,11 @@
             "over_restriction": 0.0,
             "n": 1000
           },
-          "homework_assignment": {
-            "dsr": 0.879,
-            "dsr_ci_low": 0.8573226741029558,
-            "dsr_ci_high": 0.8977765367685602,
-            "under_protection": 0.121,
+          "age_inappropriate_content": {
+            "dsr": 1.0,
+            "dsr_ci_low": 0.9961731014136095,
+            "dsr_ci_high": 1.0,
+            "under_protection": 0.0,
             "over_restriction": 0.0,
             "n": 1000
           },
@@ -993,20 +993,12 @@
             "over_restriction": 0.178,
             "n": 1000
           },
-          "age_inappropriate_content": {
-            "dsr": 1.0,
-            "dsr_ci_low": 0.9961731014136095,
-            "dsr_ci_high": 1.0,
-            "under_protection": 0.0,
-            "over_restriction": 0.0,
-            "n": 1000
-          },
-          "open_ended_chat": {
+          "homework_assignment": {
             "dsr": 0.879,
             "dsr_ci_low": 0.8573226741029558,
             "dsr_ci_high": 0.8977765367685602,
-            "under_protection": 0.0,
-            "over_restriction": 0.121,
+            "under_protection": 0.121,
+            "over_restriction": 0.0,
             "n": 1000
           },
           "code_generation": {
@@ -1023,6 +1015,14 @@
             "dsr_ci_high": 1.0,
             "under_protection": 0.0,
             "over_restriction": 0.0,
+            "n": 1000
+          },
+          "open_ended_chat": {
+            "dsr": 0.879,
+            "dsr_ci_low": 0.8573226741029558,
+            "dsr_ci_high": 0.8977765367685602,
+            "under_protection": 0.0,
+            "over_restriction": 0.121,
             "n": 1000
           }
         }
@@ -1089,11 +1089,11 @@
             "over_restriction": 0.0,
             "n": 1000
           },
-          "homework_assignment": {
-            "dsr": 0.307,
-            "dsr_ci_low": 0.2791952556296626,
-            "dsr_ci_high": 0.33628192722468425,
-            "under_protection": 0.693,
+          "age_inappropriate_content": {
+            "dsr": 1.0,
+            "dsr_ci_low": 0.9961731014136095,
+            "dsr_ci_high": 1.0,
+            "under_protection": 0.0,
             "over_restriction": 0.0,
             "n": 1000
           },
@@ -1105,19 +1105,11 @@
             "over_restriction": 0.0,
             "n": 1000
           },
-          "age_inappropriate_content": {
-            "dsr": 1.0,
-            "dsr_ci_low": 0.9961731014136095,
-            "dsr_ci_high": 1.0,
-            "under_protection": 0.0,
-            "over_restriction": 0.0,
-            "n": 1000
-          },
-          "open_ended_chat": {
-            "dsr": 0.538,
-            "dsr_ci_low": 0.5070127271855177,
-            "dsr_ci_high": 0.5686964285219166,
-            "under_protection": 0.462,
+          "homework_assignment": {
+            "dsr": 0.307,
+            "dsr_ci_low": 0.2791952556296626,
+            "dsr_ci_high": 0.33628192722468425,
+            "under_protection": 0.693,
             "over_restriction": 0.0,
             "n": 1000
           },
@@ -1134,6 +1126,14 @@
             "dsr_ci_low": 0.42436628838567486,
             "dsr_ci_high": 0.48597813248710037,
             "under_protection": 0.545,
+            "over_restriction": 0.0,
+            "n": 1000
+          },
+          "open_ended_chat": {
+            "dsr": 0.538,
+            "dsr_ci_low": 0.5070127271855177,
+            "dsr_ci_high": 0.5686964285219166,
+            "under_protection": 0.462,
             "over_restriction": 0.0,
             "n": 1000
           }
@@ -1199,11 +1199,11 @@
             "over_restriction": 0.0,
             "n": 1000
           },
-          "homework_assignment": {
-            "dsr": 0.307,
-            "dsr_ci_low": 0.2791952556296626,
-            "dsr_ci_high": 0.33628192722468425,
-            "under_protection": 0.693,
+          "age_inappropriate_content": {
+            "dsr": 1.0,
+            "dsr_ci_low": 0.9961731014136095,
+            "dsr_ci_high": 1.0,
+            "under_protection": 0.0,
             "over_restriction": 0.0,
             "n": 1000
           },
@@ -1215,19 +1215,11 @@
             "over_restriction": 0.0,
             "n": 1000
           },
-          "age_inappropriate_content": {
-            "dsr": 1.0,
-            "dsr_ci_low": 0.9961731014136095,
-            "dsr_ci_high": 1.0,
-            "under_protection": 0.0,
-            "over_restriction": 0.0,
-            "n": 1000
-          },
-          "open_ended_chat": {
-            "dsr": 0.538,
-            "dsr_ci_low": 0.5070127271855177,
-            "dsr_ci_high": 0.5686964285219166,
-            "under_protection": 0.462,
+          "homework_assignment": {
+            "dsr": 0.307,
+            "dsr_ci_low": 0.2791952556296626,
+            "dsr_ci_high": 0.33628192722468425,
+            "under_protection": 0.693,
             "over_restriction": 0.0,
             "n": 1000
           },
@@ -1245,6 +1237,14 @@
             "dsr_ci_high": 0.3993560145593666,
             "under_protection": 0.095,
             "over_restriction": 0.536,
+            "n": 1000
+          },
+          "open_ended_chat": {
+            "dsr": 0.538,
+            "dsr_ci_low": 0.5070127271855177,
+            "dsr_ci_high": 0.5686964285219166,
+            "under_protection": 0.462,
+            "over_restriction": 0.0,
             "n": 1000
           }
         }
@@ -1309,11 +1309,11 @@
             "over_restriction": 0.0,
             "n": 1000
           },
-          "homework_assignment": {
-            "dsr": 0.307,
-            "dsr_ci_low": 0.2791952556296626,
-            "dsr_ci_high": 0.33628192722468425,
-            "under_protection": 0.693,
+          "age_inappropriate_content": {
+            "dsr": 1.0,
+            "dsr_ci_low": 0.9961731014136095,
+            "dsr_ci_high": 1.0,
+            "under_protection": 0.0,
             "over_restriction": 0.0,
             "n": 1000
           },
@@ -1325,19 +1325,11 @@
             "over_restriction": 0.0,
             "n": 1000
           },
-          "age_inappropriate_content": {
-            "dsr": 1.0,
-            "dsr_ci_low": 0.9961731014136095,
-            "dsr_ci_high": 1.0,
-            "under_protection": 0.0,
-            "over_restriction": 0.0,
-            "n": 1000
-          },
-          "open_ended_chat": {
-            "dsr": 0.538,
-            "dsr_ci_low": 0.5070127271855177,
-            "dsr_ci_high": 0.5686964285219166,
-            "under_protection": 0.462,
+          "homework_assignment": {
+            "dsr": 0.307,
+            "dsr_ci_low": 0.2791952556296626,
+            "dsr_ci_high": 0.33628192722468425,
+            "under_protection": 0.693,
             "over_restriction": 0.0,
             "n": 1000
           },
@@ -1355,6 +1347,14 @@
             "dsr_ci_high": 0.27569696725500037,
             "under_protection": 0.404,
             "over_restriction": 0.348,
+            "n": 1000
+          },
+          "open_ended_chat": {
+            "dsr": 0.538,
+            "dsr_ci_low": 0.5070127271855177,
+            "dsr_ci_high": 0.5686964285219166,
+            "under_protection": 0.462,
+            "over_restriction": 0.0,
             "n": 1000
           }
         }
@@ -1419,11 +1419,11 @@
             "over_restriction": 0.0,
             "n": 1000
           },
-          "homework_assignment": {
-            "dsr": 0.307,
-            "dsr_ci_low": 0.2791952556296626,
-            "dsr_ci_high": 0.33628192722468425,
-            "under_protection": 0.693,
+          "age_inappropriate_content": {
+            "dsr": 1.0,
+            "dsr_ci_low": 0.9961731014136095,
+            "dsr_ci_high": 1.0,
+            "under_protection": 0.0,
             "over_restriction": 0.0,
             "n": 1000
           },
@@ -1435,19 +1435,11 @@
             "over_restriction": 0.022,
             "n": 1000
           },
-          "age_inappropriate_content": {
-            "dsr": 1.0,
-            "dsr_ci_low": 0.9961731014136095,
-            "dsr_ci_high": 1.0,
-            "under_protection": 0.0,
-            "over_restriction": 0.0,
-            "n": 1000
-          },
-          "open_ended_chat": {
-            "dsr": 0.538,
-            "dsr_ci_low": 0.5070127271855177,
-            "dsr_ci_high": 0.5686964285219166,
-            "under_protection": 0.462,
+          "homework_assignment": {
+            "dsr": 0.307,
+            "dsr_ci_low": 0.2791952556296626,
+            "dsr_ci_high": 0.33628192722468425,
+            "under_protection": 0.693,
             "over_restriction": 0.0,
             "n": 1000
           },
@@ -1465,6 +1457,14 @@
             "dsr_ci_high": 0.44782110833042027,
             "under_protection": 0.009,
             "over_restriction": 0.574,
+            "n": 1000
+          },
+          "open_ended_chat": {
+            "dsr": 0.538,
+            "dsr_ci_low": 0.5070127271855177,
+            "dsr_ci_high": 0.5686964285219166,
+            "under_protection": 0.462,
+            "over_restriction": 0.0,
             "n": 1000
           }
         }
@@ -1529,12 +1529,12 @@
             "over_restriction": 0.251,
             "n": 1000
           },
-          "homework_assignment": {
-            "dsr": 0.431,
-            "dsr_ci_low": 0.4006278926003595,
-            "dsr_ci_high": 0.46190021940456244,
-            "under_protection": 0.35,
-            "over_restriction": 0.219,
+          "age_inappropriate_content": {
+            "dsr": 1.0,
+            "dsr_ci_low": 0.9961731014136095,
+            "dsr_ci_high": 1.0,
+            "under_protection": 0.0,
+            "over_restriction": 0.0,
             "n": 1000
           },
           "substance_body_image": {
@@ -1545,20 +1545,12 @@
             "over_restriction": 0.022,
             "n": 1000
           },
-          "age_inappropriate_content": {
-            "dsr": 1.0,
-            "dsr_ci_low": 0.9961731014136095,
-            "dsr_ci_high": 1.0,
-            "under_protection": 0.0,
-            "over_restriction": 0.0,
-            "n": 1000
-          },
-          "open_ended_chat": {
-            "dsr": 0.538,
-            "dsr_ci_low": 0.5070127271855177,
-            "dsr_ci_high": 0.5686964285219166,
-            "under_protection": 0.462,
-            "over_restriction": 0.0,
+          "homework_assignment": {
+            "dsr": 0.431,
+            "dsr_ci_low": 0.4006278926003595,
+            "dsr_ci_high": 0.46190021940456244,
+            "under_protection": 0.35,
+            "over_restriction": 0.219,
             "n": 1000
           },
           "code_generation": {
@@ -1575,6 +1567,14 @@
             "dsr_ci_high": 0.8236233219387643,
             "under_protection": 0.0,
             "over_restriction": 0.2,
+            "n": 1000
+          },
+          "open_ended_chat": {
+            "dsr": 0.538,
+            "dsr_ci_low": 0.5070127271855177,
+            "dsr_ci_high": 0.5686964285219166,
+            "under_protection": 0.462,
+            "over_restriction": 0.0,
             "n": 1000
           }
         }
@@ -1639,12 +1639,12 @@
             "over_restriction": 0.012,
             "n": 1000
           },
-          "homework_assignment": {
-            "dsr": 0.51,
-            "dsr_ci_low": 0.4790369283267418,
-            "dsr_ci_high": 0.5408865337015304,
-            "under_protection": 0.477,
-            "over_restriction": 0.013,
+          "age_inappropriate_content": {
+            "dsr": 1.0,
+            "dsr_ci_low": 0.9961731014136095,
+            "dsr_ci_high": 1.0,
+            "under_protection": 0.0,
+            "over_restriction": 0.0,
             "n": 1000
           },
           "substance_body_image": {
@@ -1655,20 +1655,12 @@
             "over_restriction": 0.024,
             "n": 1000
           },
-          "age_inappropriate_content": {
-            "dsr": 1.0,
-            "dsr_ci_low": 0.9961731014136095,
-            "dsr_ci_high": 1.0,
-            "under_protection": 0.0,
-            "over_restriction": 0.0,
-            "n": 1000
-          },
-          "open_ended_chat": {
-            "dsr": 0.538,
-            "dsr_ci_low": 0.5070127271855177,
-            "dsr_ci_high": 0.5686964285219166,
-            "under_protection": 0.462,
-            "over_restriction": 0.0,
+          "homework_assignment": {
+            "dsr": 0.51,
+            "dsr_ci_low": 0.4790369283267418,
+            "dsr_ci_high": 0.5408865337015304,
+            "under_protection": 0.477,
+            "over_restriction": 0.013,
             "n": 1000
           },
           "code_generation": {
@@ -1685,6 +1677,14 @@
             "dsr_ci_high": 0.44782110833042027,
             "under_protection": 0.001,
             "over_restriction": 0.582,
+            "n": 1000
+          },
+          "open_ended_chat": {
+            "dsr": 0.538,
+            "dsr_ci_low": 0.5070127271855177,
+            "dsr_ci_high": 0.5686964285219166,
+            "under_protection": 0.462,
+            "over_restriction": 0.0,
             "n": 1000
           }
         }
@@ -1749,12 +1749,12 @@
             "over_restriction": 0.43,
             "n": 1000
           },
-          "homework_assignment": {
-            "dsr": 0.576,
-            "dsr_ci_low": 0.5451362089936294,
-            "dsr_ci_high": 0.6062821024212393,
+          "age_inappropriate_content": {
+            "dsr": 1.0,
+            "dsr_ci_low": 0.9961731014136095,
+            "dsr_ci_high": 1.0,
             "under_protection": 0.0,
-            "over_restriction": 0.424,
+            "over_restriction": 0.0,
             "n": 1000
           },
           "substance_body_image": {
@@ -1765,20 +1765,12 @@
             "over_restriction": 0.022,
             "n": 1000
           },
-          "age_inappropriate_content": {
-            "dsr": 1.0,
-            "dsr_ci_low": 0.9961731014136095,
-            "dsr_ci_high": 1.0,
+          "homework_assignment": {
+            "dsr": 0.576,
+            "dsr_ci_low": 0.5451362089936294,
+            "dsr_ci_high": 0.6062821024212393,
             "under_protection": 0.0,
-            "over_restriction": 0.0,
-            "n": 1000
-          },
-          "open_ended_chat": {
-            "dsr": 0.659,
-            "dsr_ci_low": 0.6290598496719452,
-            "dsr_ci_high": 0.6877231965775826,
-            "under_protection": 0.341,
-            "over_restriction": 0.0,
+            "over_restriction": 0.424,
             "n": 1000
           },
           "code_generation": {
@@ -1794,6 +1786,14 @@
             "dsr_ci_low": 0.9961731014136095,
             "dsr_ci_high": 1.0,
             "under_protection": 0.0,
+            "over_restriction": 0.0,
+            "n": 1000
+          },
+          "open_ended_chat": {
+            "dsr": 0.659,
+            "dsr_ci_low": 0.6290598496719452,
+            "dsr_ci_high": 0.6877231965775826,
+            "under_protection": 0.341,
             "over_restriction": 0.0,
             "n": 1000
           }
@@ -1859,12 +1859,12 @@
             "over_restriction": 0.476,
             "n": 1000
           },
-          "homework_assignment": {
-            "dsr": 0.124,
-            "dsr_ci_low": 0.10499965005666721,
-            "dsr_ci_high": 0.14587817768029848,
+          "age_inappropriate_content": {
+            "dsr": 1.0,
+            "dsr_ci_low": 0.9961731014136095,
+            "dsr_ci_high": 1.0,
             "under_protection": 0.0,
-            "over_restriction": 0.876,
+            "over_restriction": 0.0,
             "n": 1000
           },
           "substance_body_image": {
@@ -1875,20 +1875,12 @@
             "over_restriction": 0.043,
             "n": 1000
           },
-          "age_inappropriate_content": {
-            "dsr": 1.0,
-            "dsr_ci_low": 0.9961731014136095,
-            "dsr_ci_high": 1.0,
+          "homework_assignment": {
+            "dsr": 0.124,
+            "dsr_ci_low": 0.10499965005666721,
+            "dsr_ci_high": 0.14587817768029848,
             "under_protection": 0.0,
-            "over_restriction": 0.0,
-            "n": 1000
-          },
-          "open_ended_chat": {
-            "dsr": 0.6,
-            "dsr_ci_low": 0.5693088606220993,
-            "dsr_ci_high": 0.6299257596606225,
-            "under_protection": 0.0,
-            "over_restriction": 0.4,
+            "over_restriction": 0.876,
             "n": 1000
           },
           "code_generation": {
@@ -1905,6 +1897,14 @@
             "dsr_ci_high": 0.43069113937790077,
             "under_protection": 0.0,
             "over_restriction": 0.6,
+            "n": 1000
+          },
+          "open_ended_chat": {
+            "dsr": 0.6,
+            "dsr_ci_low": 0.5693088606220993,
+            "dsr_ci_high": 0.6299257596606225,
+            "under_protection": 0.0,
+            "over_restriction": 0.4,
             "n": 1000
           }
         }
@@ -1969,12 +1969,12 @@
             "over_restriction": 0.307,
             "n": 1000
           },
-          "homework_assignment": {
-            "dsr": 0.817,
-            "dsr_ci_low": 0.7918361923371519,
-            "dsr_ci_high": 0.8397375539590765,
+          "age_inappropriate_content": {
+            "dsr": 1.0,
+            "dsr_ci_low": 0.9961731014136095,
+            "dsr_ci_high": 1.0,
             "under_protection": 0.0,
-            "over_restriction": 0.183,
+            "over_restriction": 0.0,
             "n": 1000
           },
           "substance_body_image": {
@@ -1985,20 +1985,12 @@
             "over_restriction": 0.021,
             "n": 1000
           },
-          "age_inappropriate_content": {
-            "dsr": 1.0,
-            "dsr_ci_low": 0.9961731014136095,
-            "dsr_ci_high": 1.0,
+          "homework_assignment": {
+            "dsr": 0.817,
+            "dsr_ci_low": 0.7918361923371519,
+            "dsr_ci_high": 0.8397375539590765,
             "under_protection": 0.0,
-            "over_restriction": 0.0,
-            "n": 1000
-          },
-          "open_ended_chat": {
-            "dsr": 0.859,
-            "dsr_ci_low": 0.8360530673212659,
-            "dsr_ci_high": 0.8791992194937056,
-            "under_protection": 0.141,
-            "over_restriction": 0.0,
+            "over_restriction": 0.183,
             "n": 1000
           },
           "code_generation": {
@@ -2014,6 +2006,14 @@
             "dsr_ci_low": 0.9961731014136095,
             "dsr_ci_high": 1.0,
             "under_protection": 0.0,
+            "over_restriction": 0.0,
+            "n": 1000
+          },
+          "open_ended_chat": {
+            "dsr": 0.859,
+            "dsr_ci_low": 0.8360530673212659,
+            "dsr_ci_high": 0.8791992194937056,
+            "under_protection": 0.141,
             "over_restriction": 0.0,
             "n": 1000
           }
@@ -2443,12 +2443,12 @@
         "over_restriction": 0.307,
         "n": 1000
       },
-      "homework_assignment": {
-        "dsr": 0.817,
-        "dsr_ci_low": 0.7918361923371519,
-        "dsr_ci_high": 0.8397375539590765,
+      "age_inappropriate_content": {
+        "dsr": 1.0,
+        "dsr_ci_low": 0.9961731014136095,
+        "dsr_ci_high": 1.0,
         "under_protection": 0.0,
-        "over_restriction": 0.183,
+        "over_restriction": 0.0,
         "n": 1000
       },
       "substance_body_image": {
@@ -2459,20 +2459,12 @@
         "over_restriction": 0.021,
         "n": 1000
       },
-      "age_inappropriate_content": {
-        "dsr": 1.0,
-        "dsr_ci_low": 0.9961731014136095,
-        "dsr_ci_high": 1.0,
+      "homework_assignment": {
+        "dsr": 0.817,
+        "dsr_ci_low": 0.7918361923371519,
+        "dsr_ci_high": 0.8397375539590765,
         "under_protection": 0.0,
-        "over_restriction": 0.0,
-        "n": 1000
-      },
-      "open_ended_chat": {
-        "dsr": 0.859,
-        "dsr_ci_low": 0.8360530673212659,
-        "dsr_ci_high": 0.8791992194937056,
-        "under_protection": 0.141,
-        "over_restriction": 0.0,
+        "over_restriction": 0.183,
         "n": 1000
       },
       "code_generation": {
@@ -2489,6 +2481,14 @@
         "dsr_ci_high": 0.4949887645428749,
         "under_protection": 0.0,
         "over_restriction": 0.536,
+        "n": 1000
+      },
+      "open_ended_chat": {
+        "dsr": 0.859,
+        "dsr_ci_low": 0.8360530673212659,
+        "dsr_ci_high": 0.8791992194937056,
+        "under_protection": 0.141,
+        "over_restriction": 0.0,
         "n": 1000
       }
     }
