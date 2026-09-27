@@ -1,7 +1,21 @@
 __pycache__/
 *.py[cod]
 .pytest_cache/
+.ruff_cache/
 .venv/
 venv/
 .DS_Store
 *.egg-info/
+build/
+dist/
+
+# External corpora are never committed; see data/README.md.
+data/raw/
+data/processed/
+
+# LaTeX build products of the standalone figures.
+figures/*.aux
+figures/*.log
+
+# 600-dpi rasters are rebuilt by make_figures.py for journal upload.
+figures/*.png

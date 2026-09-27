@@ -1,20 +1,25 @@
 """Executable checks of the three safety invariants of Section 4.
 
-These are the tests that matter most for the paper's claims: each invariant is
-checked by exhaustive or randomised search over admissible transitions rather
-than by restating the proof.
+These are the tests that matter most for the paper's claims. Every invariant is
+checked exhaustively: per-response properties over the region-complete
+abstraction of `safenest.verification`, and the cross-session property over
+every transition of the tier-authority automaton. None is sampled.
 """
 import itertools
 
-import numpy as np
 import pytest
 
 from safenest.corpus import build_corpus
 from safenest.labeling import Label, decision_to_label
 from safenest.lattice import Access, Capability, access_level, allowed_set
 from safenest.policy import (
-    SEVERITY_GATED, Decision, L0TokenFilter, L1SocraticGuard, NestedPolicyEngine,
-    Response, conjoin,
+    SEVERITY_GATED,
+    Decision,
+    L0TokenFilter,
+    L1SocraticGuard,
+    NestedPolicyEngine,
+    Response,
+    conjoin,
 )
 from safenest.tiers import ALL_TIERS, Tier
 from safenest.verification import abstract_responses, abstraction_size
@@ -33,7 +38,9 @@ def _responses():
 def test_the_verification_space_is_region_complete():
     from safenest.lattice import Capability as Cap
     from safenest.verification import (
-        lexicon_representatives, readability_representatives, session_representatives,
+        lexicon_representatives,
+        readability_representatives,
+        session_representatives,
     )
     responses = list(_responses())
     assert len(responses) == abstraction_size()
@@ -112,23 +119,74 @@ def test_invariant_II_severity_gate_applies_at_every_tier():
             assert ENGINE.evaluate(r, t) is Decision.REJECT
 
 
-def test_invariant_II_holds_across_random_traces_with_tier_upgrades():
-    """A trace that walks a user up the tiers must never emit content that was
-    blocked at the tier in force at the time of emission."""
-    rng = np.random.default_rng(0)
-    for _ in range(2000):
-        tier = Tier.T1
-        for _step in range(10):
-            if rng.random() < 0.3 and int(tier) < 5:
-                tier = Tier(int(tier) + 1)  # confirmed upgrade
-            r = Response(
-                capability=list(Capability)[int(rng.integers(len(Capability)))],
-                fk_grade=float(rng.uniform(0, 14)),
-                is_direct_answer=bool(rng.random() < 0.5),
-                is_academic_query=bool(rng.random() < 0.5),
-            )
-            if ENGINE.evaluate(r, tier).emits_direct_answer:
-                assert access_level(r.capability, tier) in (Access.AVAILABLE, Access.LIMITED)
+def _tier_authority_transitions():
+    """Every transition of the cross-session tier-authority automaton.
+
+    `confirm_upgrade` is a finite-state machine: its state is the tier in
+    force plus an optional pending upgrade (target tier, count); its input is
+    the tier the latest session proposes. Enumerating every reachable state
+    under every input from the initial state covers every trace of any length.
+    """
+    from safenest.estimator import BayesianAgeEstimator
+
+    start = (Tier.T1, None)
+    seen, frontier, edges = {start}, [start], []
+    while frontier:
+        state = frontier.pop()
+        for proposed in ALL_TIERS:
+            est = BayesianAgeEstimator()
+            current, est._pending_upgrade = state
+            granted = est.confirm_upgrade(current, proposed)
+            nxt = (granted, est._pending_upgrade)
+            edges.append((state, proposed, nxt))
+            if nxt not in seen:
+                seen.add(nxt)
+                frontier.append(nxt)
+    return seen, edges
+
+
+def test_invariant_II_tier_upgrades_need_two_consecutive_agreeing_sessions():
+    """Exhaustive over the tier-authority automaton, hence over all traces.
+
+    An upgrade is granted only on the second consecutive proposal of the same
+    tier; a downgrade is immediate. Combined with the per-tier checks above,
+    which hold for every response at every tier, this means no trace can emit
+    content the tier in force forbids, and no single session can raise a tier.
+    """
+    states, edges = _tier_authority_transitions()
+    assert len(states) <= len(ALL_TIERS) * (1 + len(ALL_TIERS))
+    for (current, pending), proposed, (granted, _) in edges:
+        if int(granted) > int(current):
+            assert pending is not None and pending[0] is proposed and granted is proposed
+        elif int(proposed) <= int(current):
+            assert granted is proposed          # downgrade or no change: immediate
+        else:
+            assert granted is current           # first proposal of an upgrade is held
+
+
+def test_invariant_II_crisis_content_is_never_a_direct_answer():
+    """Crisis disclosures are never answered directly at any tier or severity."""
+    for r in _responses():
+        if r.capability is Capability.CRISIS_CONTENT:
+            for t in ALL_TIERS:
+                assert not ENGINE.evaluate(r, t).emits_direct_answer
+
+
+def test_severe_crisis_is_referred_not_refused_where_the_policy_grants_it():
+    severe = Response(capability=Capability.CRISIS_CONTENT, harm_severity=0.95,
+                      is_direct_answer=True)
+    for t in ALL_TIERS:
+        expected = Decision.REJECT if int(t) <= 2 else Decision.MODIFY
+        assert ENGINE.evaluate(severe, t) is expected
+
+
+def test_the_earlier_crisis_refusal_is_reproducible():
+    from safenest.baselines import npl_engine
+
+    earlier = npl_engine(crisis_referral=False)
+    severe = Response(capability=Capability.CRISIS_CONTENT, harm_severity=0.95)
+    for t in ALL_TIERS:
+        assert earlier.evaluate(severe, t) is Decision.REJECT
 
 
 def test_invariant_II_session_limit_is_enforced_per_tier():

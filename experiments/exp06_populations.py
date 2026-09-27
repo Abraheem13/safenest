@@ -1,10 +1,11 @@
-"""Experiment 06 -- atypically developing and non-Western populations.
+"""Experiment 06 -- simulated atypical signal profiles.
 
 Quantifies how the tier estimator behaves when linguistic profile and protective
 need diverge, and evaluates the profile/attestation discordance rule that holds a
 linguistically advanced young child at the protective tier.
 
-Also reports which signal modality is most robust to cross-cultural shift.
+Also reports which signal modality is most robust to the simulated
+second-language shift.
 """
 from __future__ import annotations
 
@@ -66,7 +67,7 @@ def run() -> dict:
     # ---- worked case: linguistic profile two tiers above chronological band --
     print("\n  Worked case: a highly verbal 8-year-old")
     print("  whose MTLD and parse depth read as t4.")
-    gen = SignalModel(profile=PROFILES["neurodivergent_verbal"])
+    gen = SignalModel(profile=PROFILES["verbally_advanced"])
     unflagged = [
         est.run_session(Tier.T2, N_INTERACTIONS, rng, generating_model=gen)[0]
         for _ in range(200)
@@ -82,10 +83,10 @@ def run() -> dict:
     print(f"    assigned above t2 with the flag:    {100 * up_fl:.1f}% of sessions")
 
     # ---- modality robustness to cross-cultural shift -----------------------
-    print("\n  Modality robustness under non-Western / L2 shift:")
+    print("\n  Modality robustness under the second-language shift:")
     robustness = {}
     base = SignalModel()
-    shifted = SignalModel(profile=PROFILES["non_weird_l2"])
+    shifted = SignalModel(profile=PROFILES["second_language_shared_device"])
     for modality in MODALITIES:
         agree = 0
         for tier in ALL_TIERS:

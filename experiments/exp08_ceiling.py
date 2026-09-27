@@ -31,7 +31,6 @@ from safenest.baselines import make_npl  # noqa: E402
 from safenest.corpus import build_corpus  # noqa: E402
 from safenest.labeling import rubric_label  # noqa: E402
 from safenest.metrics import evaluate_framework  # noqa: E402
-from safenest.tiers import ALL_TIERS  # noqa: E402
 
 N_REPEATS = 5
 N_FOLDS = 5
@@ -110,7 +109,6 @@ def run() -> dict:
     print(f"  -> irreducible, unobservable        {100 * (1 - ceiling):.1f} pp")
 
     # Where the recoverable error sits.
-    rows = []
     by_cell = defaultdict(lambda: {"n": 0, "npl": 0, "best": Counter()})
     decisions = {p.idx: npl(p, p.tier) for p in prompts}
     from safenest.labeling import decision_to_label

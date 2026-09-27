@@ -6,7 +6,7 @@ through a finite set of predicates:
   capability                 one of |U| values
   fk_grade > g_k             for each tier's readability ceiling g_k
   session_minutes > l_k      for each tier's session limit l_k
-  harm_severity > theta_sev  the severity gate
+  harm_severity > theta_sev  the severity gate (substance and age-inappropriate)
   is_direct_answer, is_academic_query
   max over tokens of the lowest tier at which the token is admissible
 
@@ -26,7 +26,10 @@ from collections.abc import Iterator
 
 from .lattice import Capability
 from .policy import (
-    _RESTRICTED_LEXICON, READABILITY_CEILING, SEVERITY_REJECT_THRESHOLD, Response,
+    _RESTRICTED_LEXICON,
+    READABILITY_CEILING,
+    SEVERITY_REJECT_THRESHOLD,
+    Response,
 )
 from .tiers import TIER_SPECS, Tier
 

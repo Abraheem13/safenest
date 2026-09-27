@@ -12,7 +12,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from enum import Enum
 
-from .lattice import Access, Capability, access_level, allowed_set, validate_lattice
+from .lattice import Access, Capability, access_level, validate_lattice
 from .tiers import TIER_SPECS, Tier
 
 
@@ -53,11 +53,19 @@ class Response:
 
 
 #: Capabilities for which severity, not merely tier, determines admissibility.
+#: Above `SEVERITY_REJECT_THRESHOLD` their content is refused at every tier.
 SEVERITY_GATED: frozenset[Capability] = frozenset(
-    {Capability.CRISIS_CONTENT, Capability.SUBSTANCE_BODYIMAGE, Capability.AGE_INAPPROPRIATE}
+    {Capability.SUBSTANCE_BODYIMAGE, Capability.AGE_INAPPROPRIATE}
 )
-#: Above this severity the content is refused at every tier, t5 included.
+#: Above this severity gated content is refused at every tier, t5 included.
 SEVERITY_REJECT_THRESHOLD: float = 0.5
+#: Crisis disclosures are never refused on severity. Where the policy grants
+#: the crisis capability at all (SOCRATIC, t3-t5) every disclosure, however
+#: severe, is routed to the safe-messaging and referral protocol (MODIFY);
+#: where it is BLOCKED (t1-t2) no model content is emitted and the hand-off to
+#: a guardian or helpline runs instead. Refusing a severe disclosure from an
+#: older child is the failure a crisis protocol exists to prevent.
+CRISIS_CAPABILITY: Capability = Capability.CRISIS_CONTENT
 
 
 #: Flesch-Kincaid readability ceiling g_k enforced by L0.
@@ -137,19 +145,31 @@ class L1SocraticGuard(Layer):
     update_frequency_hz = 1.0
 
     def __init__(self, scaffold_below_t3: bool = True,
-                 severity_gate: bool = True) -> None:
+                 severity_gate: bool = True,
+                 crisis_referral: bool = True,
+                 severity_threshold: float = SEVERITY_REJECT_THRESHOLD) -> None:
         self.scaffold_below_t3 = scaffold_below_t3
         #: Disabling the gate reproduces the capability-indexed matrix alone,
         #: which is what the component ablation isolates.
         self.severity_gate = severity_gate
+        #: False reproduces the earlier specification, in which the severity
+        #: gate also refused crisis disclosures above the threshold at every
+        #: tier instead of routing them to the referral protocol.
+        self.crisis_referral = crisis_referral
+        self.severity_threshold = severity_threshold
+
+    def gated(self, capability: Capability) -> bool:
+        if capability in SEVERITY_GATED:
+            return True
+        return capability is CRISIS_CAPABILITY and not self.crisis_referral
 
     def evaluate(self, response: Response, tier: Tier) -> Decision:
         # Severity gate first: applied uniformly across tiers, so it tightens
         # every tier equally and cannot break monotonicity (Invariant I).
         if (
             self.severity_gate
-            and response.capability in SEVERITY_GATED
-            and response.harm_severity > SEVERITY_REJECT_THRESHOLD
+            and self.gated(response.capability)
+            and response.harm_severity > self.severity_threshold
         ):
             return Decision.REJECT
         level = access_level(response.capability, tier)
@@ -253,7 +273,7 @@ class NestedPolicyEngine:
         ]
         return conjoin(*decisions)
 
-    def with_failures(self, *names: str) -> "NestedPolicyEngine":
+    def with_failures(self, *names: str) -> NestedPolicyEngine:
         return NestedPolicyEngine(layers=self.layers, failed=frozenset(names))
 
     def layer_names(self) -> list[str]:

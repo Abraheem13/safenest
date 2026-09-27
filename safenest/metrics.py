@@ -135,3 +135,39 @@ def correctness_vector(
     labeller: Callable[[Prompt], Label],
 ) -> list[bool]:
     return [decision_to_label(framework(p, p.tier)) == labeller(p) for p in prompts]
+
+
+def paired_bootstrap(
+    a_correct: Sequence[bool], b_correct: Sequence[bool], rng: np.random.Generator,
+    n_boot: int = 2000, level: float = 0.95,
+) -> dict[str, float]:
+    """Percentile bootstrap interval for DSR(a) - DSR(b) on paired items.
+
+    Items are resampled with replacement and both frameworks are scored on the
+    same resample, so the interval reflects the pairing. On a synthetic corpus
+    it describes sampling variability of the generator, not uncertainty about
+    real deployments.
+    """
+    a = np.asarray(a_correct, dtype=float)
+    b = np.asarray(b_correct, dtype=float)
+    diff = a - b
+    idx = rng.integers(0, len(diff), size=(n_boot, len(diff)))
+    boots = diff[idx].mean(axis=1)
+    alpha = (1.0 - level) / 2.0
+    return {
+        "difference": float(diff.mean()),
+        "ci_low": float(np.quantile(boots, alpha)),
+        "ci_high": float(np.quantile(boots, 1.0 - alpha)),
+        "n_boot": n_boot,
+    }
+
+
+#: Smallest p-value reported as a number; anything smaller is reported as a
+#: bound. On a synthetic corpus whose size the authors choose, p-values far
+#: below this carry no additional information.
+P_FLOOR = 1e-15
+
+
+def format_p(p: float) -> str:
+    return "< 10^-15" if p < P_FLOOR else f"{p:.2g}"
+

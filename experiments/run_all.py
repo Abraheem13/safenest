@@ -1,9 +1,13 @@
-"""Run the full validation suite and write every result to results/.
+"""Run every experiment and write each result to results/.
 
-    python3 experiments/run_all.py
+    python3 experiments/run_all.py              # all experiments
+    python3 experiments/run_all.py --synthetic  # Experiments 1-12 only (NumPy only)
+    python3 experiments/run_all.py --real       # Experiments 13-16 only
 
-Each experiment is independent and seeded from `common.MASTER_SEED`, so the
-whole results set is reproducible from a single number.
+Experiments 1-12 exercise the specification in simulation and need NumPy only.
+Experiments 13-16 use real corpora (see data/README.md); each records a
+`skipped` result when a corpus it needs has not been prepared. Every experiment
+is seeded from `common.MASTER_SEED`.
 """
 from __future__ import annotations
 
@@ -17,25 +21,34 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from experiments.common import save  # noqa: E402
 
 EXPERIMENTS = [
-    ("exp01_convergence", "Bayesian estimator convergence (Table 8, Figure 6)"),
+    ("exp01_convergence", "Bayesian estimator convergence"),
     ("exp02_separability", "Signal separability and D_min reconciliation"),
     ("exp03_socratic", "Optimal Socratic policy and reward sensitivity"),
     ("exp04_comparative", "Comparative evaluation"),
     ("exp05_privacy", "Privacy/utility and the formal DP statement"),
-    ("exp06_populations", "Neurodivergent and non-WEIRD populations"),
+    ("exp06_populations", "Simulated atypical signal profiles"),
     ("exp07_overhead", "Computational overhead"),
     ("exp08_ceiling", "Achievable ceiling on the Developmental Safety Rate"),
     ("exp09_operating", "Operating characteristics of gamma and the severity gate"),
     ("exp10_bypass", "Bypass detection against a graded impersonation adversary"),
     ("exp11_reliability", "Seed variance, calibration, multiplicity, symmetry"),
     ("exp12_ablation", "Component ablation"),
+    ("exp13_real_estimation", "Learned tier estimation on three essay corpora"),
+    ("exp14_real_privacy", "Private release of parameters learned from real text"),
+    ("exp15_real_subgroups", "Real subgroups: English learners, disability, economic status"),
+    ("exp16_real_spoken", "The youngest tiers from children's speech (CHILDES)"),
 ]
+SYNTHETIC = {name for name, _ in EXPERIMENTS if int(name[3:5]) <= 12}
 
 
-def main() -> int:
+def main(argv: list[str]) -> int:
+    selected = [(n, d) for n, d in EXPERIMENTS
+                if not argv
+                or ("--synthetic" in argv and n in SYNTHETIC)
+                or ("--real" in argv and n not in SYNTHETIC)]
     failures = []
     started = time.time()
-    for name, description in EXPERIMENTS:
+    for name, description in selected:
         print(f"\n{'=' * 78}\n{name}: {description}\n{'=' * 78}")
         t0 = time.time()
         try:
@@ -46,7 +59,7 @@ def main() -> int:
             failures.append((name, repr(exc)))
             print(f"  [FAILED] {exc!r}")
     print(f"\n{'=' * 78}")
-    print(f"Completed {len(EXPERIMENTS) - len(failures)}/{len(EXPERIMENTS)} "
+    print(f"Completed {len(selected) - len(failures)}/{len(selected)} "
           f"experiments in {time.time() - started:.1f}s")
     for name, err in failures:
         print(f"  FAILED {name}: {err}")
@@ -54,4 +67,4 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    raise SystemExit(main(sys.argv[1:]))

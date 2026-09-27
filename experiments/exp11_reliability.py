@@ -26,12 +26,14 @@ import numpy as np
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from experiments.common import pct, rng_for, save, table  # noqa: E402
-from safenest.baselines import all_frameworks  # noqa: E402
-from safenest.corpus import HARM_CATEGORIES, build_corpus  # noqa: E402
+from safenest.baselines import NPL_FULL, all_frameworks  # noqa: E402
+from safenest.corpus import build_corpus  # noqa: E402
 from safenest.estimator import BayesianAgeEstimator, EstimatorState  # noqa: E402
 from safenest.labeling import rubric_label  # noqa: E402
 from safenest.metrics import (  # noqa: E402
-    correctness_vector, evaluate_framework, mcnemar,
+    correctness_vector,
+    evaluate_framework,
+    mcnemar,
 )
 from safenest.privacy import PrivacyConfig, PrivacyMode  # noqa: E402
 from safenest.tiers import ALL_TIERS  # noqa: E402
@@ -67,7 +69,8 @@ def run() -> dict:
     # ---- 1. seed variance --------------------------------------------------
     per_seed: dict[str, list[float]] = {}
     for seed in range(N_SEEDS):
-        prompts = build_corpus(n_per_cell=60, seed=1000 + seed)
+        # Full-size corpora, so the spread matches the headline design.
+        prompts = build_corpus(n_per_cell=200, seed=1000 + seed)
         for name, fw in all_frameworks().items():
             r = evaluate_framework(fw, prompts, rubric_label)["overall"]["dsr"]
             per_seed.setdefault(name, []).append(r)
@@ -114,7 +117,8 @@ def run() -> dict:
             bins.append({"lo": float(lo), "hi": float(hi), "n": int(sel.sum()),
                          "mean_confidence": c, "observed_accuracy": a})
     assert sum(int(((conf >= lo) & ((conf <= hi) if i == len(edges) - 1 else (conf < hi))).sum())
-               for i, (lo, hi) in enumerate(edges)) == len(conf), "calibration bins must cover [0.2, 1]"
+               for i, (lo, hi) in enumerate(edges)) == len(conf), \
+        "calibration bins must cover [0.2, 1]"
     table(
         [{"confidence bin": f"[{b['lo']:.1f}, {b['hi']:.1f})", "n": str(b["n"]),
           "mean conf (%)": pct(b["mean_confidence"]),
@@ -132,10 +136,10 @@ def run() -> dict:
     # ---- 3. multiplicity ---------------------------------------------------
     prompts = build_corpus()
     frameworks = all_frameworks()
-    npl_vec = correctness_vector(frameworks["NPL (ours)"], prompts, rubric_label)
+    npl_vec = correctness_vector(frameworks[NPL_FULL], prompts, rubric_label)
     raw = {}
     for name, fw in frameworks.items():
-        if name == "NPL (ours)":
+        if name == NPL_FULL:
             continue
         raw[name] = mcnemar(npl_vec, correctness_vector(fw, prompts, rubric_label))["p_value"]
     corrected = _holm(raw)
@@ -179,14 +183,16 @@ def run() -> dict:
     )
 
     # ---- 5. prevalence-weighted DSR ---------------------------------------
-    weighted = {}
+    weighted, balanced = {}, {}
     for name, fw in frameworks.items():
-        r = evaluate_framework(fw, prompts, rubric_label)["by_category"]
-        weighted[name] = float(sum(PREVALENCE[c] * r[c]["dsr"] for c in PREVALENCE))
+        r = evaluate_framework(fw, prompts, rubric_label)
+        balanced[name] = r["overall"]["dsr"]
+        weighted[name] = float(sum(PREVALENCE[c] * r["by_category"][c]["dsr"]
+                                   for c in PREVALENCE))
     table(
-        [{"Framework": k, "Balanced (%)": pct(variance[k]["mean"]),
+        [{"Framework": k, "Balanced (%)": pct(balanced[k]),
           "Prevalence-weighted (%)": pct(v),
-          "Delta (pp)": f"{100 * (v - variance[k]['mean']):+.1f}"}
+          "Delta (pp)": f"{100 * (v - balanced[k]):+.1f}"}
          for k, v in sorted(weighted.items(), key=lambda kv: -kv[1])],
         ["Framework", "Balanced (%)", "Prevalence-weighted (%)", "Delta (pp)"],
         "DSR under a plausible deployment query mix rather than a balanced design",

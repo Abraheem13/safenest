@@ -4,7 +4,10 @@ import pytest
 from safenest.estimator import BayesianAgeEstimator, EstimatorState
 from safenest.privacy import PrivacyConfig, PrivacyMode
 from safenest.signals import (
-    NEURODIVERGENT_VERBAL, SignalModel, linguistic_kl_matrix, min_adjacent_kl,
+    VERBALLY_ADVANCED,
+    SignalModel,
+    linguistic_kl_matrix,
+    min_adjacent_kl,
     sanov_interactions,
 )
 from safenest.tiers import ALL_TIERS, K_TIERS, Tier
@@ -97,7 +100,7 @@ def test_discordance_flag_protects_a_verbally_advanced_young_child():
     """A highly verbal 8-year-old whose linguistic profile reads as t4 must be
     held at the attested tier, not promoted."""
     est = BayesianAgeEstimator(privacy=PrivacyConfig(mode=PrivacyMode.CORPUS))
-    gen = SignalModel(profile=NEURODIVERGENT_VERBAL)
+    gen = SignalModel(profile=VERBALLY_ADVANCED)
     rng = np.random.default_rng(9)
     unprotected, _ = est.run_session(Tier.T2, 10, rng, generating_model=gen)
     protected, _ = est.run_session(
@@ -127,8 +130,8 @@ def test_min_adjacent_kl_is_at_the_t4_t5_boundary():
 def test_proposition_1_bound_dominates_simulated_error():
     """The proved misassignment bound must sit above the simulated error rate
     for every tier at every milestone the manuscript reports."""
-    from safenest.signals import misassignment_bound
     from safenest.estimator import DEFAULT_GAMMA
+    from safenest.signals import misassignment_bound
     model = SignalModel()
     est = BayesianAgeEstimator(privacy=PrivacyConfig(mode=PrivacyMode.CORPUS))
     rng = np.random.default_rng(11)
@@ -155,6 +158,6 @@ def test_chernoff_closed_form_matches_monte_carlo():
     vals = []
     for _ in range(60_000):
         x = model.sample(t, rng)
-        l = sum(model.log_likelihood(m, x[m], r) - model.log_likelihood(m, x[m], t) for m in x)
-        vals.append(np.exp(s * l))
+        llr = sum(model.log_likelihood(m, x[m], r) - model.log_likelihood(m, x[m], t) for m in x)
+        vals.append(np.exp(s * llr))
     assert np.log(np.mean(vals)) == pytest.approx(log_mgf_llr(model, t, r, s), abs=0.03)

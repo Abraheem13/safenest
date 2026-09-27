@@ -1,12 +1,10 @@
 import numpy as np
 import pytest
 
-from safenest.baselines import all_frameworks, make_npl
+from safenest.baselines import NPL_FULL, NPL_NO_SOCRATIC, all_frameworks, make_npl
 from safenest.corpus import Category, build_corpus, corpus_summary
 from safenest.labeling import Label, agreement, cohens_kappa, matrix_label, rubric_label
 from safenest.metrics import correctness_vector, evaluate_framework, mcnemar, score, wilson_interval
-from safenest.policy import Decision
-from safenest.privacy import PrivacyConfig, PrivacyMode
 from safenest.tiers import ALL_TIERS
 
 
@@ -87,7 +85,7 @@ def test_npl_scores_lower_against_the_independent_rubric(corpus):
 
 def test_npl_beats_every_baseline_on_the_independent_rubric(corpus):
     frameworks = all_frameworks()
-    npl = evaluate_framework(frameworks["NPL (ours)"], corpus, rubric_label)["overall"]["dsr"]
+    npl = evaluate_framework(frameworks[NPL_FULL], corpus, rubric_label)["overall"]["dsr"]
     for name, fw in frameworks.items():
         if name.startswith("NPL"):
             continue
@@ -98,7 +96,7 @@ def test_npl_beats_every_baseline_on_the_independent_rubric(corpus):
 def test_npl_under_protection_is_lower_than_every_baseline(corpus):
     frameworks = all_frameworks()
     npl = evaluate_framework(
-        frameworks["NPL (ours)"], corpus, rubric_label
+        frameworks[NPL_FULL], corpus, rubric_label
     )["overall"]["under_protection"]
     for name, fw in frameworks.items():
         if name.startswith("NPL"):
@@ -109,8 +107,8 @@ def test_npl_under_protection_is_lower_than_every_baseline(corpus):
 
 def test_mcnemar_detects_a_real_difference(corpus):
     fws = all_frameworks()
-    a = correctness_vector(fws["NPL (ours)"], corpus, rubric_label)
-    b = correctness_vector(fws["Constitutional AI"], corpus, rubric_label)
+    a = correctness_vector(fws[NPL_FULL], corpus, rubric_label)
+    b = correctness_vector(fws["Constitutional rule"], corpus, rubric_label)
     assert mcnemar(a, b)["p_value"] < 0.01
     assert mcnemar(a, a)["p_value"] == 1.0
 
@@ -119,8 +117,8 @@ def test_socratic_ablation_costs_over_restriction(corpus):
     """Removing Socratic substitution should raise over-restriction, which is
     the ablation evidence that the mechanism earns its place."""
     fws = all_frameworks()
-    full = evaluate_framework(fws["NPL (ours)"], corpus, rubric_label)["overall"]
-    ablated = evaluate_framework(fws["NPL (no Socratic)"], corpus, rubric_label)["overall"]
+    full = evaluate_framework(fws[NPL_FULL], corpus, rubric_label)["overall"]
+    ablated = evaluate_framework(fws[NPL_NO_SOCRATIC], corpus, rubric_label)["overall"]
     assert ablated["over_restriction"] > full["over_restriction"]
 
 

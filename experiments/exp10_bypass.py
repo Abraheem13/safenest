@@ -29,7 +29,9 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from experiments.common import pct, rng_for, save, table  # noqa: E402
 from safenest.estimator import (  # noqa: E402
-    MAHALANOBIS_CHI2_ALPHA01_DF5, BayesianAgeEstimator, EstimatorState,
+    MAHALANOBIS_CHI2_ALPHA01_DF5,
+    BayesianAgeEstimator,
+    EstimatorState,
 )
 from safenest.privacy import PrivacyConfig, PrivacyMode  # noqa: E402
 from safenest.signals import PROFILES, SignalModel  # noqa: E402
@@ -110,7 +112,7 @@ def run() -> dict:
     # ---- what detection costs genuine children ----------------------------
     genuine_scores: dict[str, list[float]] = {}
     false_rows = []
-    for name in ("typical", "neurodivergent_verbal", "non_weird_l2", "dialect_switching"):
+    for name in ("typical", "verbally_advanced", "second_language_shared_device", "high_variance"):
         scores = []
         flagged = 0
         for _ in range(N_TRIALS):
@@ -148,13 +150,13 @@ def run() -> dict:
         aucs[str(alpha)] = auc
     # The hard case: separating an impersonator from a genuinely advanced child.
     verbal_curve, auc_vs_verbal = roc(
-        spoof_scores[1.0], genuine_scores["neurodivergent_verbal"])
+        spoof_scores[1.0], genuine_scores["verbally_advanced"])
     thr = MAHALANOBIS_CHI2_ALPHA01_DF5
     detected_at_thr = float(np.mean([x > thr for x in spoof_scores[1.0]]))
     operating_points = {
         name: {"fpr": float(np.mean([x > thr for x in genuine_scores[name]])),
                "tpr": detected_at_thr}
-        for name in ("typical", "neurodivergent_verbal")
+        for name in ("typical", "verbally_advanced")
     }
 
     print("\n  Detector AUC, impersonator versus typical child:")

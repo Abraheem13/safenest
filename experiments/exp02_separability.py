@@ -19,8 +19,14 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from experiments.common import RESULTS, save, table  # noqa: E402
 from safenest.estimator import DEFAULT_GAMMA  # noqa: E402
 from safenest.signals import (  # noqa: E402
-    LINGUISTIC_FEATURES, SignalModel, chernoff_exponent, kl_gaussian,
-    linguistic_kl_matrix, min_adjacent_kl, misassignment_bound, sanov_interactions,
+    LINGUISTIC_FEATURES,
+    SignalModel,
+    chernoff_exponent,
+    kl_gaussian,
+    linguistic_kl_matrix,
+    min_adjacent_kl,
+    misassignment_bound,
+    sanov_interactions,
 )
 from safenest.tiers import ALL_TIERS, K_TIERS  # noqa: E402
 
@@ -141,7 +147,7 @@ def _reconcile(d_min: float) -> dict:
     emp = json.loads(path.read_text())
     predicted = sanov_interactions(d_min, 0.10)
     observed = emp["first_milestone_above_90"]
-    print(f"\n  Reconciliation :")
+    print("\n  Reconciliation :")
     print(f"    KL heuristic at measured D_min={d_min:.2f}, delta=0.10: "
           f"n >= {predicted:.1f} interactions")
     print(f"    Observed first milestone >=90% per tier: {observed}")

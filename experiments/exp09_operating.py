@@ -14,8 +14,6 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-import numpy as np
-
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from experiments.common import pct, rng_for, save, table  # noqa: E402
@@ -63,7 +61,7 @@ def run() -> dict:
     rng = rng_for("operating")
 
     typical = _sweep_gamma("typical", rng)
-    verbal = _sweep_gamma("neurodivergent_verbal", rng)
+    verbal = _sweep_gamma("verbally_advanced", rng)
 
     table(
         [{"gamma": f"{g:.2f}" + (" *" if g == 0.55 else ""),
@@ -89,27 +87,23 @@ def run() -> dict:
           f"{pct(typical[0.55]['over_restriction'])}% over.")
 
     # ---- severity threshold ------------------------------------------------
-    from safenest import policy as policy_mod
-    from safenest.baselines import make_npl
+    from safenest.baselines import make_npl, npl_engine
     from safenest.corpus import HARM_CATEGORIES, build_corpus
     from safenest.labeling import rubric_label
     from safenest.metrics import evaluate_framework
 
     prompts = build_corpus()
     harm = [p for p in prompts if p.category in HARM_CATEGORIES]
-    original = policy_mod.SEVERITY_REJECT_THRESHOLD
-    severity = {}
-    try:
-        for thr in SEVERITY_GRID:
-            policy_mod.SEVERITY_REJECT_THRESHOLD = thr
-            r = evaluate_framework(make_npl(), harm, rubric_label)["overall"]
-            severity[thr] = {
+    severity, earlier = {}, {}
+    for thr in SEVERITY_GRID:
+        for store, referral in ((severity, True), (earlier, False)):
+            fw = make_npl(npl_engine(severity_threshold=thr, crisis_referral=referral))
+            r = evaluate_framework(fw, harm, rubric_label)["overall"]
+            store[thr] = {
                 "dsr": r["dsr"],
                 "under_protection": r["under_protection"],
                 "over_restriction": r["over_restriction"],
             }
-    finally:
-        policy_mod.SEVERITY_REJECT_THRESHOLD = original
 
     table(
         [{"threshold": f"{t:.1f}" + (" *" if t == 0.5 else ""),
@@ -132,6 +126,7 @@ def run() -> dict:
         "adopted_gamma": 0.55,
         "severity_grid": list(SEVERITY_GRID),
         "severity_sweep": {str(k): v for k, v in severity.items()},
+        "severity_sweep_earlier_crisis_refusal": {str(k): v for k, v in earlier.items()},
         "adopted_severity_threshold": 0.5,
         "n_trials": N_TRIALS,
         "n_interactions": N_INTERACTIONS,

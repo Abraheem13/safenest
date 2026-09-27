@@ -12,7 +12,7 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from experiments.common import RESULTS, pct, rng_for, save, table  # noqa: E402
+from experiments.common import pct, rng_for, save, table  # noqa: E402
 from safenest.estimator import BayesianAgeEstimator, EstimatorState  # noqa: E402
 from safenest.privacy import PrivacyConfig, PrivacyMode  # noqa: E402
 from safenest.tiers import ALL_TIERS, K_TIERS  # noqa: E402

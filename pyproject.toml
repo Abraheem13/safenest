@@ -1,14 +1,50 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "safenest"
-version = "1.1.0"
+version = "2.0.0"
 description = "SafeNest: Nested Policy Learning for developmentally adaptive child-AI interaction"
 readme = "README.md"
 license = { file = "LICENSE" }
 requires-python = ">=3.11"
+authors = [
+    { name = "Raja Abraheem Rashid Ejaz", email = "2546393@brunel.ac.uk" },
+    { name = "Faisal Iradat" },
+    { name = "Waseem Iqbal" },
+    { name = "Yawar Abbas Bangash" },
+    { name = "Muhammad Kumail" },
+]
+keywords = ["AI safety", "child safety", "differential privacy", "age assurance",
+            "formal verification", "Markov decision process"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+# The specification, the simulations and the verification need NumPy only.
 dependencies = ["numpy>=1.24"]
 
 [project.optional-dependencies]
-dev = ["pytest>=7.0"]
+# The real-data experiments (13-16): corpora, features and learned estimators.
+real = [
+    "pandas>=2.2",
+    "pyarrow>=15",
+    "scikit-learn>=1.4",
+    "lightgbm>=4.3",
+    "spacy>=3.7,<4",
+    "textstat>=0.7",
+    "pyspellchecker>=0.8",
+    "sentence-transformers>=3.0",
+]
+dev = ["pytest>=7.0", "ruff>=0.5"]
+
+[project.urls]
+Repository = "https://github.com/Abraheem13/safenest"
+
+[tool.setuptools.packages.find]
+include = ["safenest*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
@@ -16,3 +52,15 @@ pythonpath = ["."]
 
 [tool.ruff]
 line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]
+# E402: scripts insert the repository root on sys.path before importing it.
+# B905: zip() is used on sequences whose equal length is part of the contract.
+# UP042: str-mixin enums are kept for their serialised values.
+ignore = ["E402", "B905", "UP042"]
+
+[tool.ruff.lint.per-file-ignores]
+# Generators of LaTeX source contain long literal lines.
+"experiments/make_*.py" = ["E501", "E702"]

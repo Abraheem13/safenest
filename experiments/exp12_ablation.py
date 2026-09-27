@@ -4,7 +4,9 @@ The comparative evaluation shows that the framework as a whole outperforms its
 baselines. It does not show which part is responsible. This experiment removes
 one mechanism at a time and reports what each contributes, so a reader can see
 whether the result rests on the developmental lattice, on Socratic substitution,
-on the severity gate, or on the scaffolding rule added below t3.
+on the severity gate, or on the two amendments made after the rubric exposed
+defects: scaffolding direct requests below t3, and routing crisis disclosures
+to the referral protocol instead of refusing them.
 
 Each variant is a complete framework evaluated on the same 7,000 prompts against
 the same independent rubric, so the differences are attributable to the removed
@@ -23,17 +25,22 @@ from safenest.corpus import HARM_CATEGORIES, build_corpus  # noqa: E402
 from safenest.labeling import rubric_label  # noqa: E402
 from safenest.metrics import correctness_vector, evaluate_framework, mcnemar  # noqa: E402
 from safenest.policy import (  # noqa: E402
-    L0TokenFilter, L1SocraticGuard, L2TierRefiner, L3MemoryLayer, L4PolicyStore,
+    L0TokenFilter,
+    L1SocraticGuard,
+    L2TierRefiner,
+    L3MemoryLayer,
+    L4PolicyStore,
     NestedPolicyEngine,
 )
 from safenest.tiers import ALL_TIERS  # noqa: E402
 
 
-def _engine(scaffold_below_t3: bool = True, severity_gate: bool = True):
+def _engine(scaffold_below_t3: bool = True, severity_gate: bool = True,
+            crisis_referral: bool = True):
     return NestedPolicyEngine(layers=[
         L0TokenFilter(),
         L1SocraticGuard(scaffold_below_t3=scaffold_below_t3,
-                        severity_gate=severity_gate),
+                        severity_gate=severity_gate, crisis_referral=crisis_referral),
         L2TierRefiner(), L3MemoryLayer(), L4PolicyStore(),
     ])
 
@@ -44,10 +51,11 @@ def run() -> dict:
 
     variants = {
         "Full framework": make_npl(_engine()),
+        "-- crisis referral (earlier refusal)": make_npl(_engine(crisis_referral=False)),
         "-- scaffolding below $t_3$": make_npl(_engine(scaffold_below_t3=False)),
+        "As first specified (neither amendment)": make_npl(
+            _engine(scaffold_below_t3=False, crisis_referral=False)),
         "-- severity gate": make_npl(_engine(severity_gate=False)),
-        "-- both refinements": make_npl(
-            _engine(scaffold_below_t3=False, severity_gate=False)),
         "-- Socratic substitution": npl_socratic_only,
     }
 
@@ -96,22 +104,11 @@ def run() -> dict:
     )
 
     full = detail["Full framework"]
-    nogate = detail["-- severity gate"]
-    print("\n  Reading. Socratic substitution carries the headline result: removing")
-    print(f"  it costs {abs(detail['-- Socratic substitution']['delta_pp']):.1f} points and "
-          "trebles over-restriction.")
-    print("  The severity gate does NOT buy accuracy on the harm categories: removing")
-    print(f"  it raises harm-category DSR from {pct(full['harm_dsr'])}% to "
-          f"{pct(nogate['harm_dsr'])}% and overall DSR from {pct(full['dsr'])}% to "
-          f"{pct(nogate['dsr'])}%.")
-    print(f"  What it buys is under-protection: {pct(full['under_protection'])}% against "
-          f"{pct(nogate['under_protection'])}% without it.")
-    print("  The gate therefore trades "
-          f"{nogate['delta_pp']:.1f} points of accuracy for "
-          f"{100 * (nogate['under_protection'] - full['under_protection']):.1f} points of")
-    print("  under-protection. Whether that is a good trade depends on how the two")
-    print("  error types are weighted; at the adopted threshold it is plausibly")
-    print("  mis-tuned, which the threshold sweep in Experiment 09 supports.")
+    for name, d in detail.items():
+        if name == "Full framework":
+            continue
+        print(f"  {name:42s} {d['delta_pp']:+6.1f} pp DSR, under "
+              f"{pct(d['under_protection'])}% (full {pct(full['under_protection'])}%)")
 
     return {
         "variants": detail,

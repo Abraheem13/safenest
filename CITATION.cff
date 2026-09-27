@@ -1,0 +1,42 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "SafeNest: reference implementation of Nested Policy Learning"
+version: 2.0.0
+license: MIT
+repository-code: "https://github.com/Abraheem13/safenest"
+authors:
+  - family-names: Ejaz
+    given-names: Raja Abraheem Rashid
+    affiliation: Brunel University of London
+  - family-names: Iradat
+    given-names: Faisal
+    affiliation: Institute of Business Administration, Karachi
+  - family-names: Iqbal
+    given-names: Waseem
+    affiliation: Sultan Qaboos University
+  - family-names: Bangash
+    given-names: Yawar Abbas
+    affiliation: Sunway University
+  - family-names: Kumail
+    given-names: Muhammad
+    affiliation: Purdue University Northwest
+keywords:
+  - AI safety
+  - child safety
+  - age assurance
+  - differential privacy
+  - formal verification
+references:
+  - type: conference-paper
+    title: "A Multi-Timescale Safety Architecture for Developmentally Adaptive Child-AI Interaction via Nested Policy Learning"
+    authors:
+      - family-names: Ejaz
+        given-names: Raja Abraheem Rashid
+      - family-names: Iradat
+        given-names: Faisal
+      - family-names: Kumail
+        given-names: Muhammad
+    collection-title: "Advances in Computational Intelligence Systems: Contributions Presented at the 25th UK Workshop on Computational Intelligence (UKCI 2026)"
+    publisher:
+      name: Springer
+    year: 2026

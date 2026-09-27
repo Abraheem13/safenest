@@ -1,12 +1,18 @@
+import math
+
 import numpy as np
 import pytest
 
-import math
-
 from safenest.estimator import BayesianAgeEstimator, EstimatorState
 from safenest.privacy import (
-    Accounting, PrivacyConfig, PrivacyMode, PrivacyUnit, analytic_gaussian_sigma,
-    clip_llr, gaussian_mechanism_delta, laplace_noise,
+    Accounting,
+    PrivacyConfig,
+    PrivacyMode,
+    PrivacyUnit,
+    analytic_gaussian_sigma,
+    clip_llr,
+    gaussian_mechanism_delta,
+    laplace_noise,
 )
 from safenest.signals import SignalModel, release_corpus_parameters
 from safenest.tiers import Tier
@@ -62,7 +68,7 @@ def test_privacy_units_are_mode_specific():
 def test_corpus_sensitivity_matches_the_closed_form():
     c = PrivacyConfig(mode=PrivacyMode.CORPUS, corpus_n_per_tier=400,
                       corpus_clip_sd=3.0, corpus_n_features=5)
-    assert c.corpus_l2_sensitivity() == pytest.approx(math.sqrt(2) * 6 * math.sqrt(5) / 400)
+    assert c.corpus_l2_sensitivity() == pytest.approx(6 * math.sqrt(5) / 400)
 
 
 def test_corpus_noise_shrinks_with_corpus_size():

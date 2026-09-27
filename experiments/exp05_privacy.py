@@ -8,7 +8,6 @@ calibration corpus rather than the live user. Both readings are measured here.
 """
 from __future__ import annotations
 
-import json
 import sys
 from pathlib import Path
 

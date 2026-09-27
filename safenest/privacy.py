@@ -35,17 +35,21 @@ The defensible reading of the architecture is therefore `CORPUS` (plus
   CORPUS  The (eps, delta)-DP guarantee protects the children in a
           *calibration corpus* whose data would parameterise the tier-conditional
           linguistic likelihoods. The privacy unit is one corpus child, who
-          contributes one averaged feature vector. Tier sizes n_k are public, so
-          adjacency is replace-one (bounded DP). Each child's vector is
-          standardised by the public design scale of its tier, centred on a
-          public prior mean and clipped to [-c, c] per feature; the protected
-          output is the vector of per-tier clipped means. Replacing one child can
-          change two tier means (if the replacement sits in another tier), so the
-          L2 sensitivity is sqrt(2) * 2c * sqrt(d) / n_k. Noise is calibrated by
-          the analytic Gaussian mechanism (Balle and Wang, 2018), which is exact
-          for every eps > 0, unlike the classical bound that needs eps < 1.
-          Dispersions are public design constants and are not released.
-          Live inference then runs on the released parameters.
+          contributes one averaged feature vector. Each child's tier comes from
+          recorded age and is public, as are the tier sizes n_k; what is
+          protected is the child's language. Adjacency therefore replaces one
+          child's feature vector by another within the same tier (bounded DP).
+          Each vector is standardised by the public design scale of its tier,
+          centred on a public prior mean and clipped to [-c, c] per feature; the
+          protected output is the vector of per-tier clipped means. A
+          replacement moves one tier's sum by a difference of two vectors in
+          [-c, c]^d, so the L2 sensitivity is 2c * sqrt(d) / n_k. Noise is
+          calibrated by the analytic Gaussian mechanism (Balle and Wang, 2018),
+          which is exact for every eps > 0, unlike the classical bound that
+          needs eps < 1. Dispersions are public design constants and are not
+          released here; `learning.GaussianTierModel.fit_private` releases them
+          too when the parameters are learned from real data. Live inference
+          then runs on the released parameters.
 
   NONE    No statistical noise; the guarantee is architectural only. Raw
           features never leave the per-modality enclave, only clipped LLRs
@@ -58,10 +62,9 @@ section, so the paper's wording and the code cannot drift apart.
 """
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass, field
 from enum import Enum
-
-import math
 
 import numpy as np
 
@@ -184,13 +187,15 @@ class PrivacyConfig:
     def corpus_l2_sensitivity(self) -> float:
         """L2 sensitivity of the vector of per-tier clipped means.
 
-        Replace-one adjacency with public tier sizes. A replacement can remove a
-        child from one tier and add one to another, changing two tier means;
-        within one tier each of the d standardised coordinates moves by at most
-        2c / n_k. Hence sqrt(2) * 2c * sqrt(d) / n_k, in standard-deviation units.
+        Replace-one adjacency within a tier, with tier membership and sizes
+        public. Replacing one child's standardised, clipped vector changes one
+        tier's sum by the difference of two vectors in [-c, c]^d, whose L2 norm
+        is at most 2c * sqrt(d), and leaves every other tier unchanged. Hence
+        2c * sqrt(d) / n_k, in standard-deviation units. The bound is attained
+        by two children at opposite corners of the clipping box.
         """
         return float(
-            math.sqrt(2.0) * 2.0 * self.corpus_clip_sd * math.sqrt(self.corpus_n_features)
+            2.0 * self.corpus_clip_sd * math.sqrt(self.corpus_n_features)
             / self.corpus_n_per_tier
         )
 
@@ -251,8 +256,8 @@ class PrivacyConfig:
         common.update(
             epsilon_total=self.epsilon_total,
             delta=self.corpus_delta,
-            adjacency="replace one child in the calibration corpus; tier sizes "
-                      "are public",
+            adjacency="replace one child's feature vector within their tier; "
+                      "tier membership and sizes are public",
             protected_output="per-tier means of clipped, standardised linguistic "
                              "feature vectors, computed offline; dispersions are "
                              "public design constants and are not released",

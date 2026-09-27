@@ -19,7 +19,11 @@ from experiments.common import pct, rng_for, save, table  # noqa: E402
 from safenest.estimator import BayesianAgeEstimator, EstimatorState  # noqa: E402
 from safenest.lattice import Capability  # noqa: E402
 from safenest.policy import (  # noqa: E402
-    L0TokenFilter, L1SocraticGuard, L4PolicyStore, NestedPolicyEngine, Response,
+    L0TokenFilter,
+    L1SocraticGuard,
+    L4PolicyStore,
+    NestedPolicyEngine,
+    Response,
 )
 from safenest.privacy import PrivacyConfig, PrivacyMode  # noqa: E402
 from safenest.signals import SignalModel  # noqa: E402
@@ -63,6 +67,10 @@ def run() -> dict:
             lambda: mdp.solve(Tier.T3)[0][0, 25], repeats=20_000
         ),
     }
+
+    # The engine consumes features; computing them from text is the expensive
+    # part in a deployment, so it is measured too when the tools are installed.
+    measurements.update(_feature_extraction())
 
     rows = [
         {"Component": k, "Latency": _fmt(v), "seconds": f"{v:.3e}"}
@@ -110,6 +118,40 @@ def run() -> dict:
             "accuracy_drop_pp": 100 * drop,
         },
     }
+
+
+#: A 50-word message, the interaction window used for the real-data experiments.
+MESSAGE = ("I think that schools should let students choose their own summer projects "
+           "because it helps them learn about things they really care about. When my "
+           "class did a project on volcanoes last year, everyone worked harder and we "
+           "remembered much more than we usually do.")
+
+
+def _feature_extraction() -> dict[str, float]:
+    """Latency of computing the five linguistic features and a sentence embedding."""
+    out: dict[str, float] = {}
+    try:
+        from safenest.features import Featurizer
+
+        featurizer = Featurizer()
+        featurizer.window_features(featurizer.parse([MESSAGE], spoken=False)[0])  # warm up
+        out["Feature extraction (per 50-word message)"] = _time(
+            lambda: featurizer.window_features(featurizer.parse([MESSAGE], spoken=False)[0]),
+            repeats=200)
+    except (ImportError, OSError):
+        pass
+    try:
+        from sentence_transformers import SentenceTransformer
+
+        from experiments.real_common import EMBEDDER
+
+        model = SentenceTransformer(EMBEDDER, device="cpu")
+        model.encode([MESSAGE])
+        out["Sentence embedding (per 50-word message, CPU)"] = _time(
+            lambda: model.encode([MESSAGE], show_progress_bar=False), repeats=100)
+    except (ImportError, OSError):
+        pass
+    return out
 
 
 def _fmt(seconds: float) -> str:

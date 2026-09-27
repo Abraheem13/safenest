@@ -2,7 +2,13 @@ import numpy as np
 import pytest
 
 from safenest.socratic import (
-    ACTIONS, Action, MAX_DELTA, RewardParams, SocraticMDP, delta, sensitivity_analysis,
+    ACTIONS,
+    MAX_DELTA,
+    Action,
+    RewardParams,
+    SocraticMDP,
+    delta,
+    sensitivity_analysis,
 )
 from safenest.tiers import ALL_TIERS, Tier
 
@@ -54,7 +60,7 @@ def test_action_distribution_sums_to_one_hundred(mdp):
 
 
 def test_delta_is_monotone_in_tier_for_every_action():
-    for i, a in enumerate(ACTIONS):
+    for a in ACTIONS:
         vals = [delta(a, t) for t in ALL_TIERS]
         assert all(b >= a_ for a_, b in zip(vals, vals[1:])), a
 

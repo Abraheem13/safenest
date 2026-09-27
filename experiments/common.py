@@ -34,14 +34,20 @@ def provenance() -> dict:
         commit = subprocess.check_output(
             ["git", "rev-parse", "--short", "HEAD"], cwd=ROOT, stderr=subprocess.DEVNULL
         ).decode().strip()
+        # A result is only reproducible from its commit if the code it ran
+        # was committed; results/ itself is excluded from the check.
+        dirty = bool(subprocess.check_output(
+            ["git", "status", "--porcelain", "--", ".", ":(exclude)results"],
+            cwd=ROOT, stderr=subprocess.DEVNULL).decode().strip())
     except Exception:
-        commit = None
+        commit, dirty = None, None
     return {
         "timestamp": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "python": sys.version.split()[0],
         "numpy": np.__version__,
         "platform": platform.platform(),
         "git_commit": commit,
+        "git_dirty": dirty,
         "master_seed": MASTER_SEED,
     }
 

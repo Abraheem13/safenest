@@ -16,7 +16,11 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from experiments.common import save, table  # noqa: E402
 from safenest.socratic import (  # noqa: E402
-    ACTIONS, Action, MAX_DELTA, RewardParams, SocraticMDP, sensitivity_analysis,
+    MAX_DELTA,
+    Action,
+    RewardParams,
+    SocraticMDP,
+    sensitivity_analysis,
 )
 from safenest.tiers import ALL_TIERS  # noqa: E402
 

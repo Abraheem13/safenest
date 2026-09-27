@@ -9,14 +9,15 @@ Four modalities, matching the manuscript:
   contextual   Bernoulli presence of an external attestation
 
 Parameters are author-specified simulation assumptions. The choice of features
-is motivated by developmental-linguistics work (CHILDES-db; the Oxford
-Children's Corpus; MTLD), but no source-to-parameter calibration is claimed and
-no child-produced text is used. They are declared here in one place so the
-paper's parameter table can be regenerated from code rather than transcribed.
+is motivated by developmental-linguistics work (children's writing, CHILDES and
+MTLD), but these values are not calibrated to data. `learning.py` fits the
+same model to real children's language instead, and Experiment 13 shows how far
+the specified values are from what real text supports. They are declared here
+in one place so the paper's parameter table is generated from code.
 
 `UserProfile` lets an experiment perturb a synthetic cohort away from the
-corpus-derived norms, which is what Experiment 06 (atypical and
-non-Western populations) needs.
+specified norms, which is what Experiment 06 (simulated atypical profiles)
+needs.
 """
 from __future__ import annotations
 
@@ -76,8 +77,8 @@ class UserProfile:
     linguistic_tier_shift
         Shifts the *linguistic* modality to look like a user this many tiers
         older (positive) or younger (negative), while the protective tier the
-        user actually needs stays the nominal one. A verbally precocious or
-        highly verbal autistic 8-year-old is `+2`.
+        user actually needs stays the nominal one. A verbally precocious
+        8-year-old is `+2`.
     linguistic_scale
         Multiplies linguistic standard deviations (heterogeneity / dialect
         variation / L2 speakers).
@@ -96,21 +97,28 @@ class UserProfile:
     context_p_override: float | None = None
 
 
+# Simulated departures from the norms. They are perturbations of an assumed
+# signal model, named for the pattern they produce, not for any real group;
+# Experiments 15 and 16 measure real subgroups (English learners, students with a
+# disability, children with language impairment) on real text.
 TYPICAL = UserProfile("typical")
-NEURODIVERGENT_VERBAL = UserProfile(
-    "neurodivergent_verbal", linguistic_tier_shift=+2.0, linguistic_scale=1.4
+VERBALLY_ADVANCED = UserProfile(
+    "verbally_advanced", linguistic_tier_shift=+2.0, linguistic_scale=1.4
 )
-NEURODIVERGENT_MOTOR = UserProfile(
-    "neurodivergent_motor", linguistic_tier_shift=+1.0, typing_scale=0.5, linguistic_scale=1.3
+ADVANCED_ATYPICAL_MOTOR = UserProfile(
+    "advanced_atypical_motor", linguistic_tier_shift=+1.0, typing_scale=0.5,
+    linguistic_scale=1.3,
 )
-NON_WEIRD_L2 = UserProfile(
-    "non_weird_l2", linguistic_tier_shift=-1.0, linguistic_scale=1.6, device_p_override=0.25
+SECOND_LANGUAGE_SHARED_DEVICE = UserProfile(
+    "second_language_shared_device", linguistic_tier_shift=-1.0, linguistic_scale=1.6,
+    device_p_override=0.25,
 )
-DIALECT_SWITCHING = UserProfile("dialect_switching", linguistic_scale=1.8)
+HIGH_VARIANCE = UserProfile("high_variance", linguistic_scale=1.8)
 
 PROFILES: dict[str, UserProfile] = {
     p.name: p
-    for p in (TYPICAL, NEURODIVERGENT_VERBAL, NEURODIVERGENT_MOTOR, NON_WEIRD_L2, DIALECT_SWITCHING)
+    for p in (TYPICAL, VERBALLY_ADVANCED, ADVANCED_ATYPICAL_MOTOR,
+              SECOND_LANGUAGE_SHARED_DEVICE, HIGH_VARIANCE)
 }
 
 
@@ -193,7 +201,8 @@ class SignalModel:
             mean, std = self.linguistic_params(tier)
             # Estimator-side likelihood is diagonal by construction.
             z = (np.asarray(value) - mean) / std
-            return float(-0.5 * np.sum(z**2) - np.sum(np.log(std)) - 0.5 * len(std) * np.log(2 * np.pi))
+            return float(-0.5 * np.sum(z**2) - np.sum(np.log(std))
+                         - 0.5 * len(std) * np.log(2 * np.pi))
         if modality == "behavioural":
             mu, sigma = self.typing_params(tier)
             x = max(float(value), 1e-6)
@@ -279,7 +288,10 @@ def min_adjacent_kl(model: SignalModel | None = None) -> float:
 
 
 def sanov_interactions(d_min: float, delta: float, k: int = K_TIERS) -> float:
-    """n >= (1/D_min) ln((K-1)/delta), a KL-based heuristic; Proposition 1 gives the proved Chernoff bound."""
+    """n >= (1/D_min) ln((K-1)/delta), a KL-based heuristic.
+
+    Not a bound: Proposition 1 gives the proved one, with the Chernoff exponent.
+    """
     return float(np.log((k - 1) / delta) / d_min)
 
 

@@ -3,7 +3,14 @@ import itertools
 import pytest
 
 from safenest.lattice import (
-    Access, Capability, allowed_set, constraint_set, join, leq, meet, validate_lattice,
+    Access,
+    Capability,
+    allowed_set,
+    constraint_set,
+    join,
+    leq,
+    meet,
+    validate_lattice,
 )
 from safenest.tiers import ALL_TIERS, Tier
 
