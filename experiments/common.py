@@ -35,9 +35,11 @@ def provenance() -> dict:
             ["git", "rev-parse", "--short", "HEAD"], cwd=ROOT, stderr=subprocess.DEVNULL
         ).decode().strip()
         # A result is only reproducible from its commit if the code it ran
-        # was committed; results/ itself is excluded from the check.
+        # was committed. Generated outputs (results, tables, figures) are
+        # excluded from the check: they are products of the run, not inputs.
         dirty = bool(subprocess.check_output(
-            ["git", "status", "--porcelain", "--", ".", ":(exclude)results"],
+            ["git", "status", "--porcelain", "--untracked-files=no", "--", ".",
+             ":(exclude)results", ":(exclude)tex", ":(exclude)figures"],
             cwd=ROOT, stderr=subprocess.DEVNULL).decode().strip())
     except Exception:
         commit, dirty = None, None
