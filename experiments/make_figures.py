@@ -15,6 +15,7 @@ common colour-vision deficiencies and in greyscale print.
 from __future__ import annotations
 
 import json
+import os
 import shutil
 import subprocess
 import sys
@@ -32,7 +33,8 @@ TEXT_CM = 13.86   # \textwidth of mdpi.cls (394.36 pt)
 FULL_CM = 18.47   # \textwidth + \extralength, for full-width figures
 DPI = 600
 
-PREAMBLE = r"""\documentclass[10pt,border=1pt]{standalone}
+PREAMBLE = r"""\pdftrailerid{}
+\documentclass[10pt,border=1pt]{standalone}
 \usepackage[T1]{fontenc}
 \usepackage{mathpazo}
 \usepackage{amsmath,amssymb}
@@ -82,8 +84,10 @@ def build(name: str, body: str, width_cm: float) -> None:
     tex = FIG / f"{name}.tex"
     tex.write_text(PREAMBLE + f"\\setlength{{\\figwidth}}{{{width_cm}cm}}\n"
                    "\\begin{document}\n" + body.strip() + "\n\\end{document}\n")
+    # A fixed timestamp and document ID make each PDF byte-for-byte reproducible.
+    env = {**os.environ, "SOURCE_DATE_EPOCH": "1767225600", "FORCE_SOURCE_DATE": "1"}
     run = subprocess.run(["pdflatex", "-interaction=nonstopmode", "-halt-on-error",
-                          tex.name], cwd=FIG, capture_output=True, text=True)
+                          tex.name], cwd=FIG, capture_output=True, text=True, env=env)
     if run.returncode != 0:
         log = (FIG / f"{name}.log").read_text(errors="replace")
         err = [ln for ln in log.splitlines() if ln.startswith("!")][:5]

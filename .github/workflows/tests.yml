@@ -13,8 +13,8 @@ jobs:
       matrix:
         python-version: ["3.11", "3.12", "3.13"]
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: ${{ matrix.python-version }}
       - run: python -m pip install -e ".[dev]"
@@ -25,10 +25,10 @@ jobs:
     # The real-data modules, tested on synthetic inputs; no corpus is downloaded.
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.13"
       - run: python -m pip install -e ".[dev,real]"
       - run: python -m spacy download en_core_web_sm
-      - run: python -m pytest -q tests/test_features.py tests/test_learning.py
+      - run: python -m pytest -q

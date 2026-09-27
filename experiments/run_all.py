@@ -25,7 +25,7 @@ HERE = Path(__file__).resolve().parent
 
 EXPERIMENTS = [
     ("exp01_convergence", "Bayesian estimator convergence"),
-    ("exp02_separability", "Signal separability and D_min reconciliation"),
+    ("exp02_separability", "Chernoff exponents and the Proposition 1 bound"),
     ("exp03_socratic", "Optimal Socratic policy and reward sensitivity"),
     ("exp04_comparative", "Comparative evaluation"),
     ("exp05_privacy", "Privacy/utility and the formal DP statement"),

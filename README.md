@@ -43,48 +43,47 @@ code in this repository. None is transcribed by hand.
 
 ## Install
 
-Python 3.11 or later.
+Python 3.11 or later; the figures also need a TeX distribution with `pdflatex`
+and Poppler's `pdftoppm`.
 
 ```bash
-pip install -e .              # specification, simulations, verification (NumPy only)
-pip install -e ".[real]"      # + real-data experiments
+pip install -e .                # specification, simulations, verification (NumPy only)
+pip install -e ".[real,dev]"    # + real-data experiments, tests and lint
 python -m spacy download en_core_web_sm
 ```
 
-## Reproduce
+## Reproduce everything with one command
 
 ```bash
-python -m pytest -q                         # unit tests and the invariant verification
-python experiments/run_all.py --synthetic   # Experiments 1-12 (NumPy only, about 2 min)
+make reproduce                  # or: python3 scripts/reproduce.py
 ```
+
+This runs the tests, verifies the corpora against their recorded checksums,
+extracts features and sentence embeddings, runs Experiments 1–16, regenerates
+every table (`tex/tab_*.tex`), figure (`figures/*.pdf`, plus 600-dpi PNGs) and
+number quoted in the article (`tex/numbers.tex`), and then compares every output
+with the committed version. It ends with "All outputs match the committed
+versions" or lists each difference. Only the latency measurements of Experiment 7
+depend on the machine and are excluded from the comparison. It takes about
+15 minutes on a laptop once the corpora are present.
+
+| Command | What it does |
+|---|---|
+| `make synthetic` | Experiments 1–12 only; NumPy only, about 2 minutes |
+| `make check` | Compare the outputs on disk with the commit, without re-running |
+| `make test` | Unit tests and the exhaustive invariant verification |
 
 The real-data experiments need the external corpora. None is redistributed
-here; see [`data/README.md`](data/README.md) for sources, licences and the
-TalkBank login that CHILDES requires.
-
-```bash
-python scripts/download_data.py             # PERSUADE 2.0, ASAP, ELLIPSE, checksum-verified
-python scripts/prepare_features.py          # parse and featurise every corpus present
-python scripts/embed_windows.py written 50  # sentence embeddings for Experiment 13
-python experiments/run_all.py --real        # Experiments 13-16
-```
-
-Then regenerate the manuscript's tables, figures and quoted numbers:
-
-```bash
-python experiments/make_tables.py           # tex/tab_*.tex
-python experiments/make_figures.py          # figures/*.pdf (+ 600-dpi PNG); needs pdflatex, poppler
-python experiments/make_numbers.py          # tex/numbers.tex, the values quoted in the text
-```
-
-`make_numbers.py` also checks each qualitative sentence that quotes a value
-(for example, which estimator is best on every corpus) and stops if the results
-no longer support it.
+here. `scripts/download_data.py` fetches PERSUADE 2.0, ASAP and ELLIPSE; the
+two CHILDES corpora need a free TalkBank account (see [`data/README.md`](data/README.md)).
+An experiment whose corpus is absent records a skip rather than failing.
 
 Each file in `results/` records the master seed (20260806), library versions,
-platform and commit, and whether the working tree was clean when it was run.
-All experiments except the latency measurements are deterministic given the
-seed.
+platform, the commit that produced it and whether the working tree was clean.
+`experiments/make_numbers.py` refuses results that do not all come from one
+clean commit, and checks every qualitative sentence that quotes a value (for
+example, which estimator is best on every corpus), stopping if the results no
+longer support it.
 
 ## Experiments
 
@@ -121,7 +120,7 @@ seed.
 | `safenest/features.py` | The five linguistic features, computed from text |
 | `safenest/learning.py` | Learned estimators, the two-stage private release, session decisions |
 | `experiments/` | Experiments 1–16, the runner, and the table, figure and number generators |
-| `scripts/` | Data download, feature preparation, sentence embeddings |
+| `scripts/` | One-command reproduction, data download, feature preparation, sentence embeddings |
 | `tests/` | Unit tests and the invariant verification |
 | `results/`, `tex/`, `figures/` | Recorded results, generated tables, generated figures |
 
