@@ -137,6 +137,16 @@ def fig_deployment() -> None:
     build("fig_deployment", body, FULL_CM)
 
 
+#: Printed names of the nine capabilities, as the text uses them.
+CAPABILITY_LABEL = {"homework_answer": "homework answer", "open_ended_chat": "open-ended chat",
+                    "code_generation": "code generation", "essay_writing": "essay writing",
+                    "freeform_text_output": "free-form text output",
+                    "crisis_content": "crisis content",
+                    "substance_bodyimage": "substance and body image",
+                    "age_inappropriate": "age-inappropriate content",
+                    "legal_risk_content": "legal-risk content"}
+
+
 def fig_gating() -> None:
     marks = {Access.BLOCKED: ("black!72", "white", "B"),
              Access.SOCRATIC: ("black!42", "white", "S"),
@@ -146,7 +156,7 @@ def fig_gating() -> None:
     for j, cap in enumerate(Capability):
         y = -0.62 * j
         cells.append(f"\\node[font=\\footnotesize, anchor=east] at (-0.62,{y:.2f}) "
-                     f"{{{cap.value.replace('_', ' ')}}};")
+                     f"{{{CAPABILITY_LABEL[cap.value]}}};")
         for i, tier in enumerate(ALL_TIERS):
             fill, tc, ch = marks[FEATURE_GATING[cap][tier]]
             cells.append(f"\\node[cell, fill={fill}, text={tc}] at ({1.0 * i:.2f},{y:.2f}) {{{ch}}};")
@@ -214,6 +224,13 @@ def fig_layers() -> None:
 def fig_protocol() -> None:
     """The measurement protocol: four columns, each diamond a check that can fail."""
     n_abs = f"{abstraction_size():,}".replace(",", "{,}")
+    corpora = "three essay corpora"
+    if available("exp13_real_estimation"):
+        docs = load("exp13_real_estimation")["documents"]
+        n_docs = sum(sum(v.values()) for v in docs.values())
+        corpora += ", " + f"{n_docs:,}".replace(",", "{,}") + " essays"
+    if available("exp16_real_spoken"):
+        corpora += " and two speech corpora"
     body = r"""
 \begin{tikzpicture}[
   box/.style={draw, thin, rectangle, text width=31mm, align=center, inner sep=3pt,
@@ -247,7 +264,7 @@ def fig_protocol() -> None:
 \draw[ar] (a3.east) -- node[lb,above] {no} ++(0.62,0) |- (b1.west);
 
 \node[hd] at (9.1,0.1) {3.\ Real children's\\language};
-\node[box] (c1) at (9.1,-1.0) {three essay corpora and two speech corpora};
+\node[box] (c1) at (9.1,-1.0) {""" + corpora + r"""};
 \node[box] (c2) at (9.1,-2.45) {five features per 50-word window; duplicates removed};
 \node[box] (c3) at (9.1,-3.9) {learned estimators, trained on two corpora};
 \node[dec] (c4) at (9.1,-5.5) {prompt\\held out?};
@@ -452,7 +469,7 @@ def fig_privacy() -> None:
 
 def fig_dsr() -> None:
     d = load("exp04_comparative")["results"]["rubric"]
-    order = ["Topical rail", "Agent firewall", "Harm classifier", "Constitutional rule",
+    order = ["Topical rail", "Harm classifier", "Agent firewall", "Constitutional rule",
              "COPPA binary rule", "Child-safety classifier", "Age-band oracle", "NPL (full)"]
     fills = ["black!6", "black!18", "black!30", "black!42", "black!54", "black!66",
              "black!82", "accent"]
@@ -472,7 +489,8 @@ def fig_dsr() -> None:
     body = r"""
 \begin{tikzpicture}
 \begin{axis}[safenest, width=\figwidth, height=62mm,
-  ybar=0.4pt, bar width=4.2pt, enlarge x limits=0.10, ymin=0, ymax=100,
+  ybar=0.4pt, bar width=4.2pt, enlarge x limits=0.10, ymin=0, ymax=106,
+  ytick={0,20,40,60,80,100},
   xtick={1,2,3,4,5}, xticklabels={$t_1$ (3--6),$t_2$ (7--9),$t_3$ (10--12),$t_4$ (13--15),$t_5$ (16--17)},
   xlabel={Developmental tier}, ylabel={Developmental safety rate (\%)},
   ymajorgrids,
@@ -512,7 +530,11 @@ def fig_ceiling() -> None:
 \end{axis}
 \begin{axis}[safenest, at={($(l.east)+(30mm,0)$)}, anchor=west,
   width=0.40\figwidth, height=44mm,
-  xbar, bar width=4.5pt, xmin=0, xmax=105, enlarge y limits=0.12, y dir=reverse,
+  xbar, bar width=4.5pt, xmin=0, xmax=112, enlarge y limits=0.12, y dir=reverse,
+  xtick={0,20,40,60,80,100},
+  nodes near coords, point meta=x,
+  every node near coord/.append style={font=\scriptsize, /pgf/number format/fixed,
+                                       /pgf/number format/precision=0},
   ytick={""" + ",".join(str(i) for i in range(len(cells))) + r"""},
   yticklabels={""" + labels + r"""}, ytick style={draw=none},
   xlabel={DSR within cell (\%)}, xmajorgrids,

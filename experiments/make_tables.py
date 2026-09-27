@@ -64,6 +64,12 @@ def pc(x: float, d: int = 1) -> str:
     return f"{100 * x:.{d}f}"
 
 
+def sg(x: float, d: int = 1) -> str:
+    """Signed number; a value that rounds to zero is printed unsigned."""
+    t = f"{x:+.{d}f}"
+    return t[1:] if float(t) == 0 else t
+
+
 def tier_math(label: str) -> str:
     return f"$t_{label[1]}$"
 
@@ -135,7 +141,7 @@ def tab_conference() -> None:
     table("tab_conference",
           "What changed between the conference version~\\cite{Ejaz2026UKCI} and this article.",
           "tab:conference", r">{\raggedright\arraybackslash}p{2.3cm}LL",
-          r"\textbf{Aspect} & \textbf{UKCI 2026 Paper} & \textbf{This Article} \\",
+          r"\textbf{Aspect} & \textbf{UKCI 2026 paper} & \textbf{This article} \\",
           rows,
           "DSR: developmental safety rate (Section~\\ref{sec:metrics}). The conference "
           "numbers are reproduced from~\\cite{Ejaz2026UKCI}. The random seed also changed "
@@ -162,7 +168,7 @@ def tab_params() -> None:
                f"\\quad Typing speed (WPM) & {typing} \\\\",
                r"\multicolumn{6}{l}{\emph{Account} and \emph{attestation}, $\mathrm{Bern}(p_k)$; local shares $\varepsilon_m = 0.20$ and $0.10$} \\",
                f"\\quad Child-account flag & {dev} \\\\",
-               f"\\quad External attestation present & {ctx} \\\\"])
+               f"\\quad Attestation present & {ctx} \\\\"])
     table("tab_params",
           "Tier-conditional signal parameters of the simulation and local privacy budget shares.",
           "tab:params", r">{\raggedright\arraybackslash}p{3.6cm}*{5}{C}",
@@ -205,7 +211,7 @@ def tab_convergence() -> None:
           [f"\\multicolumn{{{len(ms) + 1}}}{{l}}{{\\emph{{Simulated accuracy}}}} \\\\"] + rows
           + ["\\midrule",
              f"\\multicolumn{{{len(ms) + 1}}}{{l}}{{\\emph{{Guaranteed accuracy "
-             "(Proposition~\\ref{prop:bound}; 0.0 where the bound is vacuous)}}}} \\\\"]
+             "(Proposition~\\ref{prop:bound}; 0.0 where the bound is vacuous)}} \\\\"]
           + brows,
           "Bold marks the first milestone at or above 90\\%. The simulation uses the exact "
           "likelihood parameters and applies the bypass check, which can only hold a "
@@ -246,7 +252,7 @@ def tab_corpora() -> None:
                             f"\\multicolumn{{5}}{{c}}{{$t_1$ {bt.get('t1', 0)}, $t_2$ {bt.get('t2', 0)}, "
                             f"$t_3$ {bt.get('t3', 0)}}} & TalkBank rules \\\\")
     table("tab_corpora", "Corpora of child-produced language used in Section~\\ref{sec:real}.",
-          "tab:corpora", r">{\raggedright\arraybackslash}p{2.3cm}>{\raggedright\arraybackslash}p{2.6cm}ccccc>{\raggedright\arraybackslash}p{2.1cm}",
+          "tab:corpora", r">{\raggedright\arraybackslash}p{2.3cm}Lcccccl",
           r"\textbf{Corpus} & \textbf{Writers} & \boldmath{$t_3$} & \boldmath{$t_3,t_4$} & \boldmath{$t_4$} & \boldmath{$t_4,t_5$} & \boldmath{$t_5$} & \textbf{Licence} \\",
           rows, foot, wide=True)
 
@@ -306,24 +312,26 @@ def tab_real_subgroups() -> None:
     d = load("exp15_real_subgroups")["training"]
     labels = {"ell": "English learner", "disability": "Identified disability",
               "econ": "Economically disadvantaged", "gender": "Female"}
+
+    def cell(x: dict) -> str:
+        return f"${sg(100 * x['estimate'])}$ [${sg(100 * x['ci'][0])}$, ${sg(100 * x['ci'][1])}$]"
+
     rows = []
-    for col, lab in labels.items():
-        cells = []
-        for train in ("with ELLIPSE", "without ELLIPSE"):
+    for train in ("with ELLIPSE", "without ELLIPSE"):
+        rows.append(f"\\multicolumn{{5}}{{l}}{{\\emph{{Trained {train}}}}} \\\\")
+        for col, lab in labels.items():
+            cells = []
             for name in ("NPL (learned)", "Gradient boosting (features)"):
                 diff = d[train]["subgroups"][col][name]["difference"]
-                u, o = diff["under"], diff["over"]
-                cells.append(f"${100 * u['estimate']:+.1f}$ \\scriptsize[{100 * u['ci'][0]:+.1f}, {100 * u['ci'][1]:+.1f}]")
-                cells.append(f"${100 * o['estimate']:+.1f}$ \\scriptsize[{100 * o['ci'][0]:+.1f}, {100 * o['ci'][1]:+.1f}]")
-        rows.append(f"{lab} & " + " & ".join(cells) + r" \\")
-    head = (r"& \multicolumn{4}{c}{\textbf{Trained with ELLIPSE}} & \multicolumn{4}{c}{\textbf{Trained without ELLIPSE}} \\"
-            "\n" r"\cmidrule(lr){2-5}\cmidrule(lr){6-9}" "\n"
-            r"& \multicolumn{2}{c}{\textbf{NPL (learned)}} & \multicolumn{2}{c}{\textbf{Gradient boosting}} & \multicolumn{2}{c}{\textbf{NPL (learned)}} & \multicolumn{2}{c}{\textbf{Gradient boosting}} \\"
-            "\n" r"\textbf{Group} & \textbf{Under} & \textbf{Over} & \textbf{Under} & \textbf{Over} & \textbf{Under} & \textbf{Over} & \textbf{Under} & \textbf{Over} \\")
+                cells += [cell(diff["under"]), cell(diff["over"])]
+            rows.append(f"\\quad {lab} & " + " & ".join(cells) + r" \\")
+    head = (r"& \multicolumn{2}{c}{\textbf{NPL (learned)}} & \multicolumn{2}{c}{\textbf{Gradient boosting}} \\"
+            "\n" r"\cmidrule(lr){2-3}\cmidrule(lr){4-5}" "\n"
+            r"\textbf{Group} & \textbf{Under} & \textbf{Over} & \textbf{Under} & \textbf{Over} \\")
     table("tab_real_subgroups",
           "Difference in grade-standardised error rates between each group and its "
-          "complement in PERSUADE (percentage points, 95\\% interval).",
-          "tab:real-subgroups", r"l*{8}{c}", head, rows,
+          "complement in PERSUADE (percentage points, with 95\\% interval).",
+          "tab:real-subgroups", r"L*{4}{c}", head, rows,
           "Positive values mean the group is under- or over-protected more often than its "
           "complement in the same grade. Folds hold out whole prompts; comparisons use only "
           "grades in which both groups appear. Intervals are parametric bootstrap intervals "
@@ -348,8 +356,8 @@ def tab_dsr() -> None:
             label = f"\\quad \\textbf{{{label}}}" if full else f"\\quad {label}"
             val = f"\\textbf{{{pc(o['dsr'])}}}" if full else pc(o["dsr"])
             gap = ("ref." if full else
-                   f"${100 * diff[name]['difference']:+.1f}$ [{100 * diff[name]['ci_low']:+.1f}, "
-                   f"{100 * diff[name]['ci_high']:+.1f}]")
+                   f"${sg(100 * diff[name]['difference'])}$ [${sg(100 * diff[name]['ci_low'])}$, "
+                   f"${sg(100 * diff[name]['ci_high'])}$]")
             rows.append(f"{label} & {val} & [{pc(o['dsr_ci_low'])}, {pc(o['dsr_ci_high'])}] & "
                         f"{pc(o['under_protection'])} & {pc(o['over_restriction'])} & "
                         f"{100 * sd[name]['sd']:.2f} & {gap} \\\\")
@@ -363,7 +371,7 @@ def tab_dsr() -> None:
           "The confidence interval is the Wilson score interval; SD is the standard deviation "
           "of DSR across 20 independently generated corpora of the same size; the last column "
           "is the paired difference with a 95\\% bootstrap interval (2000 resamples). "
-          + MODELLED)
+          + MODELLED, wide=True)
 
 
 def tab_tuned() -> None:
@@ -417,7 +425,7 @@ def tab_ablation() -> None:
     rows = []
     for key, label in pretty.items():
         v = d[key]
-        delta = "ref." if key == "Full framework" else f"${v['delta_pp']:+.1f}$"
+        delta = "ref." if key == "Full framework" else f"${sg(v['delta_pp'])}$"
         rows.append(f"{label} & {pc(v['dsr'])} & {delta} & {pc(v['under_protection'])} & "
                     f"{pc(v['over_restriction'])} & {pc(v['harm_dsr'])} \\\\")
     worst = max(v["mcnemar"]["p_value"] for k, v in d.items() if k != "Full framework")
@@ -473,10 +481,12 @@ def tab_bypass() -> None:
           f"Impersonation of $t_5$ by a genuine $t_2$ user after $n = {d['n_interactions']}$ "
           f"interactions, $N = {d['n_trials']}$ sessions per strength.",
           "tab:bypass", "CCC",
-          r"\textbf{Spoof Strength} \boldmath{$\alpha$} & \textbf{Escalated above} \boldmath{$t_2$} \textbf{(\%)} & \textbf{Flagged by Detector (\%)} \\",
+          r"\textbf{Spoof strength} \boldmath{$\alpha$} & \textbf{Escalated above} \boldmath{$t_2$} \textbf{(\%)} & \textbf{Flagged by detector (\%)} \\",
           rows,
           "Only the linguistic channel is spoofed. False-flag rates on genuine $t_2$ children "
-          f"at the adopted threshold $\\chi^2_{{5,0.99}}=15.086$: {ff}. Detector AUC separating "
+          f"at the adopted threshold $\\chi^2_{{5,0.99}}=15.086$: {ff}. At $\\alpha = 0$ the "
+          "user is a typical $t_2$ child, so that row and the typical false-flag rate are "
+          "independent samples of the same nominal 1\\% rate. Detector AUC separating "
           "a full-strength impersonator from a genuinely verbally advanced child: "
           f"{d['auc_vs_verbally_advanced']:.3f}.")
 
@@ -492,7 +502,7 @@ def tab_overhead() -> None:
              ("Full engine, end to end", "Full engine (per response)", "per response", "$O(|y|)$", "yes"),
              ("Tier update ($L_2$)", "L2: Bayesian update (per interaction)", "per interaction", "$O(KM)$", "no"),
              ("Five linguistic features", "Feature extraction (per 50-word message)", "per message", "$O(|x|)$", "no"),
-             ("Sentence embedding (CPU)", "Sentence embedding (per 50-word message, CPU)", "per message", "$O(|x|)$", "no")]
+             ("Sentence embedding", "Sentence embedding (per 50-word message, CPU)", "per message", "$O(|x|)$", "no")]
     rows = []
     for label, key, gran, cx, sync in order:
         if key not in m:
@@ -504,7 +514,7 @@ def tab_overhead() -> None:
     emb = m.get("Sentence embedding (per 50-word message, CPU)", 0.0)
     table("tab_overhead",
           "Measured cost per component on one CPU core (median of five runs).",
-          "tab:overhead", "LLccc",
+          "tab:overhead", "Llccc",
           r"\textbf{Component} & \textbf{Granularity} & \textbf{Time (\boldmath{$\mu$}s)} & \textbf{Complexity} & \textbf{Synchronous} \\",
           rows,
           f"The synchronous engine costs {100 * d['share_of_500ms_llm']:.4f}\\% of a 500 ms "
@@ -542,9 +552,10 @@ def tab_stats() -> None:
     for name, v in comp["paired_differences"].items():
         mc = v["mcnemar"]
         p = "$< 10^{-15}$" if mc["p_value"] < 1e-15 else f"{mc['p_value']:.2g}"
-        rows.append(f"{DAGGER.get(name, name)} & ${100 * v['difference']:+.1f}$ & "
-                    f"[{100 * v['ci_low']:+.1f}, {100 * v['ci_high']:+.1f}] & "
-                    f"{int(mc['b01']):,} / {int(mc['b10']):,} & {p} \\\\".replace(",", "{,}"))
+        pairs = f"{int(mc['b01']):,} / {int(mc['b10']):,}".replace(",", "{,}")
+        rows.append(f"{DAGGER.get(name, name)} & ${sg(100 * v['difference'])}$ & "
+                    f"[${sg(100 * v['ci_low'])}$, ${sg(100 * v['ci_high'])}$] & "
+                    f"{pairs} & {p} \\\\")
     table("tab_stats",
           "Paired comparisons of the full framework with each alternative, $N = 7000$.",
           "tab:stats", "Lcccc",
@@ -598,23 +609,32 @@ def tab_thresholds() -> None:
           "above $\\theta_{\\mathrm{sev}}$, so the two agree by construction at 0.5.")
 
 
+#: Risk categories in the order of Section 5.3, with their printed names.
+CATEGORY_LABEL = {"homework_assignment": "Homework", "open_ended_chat": "Open-ended chat",
+                  "code_generation": "Code generation", "essay_creative_writing": "Essay writing",
+                  "crisis_self_harm": "Crisis and self-harm",
+                  "substance_body_image": "Substance and body image",
+                  "age_inappropriate_content": "Age-inappropriate content"}
+
+
 def tab_category() -> None:
     comp = load("exp04_comparative")
     hw_all = comp["per_category_t2_rubric_all_frameworks"]
     rows = []
-    for cat, per in hw_all.items():
+    for cat, label in CATEGORY_LABEL.items():
+        per = hw_all[cat]
         npl = per["NPL (full)"]
         cai = per["Constitutional rule"]
         orc = per["Age-band oracle"]
-        rows.append(f"{cat.replace('_', ' ').capitalize()} & {pc(npl)} & {pc(cai)} & "
-                    f"${100 * (npl - cai):+.1f}$ & {pc(orc)} & ${100 * (npl - orc):+.1f}$ \\\\")
+        rows.append(f"{label} & {pc(npl)} & {pc(cai)} & "
+                    f"${sg(100 * (npl - cai))}$ & {pc(orc)} & ${sg(100 * (npl - orc))}$ \\\\")
     hw = hw_all["homework_assignment"]
     best = max((v, k) for k, v in hw.items() if k != "NPL (full)")
     table("tab_category",
           "Per-category DSR (\\%) at $t_2$ (ages 7--9) under the independent rubric, "
           "$N = 200$ per cell.",
           "tab:percat", "Lccccc",
-          r"\textbf{Risk Category} & \textbf{NPL} & \textbf{Constitutional rule} & \boldmath{$\Delta$} & \textbf{Age-band oracle} & \boldmath{$\Delta$} \\",
+          r"\textbf{Risk category} & \textbf{NPL} & \textbf{Constitutional rule} & \boldmath{$\Delta$} & \textbf{Age-band oracle} & \boldmath{$\Delta$} \\",
           rows,
           "The rubric scaffolds code generation and essay writing at $t_2$; NPL and the "
           "age-band oracle block both and the constitutional rule allows both. On homework "

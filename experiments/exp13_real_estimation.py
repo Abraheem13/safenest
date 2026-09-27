@@ -68,6 +68,21 @@ def _load_written(window: int) -> tuple[pd.DataFrame, pd.DataFrame, int]:
     return docs, wins, len(dup)
 
 
+def shared_prompts(docs: pd.DataFrame) -> dict:
+    """Prompts that two corpora share, matched by name, and the essays on them.
+
+    ASAP names its prompts by set number and shares none with the others.
+    """
+    names = {c: set(d["prompt"].dropna().str.strip().str.lower())
+             for c, d in docs.groupby("corpus")}
+    shared = sorted(names["persuade"] & names["ellipse"])
+    on_shared = {c: float(docs.loc[docs["corpus"] == c, "prompt"].str.strip().str.lower()
+                          .isin(shared).mean())
+                 for c in ("persuade", "ellipse")}
+    return {"persuade_prompts": len(names["persuade"]), "ellipse_prompts": len(names["ellipse"]),
+            "shared": shared, "share_of_essays_on_shared": on_shared}
+
+
 def _score(decisions: pd.DataFrame, docs: pd.DataFrame, n: int) -> dict:
     d = decisions.merge(docs[["doc_id", "admissible"]], on="doc_id")
     oc = np.array([outcome(a, adm) for a, adm in zip(d[f"tier_n{n}"], d["admissible"])])
@@ -213,6 +228,8 @@ def run() -> dict:
                .to_dict(orient="index"))
     print(f"Documents per corpus and admissible tier set: {summary}")
     print(f"ELLIPSE essays also in PERSUADE, removed: {n_dup}")
+    prompts = shared_prompts(docs)
+    print(f"Prompts shared by PERSUADE and ELLIPSE: {prompts}")
 
     loco = leave_one_corpus_out(docs, wins, zoo)
     for held, models in loco.items():
@@ -245,6 +262,7 @@ def run() -> dict:
         "horizons": list(HORIZONS),
         "documents": summary,
         "ellipse_duplicates_removed": n_dup,
+        "shared_prompts": prompts,
         "leave_one_corpus_out": loco,
         "topic_confound": confound,
         "window_sensitivity": sensitivity,
