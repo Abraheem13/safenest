@@ -112,11 +112,12 @@ CORPORA: dict[str, Corpus] = {
                     "Language, ages 5;0-11;11, typically developing children and "
                     "children with language impairment.",
         modality="spoken",
-        licence="TalkBank Ground Rules (CC BY-NC-SA 3.0)",
+        licence="CC BY-NC-SA 4.0 (TalkBank Ground Rules)",
         citation="Gillam, R.B.; Pearson, N. Test of Narrative Language; Pro-Ed: "
                  "Austin, TX, USA, 2004. Data: doi:10.21415/T5QS3N.",
         homepage="https://talkbank.org/childes/access/Clinical-Eng/Gillam.html",
-        files=(RemoteFile(url="", path="childes/Gillam.zip", sha256=None),),
+        files=(RemoteFile(url="", path="childes/Gillam.zip",
+                           sha256="88def2590595dbe5fdfd2f838693e99d54a4822e104a25f2fd342c578cd14fa9"),),
         manual="Log in at talkbank.org, download the Gillam transcripts and place "
                "Gillam.zip in data/raw/childes/.",
     ),
@@ -126,13 +127,14 @@ CORPORA: dict[str, Corpus] = {
                     "4-9, typically developing children and children with "
                     "language impairment.",
         modality="spoken",
-        licence="TalkBank Ground Rules (CC BY-NC-SA 3.0)",
+        licence="CC BY-NC-SA 4.0 (TalkBank Ground Rules)",
         citation="Schneider, P.; Hayward, D.; Dub\u00e9, R.V. Storytelling from pictures "
                  "using the Edmonton Narrative Norms Instrument. Journal of "
                  "Speech-Language Pathology and Audiology 2006, 30, 224-238. "
                  "Data: doi:10.21415/T51G7V.",
         homepage="https://talkbank.org/childes/access/Clinical-Eng/ENNI.html",
-        files=(RemoteFile(url="", path="childes/ENNI.zip", sha256=None),),
+        files=(RemoteFile(url="", path="childes/ENNI.zip",
+                           sha256="1e98850c39a3cc94a67ba98c32a3eedb9250583e832f7c18d7f19425bb872f99"),),
         manual="Log in at talkbank.org, download the ENNI transcripts and place "
                "ENNI.zip in data/raw/childes/.",
     ),

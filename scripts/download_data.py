@@ -48,8 +48,15 @@ def main(names: list[str]) -> int:
         print(f"{corpus.name} ({corpus.licence})")
         if corpus.manual:
             for rf in corpus.files:
-                present = (RAW / rf.path).exists()
-                print(f"  {'present' if present else 'MISSING'}: data/raw/{rf.path}")
+                dest = RAW / rf.path
+                if not dest.exists():
+                    print(f"  MISSING: data/raw/{rf.path}")
+                    continue
+                # TalkBank revises transcripts, so a later download can differ
+                # from the file the reported results were computed from.
+                ok = rf.sha256 is None or sha256(dest) == rf.sha256
+                print(f"  {'ok' if ok else 'CHECKSUM MISMATCH'}: data/raw/{rf.path}")
+                failures += not ok
             if not all((RAW / rf.path).exists() for rf in corpus.files):
                 print(f"  {corpus.manual}")
             continue

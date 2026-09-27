@@ -101,6 +101,11 @@ def tab_conference() -> None:
         n_docs = sum(sum(v.values()) for v in load("exp13_real_estimation")["documents"].values())
         real = (f"Tier estimators learned from three essay corpora ({n_docs:,} essays) and "
                 "evaluated across corpora; real-subgroup and privacy analyses").replace(",", "{,}")
+        if available("exp16_real_spoken") and "corpora" in load("exp16_real_spoken"):
+            kids = sum(c["children"] for c in load("exp16_real_spoken")["corpora"].values())
+            real += ("; the youngest tiers from " + f"{kids:,}".replace(",", "{,}")
+                     + " children's transcribed narratives (CHILDES), including children "
+                     "with language impairment")
     rows = [
         r"Ground truth & Labels derived from the policy's own feature-gating matrix & "
         r"Independent rubric that never consults the policy; matrix labels reported for contrast \\",
@@ -244,34 +249,72 @@ def tab_corpora() -> None:
     d = load("exp13_real_estimation")
     docs = d["documents"]
     spoken = load("exp16_real_spoken") if available("exp16_real_spoken") else None
+    cols = ("1", "2", "3", "3,4", "4", "4,5", "5")
     rows = []
     info = {"persuade": ("grades 6--12", "CC BY-NC-SA 4.0"),
             "asap": ("grades 7, 8, 10", "competition terms"),
             "ellipse": ("grades 8--12, English learners", "CC BY-NC-SA 4.0")}
+
+    def fmt(x: int) -> str:
+        return f"{int(x):,}".replace(",", "{,}")
+
     for key in ("persuade", "asap", "ellipse"):
         c = docs[key]
-        cells = [str(c.get(a, 0)) for a in ("3", "3,4", "4", "4,5", "5")]
         rows.append(f"{CORPUS[key]} & {info[key][0]} & "
-                    + " & ".join(f"{int(x):,}".replace(",", "{,}") for x in cells)
+                    + " & ".join(fmt(c.get(a, 0)) for a in cols)
                     + f" & {info[key][1]} \\\\")
-    foot = ("Counts are documents with at least one 50-word window. Columns give the "
+    foot = ("Counts are children with at least one 50-word window. Columns give the "
             "admissible tiers: a boundary grade admits two (grade 7: $t_3$ or $t_4$; "
             f"grade 10: $t_4$ or $t_5$). {d['ellipse_duplicates_removed']} ELLIPSE essays "
             "that also appear in PERSUADE are removed. PERSUADE sets every prompt to a single "
             "grade (Section~\\ref{sec:confound}).")
-    if spoken:
+    if spoken and "corpora" in spoken:
         for key in ("gillam", "enni"):
-            if key in spoken["corpora"]:
-                c = spoken["corpora"][key]
-                bt = c["by_tier"]
-                rows.append(f"{CORPUS[key]} & ages {c['age_range'][0]:.0f}--{c['age_range'][1]:.0f}, "
-                            f"{c['impaired']} impaired & "
-                            f"\\multicolumn{{5}}{{c}}{{$t_1$ {bt.get('t1', 0)}, $t_2$ {bt.get('t2', 0)}, "
-                            f"$t_3$ {bt.get('t3', 0)}}} & TalkBank rules \\\\")
-    table("tab_corpora", "Corpora of child-produced language used in Section~\\ref{sec:real}.",
-          "tab:corpora", r">{\raggedright\arraybackslash}p{2.3cm}Lcccccl",
-          r"\textbf{Corpus} & \textbf{Writers} & \boldmath{$t_3$} & \boldmath{$t_3,t_4$} & \boldmath{$t_4$} & \boldmath{$t_4,t_5$} & \boldmath{$t_5$} & \textbf{Licence} \\",
+            c = spoken["corpora"][key]
+            lo, hi = int(c["age_range"][0]), int(c["age_range"][1])
+            bt = {k[1:]: v for k, v in c["by_tier"].items()}
+            rows.append(f"{CORPUS[key]} & ages {lo}--{hi}, {c['impaired']} with language "
+                        "impairment & " + " & ".join(fmt(bt.get(a, 0)) for a in cols)
+                        + " & CC BY-NC-SA 4.0 \\\\")
+        foot += (" Gillam and ENNI record each child's age, so each child has one tier; "
+                 "their transcripts are CHILDES corpora \\cite{Gillam2004,Schneider2006}.")
+    table("tab_corpora", "Corpora of child-produced language used in "
+          "Sections~\\ref{sec:real}--\\ref{sec:spoken}.",
+          "tab:corpora", r">{\raggedright\arraybackslash}p{2.3cm}L*{7}{c}l",
+          r"\textbf{Corpus} & \textbf{Children} & \boldmath{$t_1$} & \boldmath{$t_2$} & \boldmath{$t_3$} & \boldmath{$t_3,t_4$} & \boldmath{$t_4$} & \boldmath{$t_4,t_5$} & \boldmath{$t_5$} & \textbf{Licence} \\",
           rows, foot, wide=True)
+
+
+def tab_real_spoken() -> None:
+    d = load("exp16_real_spoken")["within_corpus"]
+    n = "n10"
+    rows = []
+    for name in ESTIMATORS:
+        cells = []
+        for key in ("gillam", "enni", "pooled"):
+            r = d[key][name][n]
+            best = max(x[n]["balanced_accuracy"] for m, x in d[key].items()
+                       if not m.startswith("_"))
+            bal = pc(r["balanced_accuracy"])
+            cells += [f"\\textbf{{{bal}}}" if r["balanced_accuracy"] == best else bal,
+                      pc(r["under"]), pc(r["over"])]
+        rows.append(f"{name} & " + " & ".join(cells) + r" \\")
+    half = {k: max((x[n]["ci"][k][1] - x[n]["ci"][k][0]) / 2
+                   for res in d.values() for m, x in res.items() if not m.startswith("_"))
+            for k in ("balanced_accuracy", "under", "over")}
+    head = (r"& \multicolumn{3}{c}{\textbf{Gillam}} & \multicolumn{3}{c}{\textbf{ENNI}} & \multicolumn{3}{c}{\textbf{Pooled}} \\"
+            "\n" r"\cmidrule(lr){2-4}\cmidrule(lr){5-7}\cmidrule(lr){8-10}" "\n"
+            r"\textbf{Estimator} & \textbf{Bal.} & \textbf{Under} & \textbf{Over} & \textbf{Bal.} & \textbf{Under} & \textbf{Over} & \textbf{Bal.} & \textbf{Under} & \textbf{Over} \\")
+    table("tab_real_spoken",
+          "Tier estimation from children's transcribed speech, five-fold cross-validation "
+          "grouped by child, after $n = 10$ interactions (50-word windows).",
+          "tab:real-spoken", r"L*{9}{c}", head, rows,
+          "All values are percentages, defined as in Table~\\ref{tab:real-loco}; the highest "
+          "balanced accuracy in each column group is in bold. Half-widths of 95\\% "
+          "bootstrap intervals over children (2000 resamples) are at most "
+          f"{100 * half['balanced_accuracy']:.1f} points for balanced accuracy and "
+          f"{100 * max(half['under'], half['over']):.1f} points for under- and over-protection.",
+          wide=True)
 
 
 # ------------------------------------------------------------- real LOCO
@@ -675,6 +718,8 @@ def main() -> None:
     tab_conference(); tab_params(); tab_convergence()
     if available("exp13_real_estimation"):
         tab_corpora(); tab_real_loco()
+    if available("exp16_real_spoken") and "within_corpus" in load("exp16_real_spoken"):
+        tab_real_spoken()
     if available("exp14_real_privacy"):
         tab_real_privacy()
     if available("exp15_real_subgroups"):

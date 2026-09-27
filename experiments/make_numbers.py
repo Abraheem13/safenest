@@ -62,7 +62,8 @@ def values() -> dict[str, str]:
         "exp01_convergence", "exp02_separability", "exp03_socratic", "exp04_comparative",
         "exp05_privacy", "exp06_populations", "exp07_overhead", "exp08_ceiling",
         "exp09_operating", "exp10_bypass", "exp11_reliability", "exp12_ablation",
-        "exp13_real_estimation", "exp14_real_privacy", "exp15_real_subgroups")}
+        "exp13_real_estimation", "exp14_real_privacy", "exp15_real_subgroups",
+        "exp16_real_spoken")}
 
     # ---- provenance: one clean commit behind every number ------------------
     commits = {x["provenance"]["git_commit"] for x in r.values()}
@@ -184,6 +185,55 @@ def values() -> dict[str, str]:
         drop = tc[name]["random_minus_disjoint"]
         claim(drop["ci"][0] > 0, f"the drop has a paired interval above zero ({name})")
         v[f"{key}DropLo"], v[f"{key}DropHi"] = pc(drop["ci"][0]), pc(drop["ci"][1])
+
+    # ---- Experiment 16: children's speech ---------------------------------
+    e16 = r["exp16_real_spoken"]
+    sp, cv = e16["corpora"], e16["within_corpus"]
+    kids = sum(c["children"] for c in sp.values())
+    v["spokenChildren"] = thousands(kids)
+    v["gillamChildren"], v["enniChildren"] = str(sp["gillam"]["children"]), str(sp["enni"]["children"])
+    v["gillamImpaired"], v["enniImpaired"] = str(sp["gillam"]["impaired"]), str(sp["enni"]["impaired"])
+    v["spokenImpaired"] = str(sp["gillam"]["impaired"] + sp["enni"]["impaired"])
+    v["spokenTOne"] = str(sp["gillam"]["by_tier"]["t1"] + sp["enni"]["by_tier"]["t1"])
+    v["spokenTTwo"] = str(sp["gillam"]["by_tier"]["t2"] + sp["enni"]["by_tier"]["t2"])
+    v["gillamWinMedian"] = f"{sp['gillam']['windows_per_child_median']:.0f}"
+    v["enniWinMedian"] = f"{sp['enni']['windows_per_child_median']:.1f}"
+    pooled = cv["pooled"]
+    spec = pooled["NPL (specified)"]["n10"]
+    v["spokenSpecUnder"] = pc(spec["under"])
+    v["spokenSpecTOne"] = pc(spec["by_admissible"]["1"]["accuracy"])
+    v["gillamSpecUnder"] = pc(cv["gillam"]["NPL (specified)"]["n10"]["under"])
+    v["enniSpecUnder"] = pc(cv["enni"]["NPL (specified)"]["n10"]["under"])
+    claim(spec["under"] > 0.5 and spec["over"] < 0.02,
+          "hand-set parameters place most young children in an older tier")
+    learned = [m for m in pooled if not m.startswith("_") and m != "NPL (specified)"]
+    pb = [pooled[m]["n10"]["balanced_accuracy"] for m in learned]
+    v["spokenBalMin"], v["spokenBalMax"] = pc(min(pb)), pc(max(pb))
+    v["enniBestBal"] = pc(max(cv["enni"][m]["n10"]["balanced_accuracy"] for m in learned))
+    v["gillamBestBal"] = pc(max(cv["gillam"][m]["n10"]["balanced_accuracy"] for m in learned))
+    claim(all(pooled[m]["n10"]["under"] < spec["under"] for m in learned),
+          "every learned estimator under-protects young children less than the specified one")
+    b = pooled["_best_vs_runner_up"]
+    v["spokenBest"] = b["best"].replace("Logistic (TF-IDF)", "TF-IDF")
+    v["spokenLead"], v["spokenLeadLo"], v["spokenLeadHi"] = (
+        pc(b["difference"]), pc(b["ci"][0]), pc(b["ci"][1]))
+    claim(b["best"] == "Logistic (TF-IDF)" and b["ci"][0] < 0 < b["ci"][1],
+          "on speech TF-IDF leads, but not significantly")
+    tr = [e16["transfer"][k][m]["n10"]["balanced_accuracy"]
+          for k in e16["transfer"] for m in learned]
+    v["transferBalMin"], v["transferBalMax"] = pc(min(tr)), pc(max(tr))
+    imp = e16["impairment"]
+    overs = {m: imp[m]["difference"]["over"] for m in learned}
+    unders = {m: imp[m]["difference"]["under"] for m in learned}
+    claim(all(x["ci"][0] > 0 for x in overs.values()),
+          "every learned estimator over-protects children with language impairment")
+    claim(all(x["ci"][1] < 0 for x in unders.values()),
+          "and under-protects them less")
+    v["impOverMin"] = num(100 * min(x["estimate"] for x in overs.values()))
+    v["impOverMax"] = num(100 * max(x["estimate"] for x in overs.values()))
+    v["impUnderMin"] = num(-100 * max(x["estimate"] for x in unders.values()))
+    v["impUnderMax"] = num(-100 * min(x["estimate"] for x in unders.values()))
+    v["impTiers"] = str(len(imp["tiers"]))
 
     cases = [(c, t, n, x) for c, tiers in e13["proposition1_real"].items()
              for t, ns in tiers.items() for n, x in ns.items()]

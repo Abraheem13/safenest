@@ -230,7 +230,9 @@ def fig_protocol() -> None:
         n_docs = sum(sum(v.values()) for v in docs.values())
         corpora += ", " + f"{n_docs:,}".replace(",", "{,}") + " essays"
     if available("exp16_real_spoken"):
-        corpora += " and two speech corpora"
+        spoken = load("exp16_real_spoken")["corpora"]
+        n_kids = sum(c["children"] for c in spoken.values())
+        corpora += "; " + f"{n_kids:,}".replace(",", "{,}") + " children's narratives"
     body = r"""
 \begin{tikzpicture}[
   box/.style={draw, thin, rectangle, text width=31mm, align=center, inner sep=3pt,
@@ -266,7 +268,7 @@ def fig_protocol() -> None:
 \node[hd] at (9.1,0.1) {3.\ Real children's\\language};
 \node[box] (c1) at (9.1,-1.0) {""" + corpora + r"""};
 \node[box] (c2) at (9.1,-2.45) {five features per 50-word window; duplicates removed};
-\node[box] (c3) at (9.1,-3.9) {learned estimators, trained on two corpora};
+\node[box] (c3) at (9.1,-3.9) {learned estimators, tested on unseen corpora or children};
 \node[dec] (c4) at (9.1,-5.5) {prompt\\held out?};
 \node[term] (c5) at (9.1,-7.05) {topic confound: report separately};
 \draw[ar] (c1) -- (c2); \draw[ar] (c2) -- (c3); \draw[ar] (c3) -- (c4);
@@ -411,6 +413,53 @@ def fig_real_subgroups() -> None:
                     "at={($(u.east)+(6mm,0)$)}, anchor=west,")
             + r"\end{tikzpicture}")
     build("fig_real_subgroups", body, FULL_CM)
+
+
+def fig_real_spoken() -> None:
+    """Children's speech: pooled outcomes, and the language-impairment gap."""
+    d = load("exp16_real_spoken")
+    order = ["NPL (specified)", "NPL (learned)", "Logistic (features)",
+             "Gradient boosting (features)", "Logistic (TF-IDF)", "Logistic (MiniLM)"]
+    imp = d["impairment"]
+
+    def series(what: str, offset: float) -> str:
+        pts = []
+        for k, m in enumerate(order):
+            x = imp[m]["difference"][what]
+            est, lo, hi = 100 * x["estimate"], 100 * x["ci"][0], 100 * x["ci"][1]
+            pts.append(f"({est:.2f},{k + offset:.2f}) -= ({est - lo:.2f},0) += ({hi - est:.2f},0)")
+        return " ".join(pts)
+
+    lo = min(100 * imp[m]["difference"][w]["ci"][0] for m in order for w in ("under", "over"))
+    hi = max(100 * imp[m]["difference"][w]["ci"][1] for m in order for w in ("under", "over"))
+    xmin, xmax = 10 * (int(lo // 10)), 10 * (int(hi // 10) + 1)
+    body = (r"\begin{tikzpicture}"
+            + _stacked_panel(d["within_corpus"]["pooled"],
+                             "(a) Gillam and ENNI pooled, five folds", "s1", True, "")
+            + r"""
+\begin{axis}[safenest, name=s2, at={($(s1.east)+(9mm,0)$)}, anchor=west,
+  width=0.40\figwidth, height=52mm, y dir=reverse,
+  xmin=""" + str(xmin) + ", xmax=" + str(xmax) + r""",
+  ytick={0,1,2,3,4,5}, yticklabels={}, enlarge y limits=0.12, ytick style={draw=none},
+  xmajorgrids, xlabel={Impaired minus typical (percentage points)},
+  title={(b) Language impairment, same tiers},
+]
+\draw[black!55, line width=0.5pt] (axis cs:0,-0.6) -- (axis cs:0,5.6);
+\addplot[only marks, mark=*, mark size=1.6pt, accent,
+  error bars/.cd, x dir=both, x explicit, error bar style={line width=0.5pt}]
+  coordinates {""" + series("under", -0.15) + r"""};
+\addplot[only marks, mark=square*, mark size=1.5pt, oksky,
+  error bars/.cd, x dir=both, x explicit, error bar style={line width=0.5pt}]
+  coordinates {""" + series("over", 0.15) + r"""};
+\end{axis}
+\node[anchor=north, font=\footnotesize] at ($(s1.south)!0.5!(s2.south)+(0,-9mm)$) {%
+  \tikz\fill[accent, draw=black!60] (0,0) rectangle (3mm,2mm);~under-protected\quad
+  \tikz\fill[black!18, draw=black!60] (0,0) rectangle (3mm,2mm);~correct tier\quad
+  \tikz\fill[oksky, draw=black!60] (0,0) rectangle (3mm,2mm);~over-protected\qquad
+  \tikz\fill[accent] (0,0) circle (0.9mm);~under-protection gap\quad
+  \tikz\fill[oksky] (0,0) rectangle (1.8mm,1.8mm);~over-protection gap};
+\end{tikzpicture}""")
+    build("fig_real_spoken", body, FULL_CM)
 
 
 def fig_privacy() -> None:
@@ -643,6 +692,8 @@ def main() -> int:
         fig_real_loco()
     if available("exp15_real_subgroups"):
         fig_real_subgroups()
+    if available("exp16_real_spoken") and "impairment" in load("exp16_real_spoken"):
+        fig_real_spoken()
     fig_privacy(); fig_dsr(); fig_ceiling(); fig_bypass(); fig_calibration()
     return 0
 

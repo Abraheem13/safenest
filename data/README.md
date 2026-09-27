@@ -9,8 +9,8 @@ language. None of them is redistributed here: each has its own licence, and
 | PERSUADE 2.0 (training release) | written essays | grades 6–12 | 15,594 essays | CC BY-NC-SA 4.0 | `scripts/download_data.py persuade` |
 | ELLIPSE (public training split) | written essays, English learners | grades 8–12 | 3,911 essays | CC BY-NC-SA 4.0 | `scripts/download_data.py ellipse` |
 | ASAP (Automated Student Assessment Prize) | written essays | grades 7, 8, 10 | 12,972 essays | Kaggle competition terms | `scripts/download_data.py asap` |
-| CHILDES Gillam | transcribed oral narratives | ages 5;0–11;11 | see below | TalkBank Ground Rules | TalkBank login |
-| CHILDES ENNI | transcribed oral narratives | ages 4–9 | see below | TalkBank Ground Rules | TalkBank login |
+| CHILDES Gillam | transcribed oral narratives | ages 5;0–11;11 | 668 transcripts | CC BY-NC-SA 4.0, TalkBank Ground Rules | TalkBank login |
+| CHILDES ENNI | transcribed oral narratives | ages 4–9 | 361 transcripts | CC BY-NC-SA 4.0, TalkBank Ground Rules | TalkBank login |
 
 `scripts/download_data.py` fetches the first three and checks each file against
 the SHA-256 recorded in `safenest/data/registry.py`. The recorded hash is that of
@@ -25,11 +25,17 @@ The CHILDES corpora need a free TalkBank account, so they cannot be scripted:
    <https://talkbank.org/childes/access/Clinical-Eng/ENNI.html>.
 3. Place `Gillam.zip` and `ENNI.zip` in `data/raw/childes/`.
 
+`python3 scripts/download_data.py gillam enni` then checks both archives against
+the recorded SHA-256. TalkBank revises transcripts from time to time, so a later
+download may differ from the one the published results used. Transcripts
+without a recorded child age are skipped (four in Gillam, one in ENNI).
+
 Then build the feature tables:
 
 ```bash
 python3 scripts/prepare_features.py        # parse every corpus present
 python3 scripts/embed_windows.py written 50  # sentence embeddings for Experiment 13
+                                              # (Experiment 16 embeds speech itself)
 ```
 
 ## What is derived, and how
