@@ -8,17 +8,20 @@ Experiments 1-12 exercise the specification in simulation and need NumPy only.
 Experiments 13-16 use real corpora (see data/README.md); each records a
 `skipped` result when a corpus it needs has not been prepared. Every experiment
 is seeded from `common.MASTER_SEED`.
+
+Each experiment runs in its own interpreter. Isolation keeps one experiment's
+imports from affecting another: on macOS, PyTorch (loaded by the overhead
+experiment) and LightGBM ship separate OpenMP runtimes that cannot share a
+process.
 """
 from __future__ import annotations
 
-import importlib
+import subprocess
 import sys
 import time
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-
-from experiments.common import save  # noqa: E402
+HERE = Path(__file__).resolve().parent
 
 EXPERIMENTS = [
     ("exp01_convergence", "Bayesian estimator convergence"),
@@ -49,15 +52,14 @@ def main(argv: list[str]) -> int:
     failures = []
     started = time.time()
     for name, description in selected:
-        print(f"\n{'=' * 78}\n{name}: {description}\n{'=' * 78}")
+        print(f"\n{'=' * 78}\n{name}: {description}\n{'=' * 78}", flush=True)
         t0 = time.time()
-        try:
-            module = importlib.import_module(f"experiments.{name}")
-            save(name, module.run())
-            print(f"  [ok] {time.time() - t0:.1f}s")
-        except Exception as exc:  # keep going; report at the end
-            failures.append((name, repr(exc)))
-            print(f"  [FAILED] {exc!r}")
+        code = subprocess.run([sys.executable, str(HERE / f"{name}.py")]).returncode
+        if code == 0:
+            print(f"  [ok] {time.time() - t0:.1f}s", flush=True)
+        else:  # keep going; report at the end
+            failures.append((name, f"exit status {code}"))
+            print(f"  [FAILED] exit status {code}", flush=True)
     print(f"\n{'=' * 78}")
     print(f"Completed {len(selected) - len(failures)}/{len(selected)} "
           f"experiments in {time.time() - started:.1f}s")
