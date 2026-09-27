@@ -155,6 +155,11 @@ def values() -> dict[str, str]:
     best = {c: max(LEARNED, key=lambda m, c=c: loco[c][m]["n10"]["balanced_accuracy"]) for c in CORPORA}
     claim(set(best.values()) == {"Logistic (TF-IDF)"},
           "TF-IDF has the highest balanced accuracy on every held-out corpus")
+    bvr = e13["best_vs_runner_up"]
+    claim(all(x["best"] == "Logistic (TF-IDF)" and x["ci"][0] > 0 for x in bvr.values()),
+          "TF-IDF's lead over the next estimator has a paired interval above zero everywhere")
+    lead = [100 * x["difference"] for x in bvr.values()]
+    v["tfidfLeadMin"], v["tfidfLeadMax"] = num(min(lead)), num(max(lead))
     claim(loco["persuade"]["Logistic (TF-IDF)"]["n10"]["under"]
           > max(loco["persuade"][m]["n10"]["under"] for m in LEARNED[:3]),
           "TF-IDF under-protects more than the feature-based estimators on PERSUADE")
@@ -176,6 +181,9 @@ def values() -> dict[str, str]:
         v[f"{key}Disjoint"] = pc(tc[name]["prompt_disjoint"]["accuracy"])
         claim(tc[name]["random"]["accuracy"] > tc[name]["prompt_disjoint"]["accuracy"],
               f"holding out prompts lowers accuracy ({name})")
+        drop = tc[name]["random_minus_disjoint"]
+        claim(drop["ci"][0] > 0, f"the drop has a paired interval above zero ({name})")
+        v[f"{key}DropLo"], v[f"{key}DropHi"] = pc(drop["ci"][0]), pc(drop["ci"][1])
 
     cases = [(c, t, n, x) for c, tiers in e13["proposition1_real"].items()
              for t, ns in tiers.items() for n, x in ns.items()]

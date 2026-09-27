@@ -218,8 +218,25 @@ def tab_convergence() -> None:
           "session at a confirmed tier; the bound applies to the assignment rule of "
           "Equation~\\eqref{eq:assign}. Milestones are read from one trajectory per "
           "simulated user and are therefore paired. The bound first guarantees 90\\% at "
-          + ", ".join(f"$n={first_n[t.label]}$ for {tier_math(t.label)}" for t in ALL_TIERS)
+          + _grouped_milestones(first_n)
           + "; it is evaluated at $n \\in \\{1,3,5,7,10\\}$.")
+
+
+def _grouped_milestones(first_n: dict) -> str:
+    """'$n=2$ for $t_1$--$t_3$ and $n=4$ for $t_4$--$t_5$', grouping consecutive tiers."""
+    runs: list[list] = []
+    for k, t in enumerate(ALL_TIERS):
+        n = first_n[t.label]
+        if runs and runs[-1][0] == n and runs[-1][2] == k - 1:
+            runs[-1][2] = k
+        else:
+            runs.append([n, k, k])
+    parts = []
+    for n, a, b in runs:
+        span = (f"$t_{a + 1}$" if a == b else
+                f"$t_{a + 1}$ and $t_{b + 1}$" if b == a + 1 else f"$t_{a + 1}$--$t_{b + 1}$")
+        parts.append(f"$n={n}$ for {span}")
+    return ", ".join(parts[:-1]) + (" and " if len(parts) > 1 else "") + parts[-1]
 
 
 # ---------------------------------------------------------------- corpora
@@ -266,8 +283,14 @@ def tab_real_loco() -> None:
         cells = []
         for held in ("persuade", "asap", "ellipse"):
             r = d[held][name][n]
-            cells += [pc(r["balanced_accuracy"]), pc(r["under"]), pc(r["over"])]
+            best = max(x[n]["balanced_accuracy"] for x in d[held].values())
+            bal = pc(r["balanced_accuracy"])
+            cells += [f"\\textbf{{{bal}}}" if r["balanced_accuracy"] == best else bal,
+                      pc(r["under"]), pc(r["over"])]
         rows.append(f"{name} & " + " & ".join(cells) + r" \\")
+    half = {k: max((x[n]["ci"][k][1] - x[n]["ci"][k][0]) / 2
+                   for held in d.values() for x in held.values())
+            for k in ("balanced_accuracy", "under", "over")}
     head = (r"& \multicolumn{3}{c}{\textbf{PERSUADE held out}} & \multicolumn{3}{c}{\textbf{ASAP held out}} & \multicolumn{3}{c}{\textbf{ELLIPSE held out}} \\"
             "\n" r"\cmidrule(lr){2-4}\cmidrule(lr){5-7}\cmidrule(lr){8-10}" "\n"
             r"\textbf{Estimator} & \textbf{Bal.} & \textbf{Under} & \textbf{Over} & \textbf{Bal.} & \textbf{Under} & \textbf{Over} & \textbf{Bal.} & \textbf{Under} & \textbf{Over} \\")
@@ -278,7 +301,11 @@ def tab_real_loco() -> None:
           "All values are percentages. Bal.: balanced accuracy over admissible-tier groups; "
           "Under: a less protective tier than any admissible one; Over: a more protective "
           "one, including the $t_1$ floor. NPL (specified) uses the simulation parameters of "
-          "Table~\\ref{tab:params}; every other estimator is fitted to the training corpora.",
+          "Table~\\ref{tab:params}; every other estimator is fitted to the training corpora. "
+          "The highest balanced accuracy on each corpus is in bold. Half-widths of 95\\% "
+          "bootstrap intervals over writers (2000 resamples) are at most "
+          f"{100 * half['balanced_accuracy']:.1f} points for balanced accuracy and "
+          f"{100 * max(half['under'], half['over']):.1f} points for under- and over-protection.",
           wide=True)
 
 
