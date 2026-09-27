@@ -1,0 +1,21 @@
+\begin{table}[H]
+\begin{adjustwidth}{-\extralength}{0cm}
+\caption{Tier estimation from children's transcribed speech, five-fold cross-validation grouped by child, after $n = 10$ interactions (50-word windows).\label{tab:real-spoken}}
+\small
+\begin{tabularx}{\fulllength}{L*{9}{c}}
+\toprule
+& \multicolumn{3}{c}{\textbf{Gillam}} & \multicolumn{3}{c}{\textbf{ENNI}} & \multicolumn{3}{c}{\textbf{Pooled}} \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-7}\cmidrule(lr){8-10}
+\textbf{Estimator} & \textbf{Bal.} & \textbf{Under} & \textbf{Over} & \textbf{Bal.} & \textbf{Under} & \textbf{Over} & \textbf{Bal.} & \textbf{Under} & \textbf{Over} \\
+\midrule
+NPL (specified) & 38.2 & 71.5 & 1.2 & 51.7 & 46.9 & 0.0 & 40.5 & 74.7 & 0.8 \\
+NPL (learned) & 51.5 & 25.6 & 28.3 & 74.4 & 13.3 & 12.2 & 57.3 & 23.4 & 22.9 \\
+Logistic (features) & 53.4 & 20.6 & 36.4 & 71.8 & 15.8 & 12.2 & 58.7 & 22.5 & 26.2 \\
+Gradient boosting (features) & 43.0 & 28.2 & 24.1 & 72.3 & 17.2 & 10.3 & 51.0 & 20.3 & 21.3 \\
+Logistic (TF-IDF) & \textbf{59.3} & 20.6 & 19.6 & \textbf{81.8} & 10.6 & 7.5 & \textbf{65.9} & 19.8 & 14.7 \\
+Logistic (MiniLM) & 56.9 & 24.7 & 24.4 & 80.2 & 10.3 & 9.4 & 64.3 & 24.5 & 17.8 \\
+\bottomrule
+\end{tabularx}
+\noindent{\footnotesize{All values are percentages, defined as in Table~\ref{tab:real-loco}; the highest balanced accuracy in each column group is in bold. Half-widths of 95\% bootstrap intervals over children (2000 resamples) are at most 4.6 points for balanced accuracy and 5.3 points for under- and over-protection.}}
+\end{adjustwidth}
+\end{table}

@@ -79,9 +79,9 @@ def note(text: str) -> str:
 
 
 def table(name: str, caption: str, label: str, colspec: str, head: str,
-          rows: list[str], foot: str, wide: bool = False) -> None:
+          rows: list[str], foot: str, wide: bool = False, place: str = "H") -> None:
     width = "\\fulllength" if wide else "\\textwidth"
-    body = ("\\begin{table}[H]\n" + ("\\begin{adjustwidth}{-\\extralength}{0cm}\n" if wide else "")
+    body = (f"\\begin{{table}}[{place}]\n" + ("\\begin{adjustwidth}{-\\extralength}{0cm}\n" if wide else "")
             + f"\\caption{{{caption}\\label{{{label}}}}}\n\\small\n"
             + f"\\begin{{tabularx}}{{{width}}}{{{colspec}}}\n"
             + "\\toprule\n" + head + "\n\\midrule\n" + "\n".join(rows)
@@ -152,7 +152,7 @@ def tab_conference() -> None:
           "numbers are reproduced from~\\cite{Ejaz2026UKCI}. The random seed also changed "
           "(20260720 to 20260806), but seed-to-seed variation is "
           f"{100 * load('exp11_reliability')['seed_variance']['NPL (full)']['sd']:.2f} "
-          "points, so the differences come from the changes listed.")
+          "points, so the differences come from the changes listed.", place="tbp")
 
 
 # ------------------------------------------------------------------ params
@@ -280,7 +280,7 @@ def tab_corpora() -> None:
                  "their transcripts are CHILDES corpora \\cite{Gillam2004,Schneider2006}.")
     table("tab_corpora", "Corpora of child-produced language used in "
           "Sections~\\ref{sec:real}--\\ref{sec:spoken}.",
-          "tab:corpora", r">{\raggedright\arraybackslash}p{2.3cm}L*{7}{c}l",
+          "tab:corpora", r"lL*{7}{c}l",
           r"\textbf{Corpus} & \textbf{Children} & \boldmath{$t_1$} & \boldmath{$t_2$} & \boldmath{$t_3$} & \boldmath{$t_3,t_4$} & \boldmath{$t_4$} & \boldmath{$t_4,t_5$} & \boldmath{$t_5$} & \textbf{Licence} \\",
           rows, foot, wide=True)
 
