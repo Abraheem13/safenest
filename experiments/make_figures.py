@@ -111,7 +111,7 @@ def fig_deployment() -> None:
   box/.style={draw, thin, rectangle, align=center, inner sep=4pt,
               minimum height=9mm, font=\footnotesize},
   ar/.style={-{Latex[length=2mm]}, thin},
-  lab/.style={font=\footnotesize, inner sep=2pt},
+  lab/.style={font=\footnotesize, inner sep=2pt, align=left},
 ]
 \node[box, text width=19mm] (c)  at (0.7,1.55) {child};
 \node[box, text width=19mm] (s)  at (0.7,0.35) {signals $x$};
@@ -119,20 +119,20 @@ def fig_deployment() -> None:
 \node[box, text width=26mm] (est) at (4.6,0.35) {tier estimator\\(learned or specified)};
 \node[box, text width=33mm] (pol) at (9.1,0.35) {Nested Policy Engine\\$L_0,\ldots,L_4$};
 \node[box, text width=33mm] (llm) at (9.1,2.15) {foundation model $\theta$\\(unmodified)};
-\node[box, text width=33mm] (soc) at (9.1,-1.45) {Socratic engine $\pi^{*}$\\or referral protocol};
+\node[box, text width=30mm] (soc) at (10.0,-1.45) {Socratic engine $\pi^{*}$\\or referral protocol};
+\node[box, text width=31mm] (rej) at (4.9,-1.45) {no model content;\\crisis: hand-off to a\\guardian or helpline};
 \node[box, text width=20mm] (out) at (13.6,0.35) {response $y$};
 \draw[ar] (c) -- (s);
 \draw[ar] (s) -- node[lab, above] {LLRs} (est);
 \draw[ar] (dv.east) -- ++(0.75,0) |- (est.west);
 \draw[ar] (est) -- node[lab, above] {tier $\hat{\tau}$} (pol);
 \draw[ar] (llm) -- node[lab, right] {candidate $y$} (pol);
-\draw[ar] (pol) -- node[lab, right] {\textsc{modify}} (soc);
+\draw[ar] (pol.south -| soc.north) -- node[lab, right] {\textsc{modify}} (soc.north);
+\draw[ar] ($(pol.south)+(-1.2,0)$) |- node[lab, above, pos=0.78] {\textsc{reject}} (rej.east);
 \draw[ar] (pol) -- node[lab, above] {\textsc{accept}} (out);
-\draw[ar] (soc.east) -| (out.south);
-\node[lab, anchor=south] at ($(soc.east)+(1.2,0)$) {scaffold or refer};
+\draw[ar] (soc.east) -| node[lab, right, pos=0.72] {scaffold\\or refer} (out.south);
 \draw[dashed, thin, black!60] (-0.55,0.97) rectangle (1.95,-1.78);
-\node[lab, anchor=north west, text=black!70] at (-0.55,-1.8)
-  {signal enclave: raw features stay inside};
+\node[lab, anchor=north west, text=black!70] at (-0.55,-1.8) {signal enclave};
 \end{tikzpicture}"""
     build("fig_deployment", body, FULL_CM)
 

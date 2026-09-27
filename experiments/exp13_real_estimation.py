@@ -28,7 +28,7 @@ import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from experiments.common import pct, save, table  # noqa: E402
+from experiments.common import pct, rng_for, save, table  # noqa: E402
 from experiments.real_common import (  # noqa: E402
     HORIZONS,
     MissingCorpus,
@@ -46,6 +46,7 @@ from safenest.learning import (  # noqa: E402
 
 WRITTEN = ("persuade", "asap", "ellipse")
 REPORT_N = 10
+N_BOOT = 2000
 
 
 def _load_written(window: int) -> tuple[pd.DataFrame, pd.DataFrame, int]:
@@ -104,21 +105,92 @@ def _score(decisions: pd.DataFrame, docs: pd.DataFrame, n: int) -> dict:
     }
 
 
-def leave_one_corpus_out(docs, wins, zoo, horizons=HORIZONS) -> dict:
+def _outcomes(decisions: pd.DataFrame, docs: pd.DataFrame, n: int) -> pd.DataFrame:
+    """One row per writer: admissible tier set and outcome after n interactions."""
+    d = decisions.merge(docs[["doc_id", "admissible"]], on="doc_id")
+    d["outcome"] = [outcome(a, adm) for a, adm in zip(d[f"tier_n{n}"], d["admissible"])]
+    return d[["doc_id", "admissible", "outcome"]].sort_values("doc_id").reset_index(drop=True)
+
+
+def _rates(correct, under, over, group, n_groups, idx) -> np.ndarray:
+    """Balanced accuracy, accuracy, under- and over-protection on a resample."""
+    g = group[idx]
+    per_group = (np.bincount(g, weights=correct[idx], minlength=n_groups)
+                 / np.maximum(np.bincount(g, minlength=n_groups), 1))
+    present = np.bincount(g, minlength=n_groups) > 0
+    return np.array([per_group[present].mean(), correct[idx].mean(),
+                     under[idx].mean(), over[idx].mean()])
+
+
+METRICS = ("balanced_accuracy", "accuracy", "under", "over")
+#: Filled by leave_one_corpus_out when it bootstraps.
+BEST_VS_RUNNER_UP: dict = {}
+
+
+def _arrays(frame: pd.DataFrame):
+    oc = frame["outcome"].to_numpy()
+    codes, group = np.unique(frame["admissible"].to_numpy(), return_inverse=True)
+    return ((oc == "correct").astype(float), (oc == "under").astype(float),
+            (oc == "over").astype(float), group, len(codes))
+
+
+def bootstrap_ci(frame: pd.DataFrame, rng: np.random.Generator, b: int = N_BOOT) -> dict:
+    """95% percentile intervals over writers for each headline rate."""
+    c, u, o, g, k = _arrays(frame)
+    n = len(frame)
+    draws = np.array([_rates(c, u, o, g, k, rng.integers(0, n, n)) for _ in range(b)])
+    lo, hi = np.percentile(draws, [2.5, 97.5], axis=0)
+    return {m: [float(lo[i]), float(hi[i])] for i, m in enumerate(METRICS)}
+
+
+def paired_difference(a: pd.DataFrame, b_: pd.DataFrame, metric: str,
+                      rng: np.random.Generator, b: int = N_BOOT) -> dict:
+    """Difference a - b in one rate on the same writers, with a paired bootstrap."""
+    m = a.merge(b_, on=["doc_id", "admissible"], suffixes=("_a", "_b"))
+    i = METRICS.index(metric)
+    fa = _arrays(m.rename(columns={"outcome_a": "outcome"}))
+    fb = _arrays(m.rename(columns={"outcome_b": "outcome"}))
+    n = len(m)
+    full = np.arange(n)
+    diff = _rates(*fa, full)[i] - _rates(*fb, full)[i]
+    draws = []
+    for _ in range(b):
+        idx = rng.integers(0, n, n)
+        draws.append(_rates(*fa, idx)[i] - _rates(*fb, idx)[i])
+    lo, hi = np.percentile(draws, [2.5, 97.5])
+    return {"metric": metric, "n_writers": int(n), "difference": float(diff),
+            "ci": [float(lo), float(hi)]}
+
+
+def leave_one_corpus_out(docs, wins, zoo, horizons=HORIZONS, rng=None) -> dict:
+    """Train on two corpora, test on the third. With `rng`, every estimator's
+    headline rates carry bootstrap intervals over writers, and the estimator
+    with the highest balanced accuracy is compared with the runner-up."""
     out: dict = {}
     for held in WRITTEN:
         train = expand_admissible(wins[wins["corpus"] != held])
         test = wins[wins["corpus"] == held]
         test_docs = docs[docs["corpus"] == held]
         out[held] = {}
+        frames = {}
         for name, factory in zoo.items():
             model = factory().fit(train)
             dec = session_decisions(test, model.window_log_scores(test), model.tiers, horizons)
             out[held][name] = {f"n{n}": _score(dec, test_docs, n) for n in horizons}
+            if rng is not None:
+                frames[name] = _outcomes(dec, test_docs, REPORT_N)
+                out[held][name][f"n{REPORT_N}"]["ci"] = bootstrap_ci(frames[name], rng)
+        if rng is not None:
+            bal = {m: out[held][m][f"n{REPORT_N}"]["balanced_accuracy"] for m in frames}
+            ranked = sorted(bal, key=bal.get, reverse=True)
+            BEST_VS_RUNNER_UP[held] = {"best": ranked[0], "runner_up": ranked[1],
+                                       **paired_difference(frames[ranked[0]], frames[ranked[1]],
+                                                           "balanced_accuracy", rng)}
     return out
 
 
-def topic_confound(docs, wins, zoo) -> dict:
+
+def topic_confound(docs, wins, zoo, rng) -> dict:
     """Inside PERSUADE: random folds versus folds that hold out whole prompts.
 
     Prompt-disjoint folds keep the single grade-6 prompt in every training set
@@ -137,6 +209,7 @@ def topic_confound(docs, wins, zoo) -> dict:
     out = {}
     for name in ("Gradient boosting (features)", "Logistic (TF-IDF)", "NPL (learned)"):
         res = {}
+        frames = {}
         for scheme in ("random", "prompt_disjoint"):
             decs = []
             for k in range(5):
@@ -159,6 +232,10 @@ def topic_confound(docs, wins, zoo) -> dict:
                 scored = scored[scored["admissible"] != "3"]  # same population as prompt-disjoint
                 dec = dec[dec["doc_id"].isin(scored["doc_id"])]
             res[scheme] = _score(dec, scored, REPORT_N)
+            frames[scheme] = _outcomes(dec, scored, REPORT_N)
+            res[scheme]["ci"] = bootstrap_ci(frames[scheme], rng)
+        res["random_minus_disjoint"] = paired_difference(
+            frames["random"], frames["prompt_disjoint"], "accuracy", rng)
         out[name] = res
     return out
 
@@ -231,7 +308,11 @@ def run() -> dict:
     prompts = shared_prompts(docs)
     print(f"Prompts shared by PERSUADE and ELLIPSE: {prompts}")
 
-    loco = leave_one_corpus_out(docs, wins, zoo)
+    rng = rng_for("exp13_bootstrap")
+    loco = leave_one_corpus_out(docs, wins, zoo, rng=rng)
+    for held, cmp in BEST_VS_RUNNER_UP.items():
+        print(f"  {held}: {cmp['best']} minus {cmp['runner_up']} balanced accuracy "
+              f"{pct(cmp['difference'])} [{pct(cmp['ci'][0])}, {pct(cmp['ci'][1])}]")
     for held, models in loco.items():
         rows = []
         for name, res in models.items():
@@ -242,7 +323,7 @@ def run() -> dict:
         table(rows, ["Estimator", "Acc", "Bal. acc", "Under", "Over", "Floor"],
               f"Held-out corpus {held} (n = {REPORT_N} windows), %")
 
-    confound = topic_confound(docs, wins, zoo)
+    confound = topic_confound(docs, wins, zoo, rng)
     print("\nTopic confound inside PERSUADE (t4/t5 essays, n = 10):")
     for name, res in confound.items():
         print(f"  {name:30s} random folds {pct(res['random']['accuracy'])}%  "
@@ -263,6 +344,7 @@ def run() -> dict:
         "documents": summary,
         "ellipse_duplicates_removed": n_dup,
         "shared_prompts": prompts,
+        "best_vs_runner_up": BEST_VS_RUNNER_UP,
         "leave_one_corpus_out": loco,
         "topic_confound": confound,
         "window_sensitivity": sensitivity,
