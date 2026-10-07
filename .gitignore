@@ -19,3 +19,6 @@ figures/*.log
 
 # 600-dpi rasters are rebuilt by make_figures.py for journal upload.
 figures/*.png
+
+# Unrelated project that lives in this directory; not part of SafeNest.
+terra-net/
